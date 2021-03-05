@@ -1,25 +1,34 @@
-import logo from './logo.svg';
+import React from 'react';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+
 import './App.css';
+import 'fontsource-roboto';
 
-function App() {
+import { Dashboard } from './Layouts';
+import { Welcome, Login, Register, Home, History, Prizes, Profile, Services, Plans, About } from './pages';
+
+export default function App(props) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-
-export default App;
+    // <BrowserRouter>
+    //   <Dashboard>
+    //       <Switch>
+    //         <Route path="/dashboard/history" component={History}/>
+    //         <Route path="/dashboard/home" component={Home}/>
+    //         <Route path="/dashboard/prizes" component={Prizes}/>
+    //         <Route path="/dashboard/profile" component={Profile}/>
+    //         <Route path="/dashboard/services" component={Services}/>
+    //         <Route path="/dashboard/subscription" component={Subscription}/>
+    //       </Switch>
+    //   </Dashboard>
+    // </BrowserRouter>
+     <BrowserRouter>
+        <Switch>
+          <Route path="/" exact component={Welcome}/>
+          <Route path="/login" component={Login}/>
+          <Route path="/register" component={Register}/>
+          <Route path="/plans" component={Plans}/>
+          <Route path="/about" component={About}/>
+        </Switch>
+      </BrowserRouter>
+    );
+};
