@@ -1,26 +1,13 @@
 import React from 'react';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-
-import './App.css';
 import 'fontsource-roboto';
+import './App.css';
 
-import { Dashboard } from './Layouts';
-import { Welcome, Login, Register, Home, History, Prizes, Profile, Services, Plans, About } from './pages';
+import { ProtectedRoute } from './protected.route';
+import { Welcome, Login, Register, Home, History, Prizes, Profile, Services, Plans, About, NotFound } from './pages';
 
 export default function App(props) {
   return (
-    // <BrowserRouter>
-    //   <Dashboard>
-    //       <Switch>
-    //         <Route path="/dashboard/history" component={History}/>
-    //         <Route path="/dashboard/home" component={Home}/>
-    //         <Route path="/dashboard/prizes" component={Prizes}/>
-    //         <Route path="/dashboard/profile" component={Profile}/>
-    //         <Route path="/dashboard/services" component={Services}/>
-    //         <Route path="/dashboard/subscription" component={Subscription}/>
-    //       </Switch>
-    //   </Dashboard>
-    // </BrowserRouter>
      <BrowserRouter>
         <Switch>
           <Route path="/" exact component={Welcome}/>
@@ -28,6 +15,12 @@ export default function App(props) {
           <Route path="/register" component={Register}/>
           <Route path="/plans" component={Plans}/>
           <Route path="/about" component={About}/>
+          <ProtectedRoute path="/dashboard/history" component={History}/>
+          <ProtectedRoute path="/dashboard/home" component={Home}/>
+          <ProtectedRoute path="/dashboard/prizes" component={Prizes}/>
+          <ProtectedRoute path="/dashboard/profile" component={Profile}/>
+          <ProtectedRoute path="/dashboard/services" component={Services}/>
+          <Route path="*" component={NotFound}/>
         </Switch>
       </BrowserRouter>
     );

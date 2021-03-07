@@ -97,7 +97,7 @@ export default function Header({toggle}){
                     </NavItem>
                 </NavMenu>
                 <NavBtn>
-                    <LButton redirectTo="/login" primary={true} large={false}>Entrar</LButton>
+                    <LButton redirectTo="/login" primary={1} large={0}>Entrar</LButton>
                 </NavBtn>
             </NavbarContainer> 
         </Navbar>

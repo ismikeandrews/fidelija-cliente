@@ -24,7 +24,7 @@ const HeroSection = () => {
                 <HeroH1>Fidelização de clientes fácil</HeroH1>
                 <HeroP>Cadastre-se de graça hoje mesmo e desfrute dos beneficios</HeroP>
                 <HeroBtnWrapper>
-                    <LButton redirectTo="/register" primary={true} large={false}>Cadastre-se</LButton>
+                    <LButton redirectTo="/register" primary={1} large={0}>Cadastre-se</LButton>
                 </HeroBtnWrapper>
             </HeroContent>
         </HeroContainer>

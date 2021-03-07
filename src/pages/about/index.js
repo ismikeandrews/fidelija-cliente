@@ -3,21 +3,22 @@ import React from 'react';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import { Footer, Header, Button } from '../../components';
 import Collab from '../../assets/images/svg/collab.svg';
-import { MainSection } from './aboutElements';
+import { MainSection, LeftSection, Title, Msg, RightSection, RightSectionImg } from './aboutElements';
 
 const About = () => {
     return (
         <>
             <Header/>
-                <h1>About</h1> 
                 <MainSection>
-                    <h2 className="title">A Placeholder Goes Here</h2>
-                    <p>Lorem ipsum dolor sit amet consectetut adi[psocomg e;it. Ex nigil rerum itaque quisqua,! Matis re[odiamdae mescoimt tempora pdop a,et. Saepe?</p>
-                    <Button primary={true} icon={<PlayArrowRoundedIcon style={{ fontSize: 25 }}/>}>Assita ao video</Button>
+                    <LeftSection>
+                        <Title>Placeholder Here</Title>
+                        <Msg>Lorem ipsum dolor sit amet consectetut adi[psocomg e;it. Ex nigil rerum itaque quisqua,! Matis re[odiamdae mescoimt tempora pdop a,et. Saepe?</Msg>
+                        <Button primary={true} icon={<PlayArrowRoundedIcon style={{ fontSize: 25 }}/>}>Assita ao video</Button>
+                    </LeftSection>
+                    <RightSection>
+                        <RightSectionImg src={Collab} alt="collaboration"/>
+                    </RightSection>
                 </MainSection>
-                <section className="right">
-                    <img src={Collab} alt="collaboration"/>
-                </section>
             <Footer/>
         </>
     );

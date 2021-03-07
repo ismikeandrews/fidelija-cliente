@@ -56,7 +56,7 @@ const Plans = () => {
                                         <PlanCardListItem>Lorem Ipsum</PlanCardListItem>
                                     </PlanCardList>
                                     <PlanCardFooter>
-                                        <Button primary={false} large={true}>Selecionar</Button>
+                                        <Button primary={0} large={1}>Selecionar</Button>
                                     </PlanCardFooter>
                                 </PlanCard>
                                 <PlanCard>
@@ -74,7 +74,7 @@ const Plans = () => {
                                         <PlanCardListItem>Lorem Ipsum</PlanCardListItem>
                                     </PlanCardList>
                                     <PlanCardFooter>
-                                        <Button primary={false} large={true}>Selecionar</Button>
+                                        <Button primary={0} large={1}>Selecionar</Button>
                                     </PlanCardFooter>
                                 </PlanCard>
                                 <PlanCard>
@@ -92,7 +92,7 @@ const Plans = () => {
                                         <PlanCardListItem>Lorem Ipsum</PlanCardListItem>
                                     </PlanCardList>
                                     <PlanCardFooter>
-                                        <Button primary={false} large={true}>Selecionar</Button>
+                                        <Button primary={0} large={1}>Selecionar</Button>
                                     </PlanCardFooter>
                                 </PlanCard>
                             </PlansRow>

@@ -26,7 +26,7 @@ export default function Menu({ isOpen, toggle }){
                     <MenuLink to="subscriptions" onClick={toggle}>Planos</MenuLink>
                 </SidebarMenu>
                 <MenuBtnWrap>
-                    <LButton redirectTo="/login" primary={true} large={true}>Entrar</LButton>
+                    <LButton redirectTo="/login" primary={1} large={1}>Entrar</LButton>
                 </MenuBtnWrap>
             </MenuWrapper>
         </MenuContainer>

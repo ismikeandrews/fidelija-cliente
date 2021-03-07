@@ -12,13 +12,13 @@ export const homeObjOne = {
     headline: 'Lorem Ipsum Nedir?',
     description: 'dizgi ve baskı endüstrisinde kullanılan mıgır metinlerdir. Lorem Ipsum, adı bilinmeyen bir matbaacının bir hurufat numune kitabı oluşturmak üzere bir yazı galerisini alarak karıştırdığı',
     buttonLabel: 'Saiba mais',
-    buttonLarge: false,
+    buttonLarge: 0,
     url: '/about',
     imgStart: false,
     img: Shopping,
     alt: 'shopping',
     topLinePrimary: false,
-    primary: false,
+    primary: 0,
     dartText: false
 };
 
@@ -32,13 +32,13 @@ export const homeObjTwo = {
     headline: 'Lorem Ipsum Nedir?',
     description: 'dizgi ve baskı endüstrisinde kullanılan mıgır metinlerdir. Lorem Ipsum, adı bilinmeyen bir matbaacının bir hurufat numune kitabı oluşturmak üzere bir yazı galerisini alarak karıştırdığı',
     buttonLabel: 'Começar',
-    buttonLarge: false,
+    buttonLarge: 0,
     url: '/plans',
     imgStart: true,
     img: Profile,
     alt: 'profile',
     topLinePrimary: true,
-    primary: true,
+    primary: 1,
     dartText: false
 };
 
@@ -52,13 +52,13 @@ export const homeObjThree = {
     headline: 'Lorem Ipsum Nedir?',
     description: 'dizgi ve baskı endüstrisinde kullanılan mıgır metinlerdir. Lorem Ipsum, adı bilinmeyen bir matbaacının bir hurufat numune kitabı oluşturmak üzere bir yazı galerisini alarak karıştırdığı',
     buttonLabel: 'Começar',
-    buttonLarge: false,
+    buttonLarge: 0,
     url: '/plans',
     imgStart: false,
     img: Cashback,
     alt: 'cashback',
     topLinePrimary: true,
-    primary: true,
+    primary: 1,
     dartText: false
 };
 
@@ -72,12 +72,12 @@ export const homeObjFour = {
     headline: 'Lorem Ipsum Nedir?',
     description: 'dizgi ve baskı endüstrisinde kullanılan mıgır metinlerdir. Lorem Ipsum, adı bilinmeyen bir matbaacının bir hurufat numune kitabı oluşturmak üzere bir yazı galerisini alarak karıştırdığı',
     buttonLabel: 'Conferir',
-    buttonLarge: false,
+    buttonLarge: 0,
     url: '/plans',
     imgStart: true,
     img: Cashback,
     alt: 'cashback',
     topLinePrimary: false,
-    primary: false,
+    primary: 0,
     dartText: false
 };
