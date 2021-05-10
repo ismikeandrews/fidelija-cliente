@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Button } from '@material-ui/core';
+import { Link } from 'react-router-dom';
 
 import { colorSchema } from '../../../components'
 
@@ -121,15 +121,6 @@ export const InputField = styled.div`
     grid-template-columns: 100%;
 `;
 
-export const Btn = styled(Button)`
-    &&&{
-        width: 150px;
-        height: 49px;
-        font-weight: bolder;
-        margin: 10px 0;
-    };
-`;
-
 export const LoginRegister = styled.div`
     position: absolute;
     top: 50%;
@@ -148,7 +139,7 @@ export const LoginRegister = styled.div`
     @media (max-width: 870px){
         width: 100%;
         left: 50%;
-        top: 65%;
+        top: 70%;
         transform: translate(-50%, -100%);
         transition: 1s 0.8s ease-in-out;
 
@@ -289,15 +280,6 @@ export const ImageRight = styled(Image)`
     };
 `;
 
-export const PanelBtn = styled(Button)`
-    &&&{
-        margin: 13px 0 0;;
-        width: 130px;
-        height: 41px;
-        font-weight: 700;
-        font-size: 0.8rem;
-    };
-`;
 
 export const ContentLeft = styled(Content)`
     &.register-mode{
@@ -322,3 +304,15 @@ export const ImageLeft = styled(Image)`
         };
     };
 `;
+
+export const AccessWrapper = styled.div`
+    margin-top: 15px;
+    display: grid;
+    grid-gap: 10px;
+`
+
+export const RecoverPassword = styled(Link)`
+    text-decoration: none;
+    color: ${colorSchema.lprimary};
+    font-size: 15px;
+`

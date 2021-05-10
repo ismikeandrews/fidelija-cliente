@@ -1,10 +1,11 @@
 export const colorSchema = {
-    lprimary: '#5c6bc0',
-    dprimary: '#3949ab',
-    lsecondary: '#f50057',
-    dsecondary: '#ca0148',
+    lprimary: '#757de8',
+    dprimary: '#002984',
+    lsecondary: '#E50047',
+    dsecondary: '#990030',
     white: '#f9f9f9',
     black: '#010606',
+
 };
 
 

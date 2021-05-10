@@ -1,25 +1,43 @@
 import axios from 'axios';
 
-const url = 'https://gsk.scel.net.br';
+const url = 'http://127.0.0.1:8000';
+// const url = 'https://gsk.scel.net.br';
 
 const authService = {
 
     async authenticate(data){
-        const endPoint = `${url}/users/sign-in`
+        const endPoint = `${url}/oauth/token`
         return axios.post(endPoint, data);
     },
 
-    setLoggedUser(data){
-        const stingData = JSON.stringify(data);
-        localStorage.setItem("user", stingData);
+    async setLoggedUser(data){
+        const endPoint = `${url}/api/user`
+        let res;
+        if(data){
+            res = await axios.get(endPoint, { headers: { Authorization: `${data.token_type} ${data.access_token}` }})
+            const stringAuthData = JSON.stringify(data);
+            const stringUserData = JSON.stringify(res.data);
+            localStorage.setItem("authData", stringAuthData);
+            localStorage.setItem("userData", stringUserData);
+        }
+    },
+
+    getAuthData(){
+        const data = localStorage.getItem("authData");
+        if(!data) return null;
+        try {
+            return JSON.parse(data);
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
     },
 
     getLoggedUser(){
-        const data = localStorage.getItem("user");
-        if(!data) return null;
+        const data = localStorage.getItem("userData");
+        if (!data) return null;
         try {
-            let parsedData = JSON.parse(data);
-            return parsedData;
+            return JSON.parse(data);
         } catch (error) {
             console.log(error);
             return null;
@@ -27,8 +45,18 @@ const authService = {
     },
 
     isAuthenticated(){
-        const data = localStorage.getItem("user");
+        const data = localStorage.getItem("authData");
         if(data){
+            return true;
+        }else{
+            return false;
+        }
+    },
+
+    clearLoggedUser(){
+        const data = localStorage.getItem("authData");
+        if (data) {
+            localStorage.removeItem("authData");
             return true;
         }else{
             return false;

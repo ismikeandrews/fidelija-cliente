@@ -17,18 +17,17 @@ import {
     RegisterForm, 
     Title, 
     InputField, 
-    Btn, 
     LoginRegister, 
     PanelContainer, 
     PanelLeft, 
     PanelRight, 
     SubTitle,
     Paragraph,
-    PanelBtn,
     ContentRight,
     ImageRight,
     ContentLeft,
-    ImageLeft
+    ImageLeft,
+    AccessWrapper,
 } from './LoginElements';
 import LoginIcon from '../../../assets/images/svg/login.svg';
 import RegisterIcon from '../../../assets/images/svg/register.svg';
@@ -42,15 +41,17 @@ export default function Login(props){
 
     const submitLogin = async () => {
         let data = {
-            email,
-            password
+            username: email,
+            password: password,
+            scope: "*",
+            client_id: 1,
+            grant_type: "password",
+            client_secret: "IQLstf5Jhow51iiBGDxp9BPxlfMDwLvnxrsTF6n6"
         }
-
         try {
             let res = await authService.authenticate(data);
-            console.log("res", res.data);
-            authService.setLoggedUser(res.data);
-            props.history.push("/dashboard/home")
+            await authService.setLoggedUser(res.data);
+            props.history.push("/dashboard/home");
         } catch (error) {
             console.log(error)
             setToggleSnack(true)
@@ -65,7 +66,7 @@ export default function Login(props){
         <>  
             <ScrollToTop/>
             <Header/>
-            <Snackbar open={toggleSnack} autoHideDuration={3500} onClose={closeSnack}  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+            <Snackbar open={toggleSnack} autoHideDuration={3500} onClose={() => closeSnack()}  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={closeSnack} severity="error" variant="filled">
                     Ocorreu um erro ao tentar efetuar o login
                 </Alert>
@@ -92,7 +93,10 @@ export default function Login(props){
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}/>
                             </InputField>
-                            <Button primary={1} large={1} onClick={() => submitLogin()}>Entrar</Button>
+                            <AccessWrapper>
+                                <Button primary={1} large={0} onClick={() => submitLogin()}>Entrar</Button>
+                                <LButton redirectTo="/" primary={0} large={0}>Esqueceu a Senha?</LButton>
+                            </AccessWrapper>
                         </LoginForm>
 
                         <RegisterForm className={registerMode === true ? "register-mode" : ""}>

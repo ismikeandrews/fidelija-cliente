@@ -10,8 +10,10 @@ import {
     MobileIcon, 
     NavMenu, NavItem, 
     NavLinks, 
-    NavBtn
+    NavBtn,
+    LogoImg
 } from './HeaderElements';
+import Logo from '../../../../assets/images/img/fidelija-logo.png';
 
 export default function Header({toggle}){
     const [scrollNav, setScrollNav] = useState(false);
@@ -35,7 +37,7 @@ export default function Header({toggle}){
     return (
         <Navbar scrollNav={scrollNav}>
             <NavbarContainer>
-                <NavLogo to="/" onClick={toogleHome}>Logo</NavLogo>
+                <NavLogo to="/" onClick={toogleHome}><LogoImg src={Logo}/></NavLogo>
                 <MobileIcon onClick={toggle}>
                     <MenuRounded/>
                 </MobileIcon>

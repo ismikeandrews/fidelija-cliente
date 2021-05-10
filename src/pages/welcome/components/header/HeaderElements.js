@@ -97,3 +97,7 @@ export const NavBtn = styled.nav`
         display: none;
     };
 `;
+
+export const LogoImg = styled.img`
+    width: 120px;
+`

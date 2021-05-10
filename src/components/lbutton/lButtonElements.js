@@ -16,6 +16,7 @@ export const MButton = styled(Button)`
         padding: ${(props) => (props.large ? '15px 50px' : '9px 25px;')};
         font-weight: 900;
         color: ${colorSchema.white};
+        ${props => props.block && 'display: block;'}
 
         &:hover{
             background: ${(props) => (props.primary ? colorSchema.white : colorSchema.dsecondary)};

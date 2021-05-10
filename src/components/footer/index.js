@@ -17,8 +17,11 @@ import {
     SocialLogo, 
     WebsiteRights, 
     SocialIcons, 
-    SocialIconLink 
+    SocialIconLink,
+    LogoImg
 } from './footerElements';
+
+import Logo from '../../assets/images/img/fidelija-logo.png';
 
 const Footer = () => {
     return (
@@ -64,7 +67,7 @@ const Footer = () => {
                 </FooterLinksContainer>
                 <SocialMedia>
                     <SocialMediaWrap>
-                        <SocialLogo to="/">Logo</SocialLogo>
+                        <SocialLogo to="/"><LogoImg src={Logo}/></SocialLogo>
                         <WebsiteRights>Fidelijá © {new Date().getFullYear()} All Rights Reserved</WebsiteRights>
                         <SocialIcons>
                             <SocialIconLink href="" target="_blank" aria-label="Facebook">

@@ -39,3 +39,7 @@ export const NavLogo = styled(LinkR)`
     font-weight: bold;
     text-decoration: none;
 `;
+
+export const LogoImg = styled.img`
+    width: 120px;
+`
