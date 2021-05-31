@@ -21,19 +21,19 @@ const ServiceSection = () => {
             <ServicesWrapper>
                 <ServicesCard>
                     <ServicesIcon src={Icon1}/>
-                    <ServicesH2>What is Lorem Ipsum?</ServicesH2>
-                    <ServicesP>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae mauris at orci consectetur congue.</ServicesP>
+                    <ServicesH2>Acumulação de pontos</ServicesH2>
+                    <ServicesP></ServicesP>
                 </ServicesCard>
 
                 <ServicesCard>
                     <ServicesIcon src={Icon2}/>
-                    <ServicesH2>What is Lorem Ipsum?</ServicesH2>
+                    <ServicesH2>Gerenciamento de prêmios</ServicesH2>
                     <ServicesP>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae mauris at orci consectetur congue.</ServicesP>
                 </ServicesCard>
 
                 <ServicesCard>
                     <ServicesIcon src={Icon3}/>
-                    <ServicesH2>What is Lorem Ipsum?</ServicesH2>
+                    <ServicesH2>Fidelização de clientes</ServicesH2>
                     <ServicesP>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam vitae mauris at orci consectetur congue.</ServicesP>
                 </ServicesCard>
             </ServicesWrapper>
@@ -41,4 +41,4 @@ const ServiceSection = () => {
     );
 };
 
-export default  ServiceSection;
+export default ServiceSection;

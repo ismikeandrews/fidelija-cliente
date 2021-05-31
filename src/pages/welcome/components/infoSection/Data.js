@@ -72,7 +72,7 @@ export const homeObjFour = {
     darkText: true,
     topLine: 'Nossos planos',
     headline: 'Confira os beneficios disponíveis',
-    description: 'Aqui você pode encontrar todos as vantagens que vc precisa.',
+    description: 'Aqui você pode encontrar todos as vantagens que você   precisa.',
     buttonLabel: 'Conferir',
     buttonLarge: 0,
     url: '/plans',
