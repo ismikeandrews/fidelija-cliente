@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const url = 'http://127.0.0.1:8000';
-// const url = 'https://gsk.scel.net.br';
 
 const authService = {
 
@@ -15,11 +14,13 @@ const authService = {
         let res;
         if(data){
             res = await axios.get(endPoint, { headers: { Authorization: `${data.token_type} ${data.access_token}` }})
+            console.log(res)
             const stringAuthData = JSON.stringify(data);
             const stringUserData = JSON.stringify(res.data);
             localStorage.setItem("authData", stringAuthData);
             localStorage.setItem("userData", stringUserData);
         }
+
     },
 
     getAuthData(){
@@ -61,6 +62,11 @@ const authService = {
         }else{
             return false;
         }
+    },
+
+    async setNewUser(data){
+        const endPoint = `${url}/api/users/sign-up`;
+        return axios.post(endPoint, data)
     }
 
 }

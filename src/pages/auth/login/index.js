@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Snackbar } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
+import InputMask from 'react-input-mask';
 
 import { authService } from '../../../services'
 import { 
@@ -31,6 +32,7 @@ import {
 } from './LoginElements';
 import LoginIcon from '../../../assets/images/svg/login.svg';
 import RegisterIcon from '../../../assets/images/svg/register.svg';
+import { register } from 'react-scroll/modules/mixins/scroller';
 
 
 export default function Login(props){
@@ -38,6 +40,11 @@ export default function Login(props){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [toggleSnack, setToggleSnack] = useState(false);
+    const [ownerName, setOwnername] = useState('');
+    const [registerEmail, setRegisterEmail] = useState('');
+    const [cpf, setCpf] = useState('');
+    const [registerPassword, setRegisterPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
     const submitLogin = async () => {
         let data = {
@@ -58,9 +65,35 @@ export default function Login(props){
         }
     }
 
+    const submitRegister = async () => {
+        try {
+            const registerData = {
+                name: ownerName,
+                email: registerEmail,
+                cpf: cpf,
+                password: registerPassword
+            }
+            await authService.setNewUser(registerData);
+            let loginData = {
+                username: registerEmail,
+                password: registerPassword,
+                scope: "*",
+                client_id: 1,
+                grant_type: "password",
+                client_secret: "IQLstf5Jhow51iiBGDxp9BPxlfMDwLvnxrsTF6n6"
+            }
+            let res = await authService.authenticate(loginData);
+            await authService.setLoggedUser(res.data);
+            props.history.push("/dashboard/home");
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const closeSnack = () => {
         setToggleSnack(false)
     }
+        
 
     return (
         <>  
@@ -103,32 +136,60 @@ export default function Login(props){
                             <Title>Cadastro</Title>
                             <InputField>
                                 <TextField 
-                                    label="Username" 
+                                    label="Nome" 
                                     type="text"
-                                    variant="outlined"/>
+                                    variant="outlined"
+                                    value={ownerName}
+                                    onChange={(e) => setOwnername(e.target.value)}/>
                             </InputField>
                             <InputField>
                                 <TextField 
                                     label="Email" 
                                     type="text"
-                                    variant="outlined"/>
+                                    variant="outlined"
+                                    value={registerEmail}
+                                    onChange={(e) => setRegisterEmail(e.target.value)}/>
                             </InputField>
+
+                            <InputMask mask="999.999.999-99" value={cpf} onChange={(e) => setCpf(e.target.value)}>
+                                {(props) => (
+                                    <InputField>
+                                    <TextField 
+                                        label="CPF" 
+                                        type="text"
+                                        variant="outlined"
+                                        />
+                                </InputField>
+                                )}
+                            </InputMask>
+
                             <InputField>
                                 <TextField
                                 label="Senha"
                                 type="password"
                                 autoComplete="current-password"
-                                variant="outlined"/>
+                                variant="outlined"
+                                value={registerPassword}
+                                onChange={(e) => setRegisterPassword(e.target.value)}/>
                             </InputField>
-                            <LButton redirectTo="/register" primary={1} large={1}>Continuar</LButton>
+                            <InputField>
+                                <TextField
+                                label="Confirmar senha"
+                                type="password"
+                                autoComplete="current-password"
+                                variant="outlined"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}/>
+                            </InputField>
+                            <LButton onClick={() => submitRegister()} primary={1} large={1}>Continuar</LButton>
                         </RegisterForm>
                     </LoginRegister>
                 </FormContainer>
                 <PanelContainer>
                     <PanelLeft className={registerMode === true ? "register-mode" : ""}>
                         <ContentLeft className={registerMode === true ? "register-mode" : ""}>
-                            <SubTitle className="subtitle">Novo por aqui ?</SubTitle>
-                            <Paragraph className="reponsive">Lorem ipsum dolor sit amet consectetur adiposocong elit. Minus impedt quidem quibusadam?</Paragraph>
+                            <SubTitle className="subtitle">Comece agora seu plano de fidelidade grátis</SubTitle>
+                            {/* <Paragraph className="reponsive">Lorem ipsum dolor sit amet consectetur adiposocong elit. Minus impedt quidem quibusadam?</Paragraph> */}
                             <Button onClick={() => setRegisterMode(true)} primary={0} large={0}>Cadastre-se</Button>
                         </ContentLeft>
                         <ImageLeft src={LoginIcon} className={registerMode === true ? "register-mode" : ""} alt="login icon"/>
