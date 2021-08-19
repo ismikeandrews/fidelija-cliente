@@ -1,62 +1,148 @@
-import React, { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import React, { useEffect, useState } from 'react'
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import LastPageIcon from '@material-ui/icons/LastPage';
+import moment from 'moment';
+
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  Paper, 
+  TextField, 
+  TableFooter,
+  TablePagination,
+  IconButton,
+  CircularProgress,
+  Modal
+} from '@material-ui/core';
 
 import { userService } from '../../../services';
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
-
+const useStyles = makeStyles((theme) => ({
+    table: {
+      minWidth: 650,
+    },
+    center: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    root: {
+      flexShrink: 0,
+      marginLeft: theme.spacing(2.5),
+    },
+}));
 
 function History() {
+    const classes = useStyles();
+    const theme = useTheme();
+  
+    const [historyList, setHistoryList] = useState([]);
+    const [page, setPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [isLoading, setIsLoading] = useState(true);
+    const [lastPage, setLastPage] = useState(null);
 
-  const classes = useStyles();
+    useEffect(() => {
+        fetchHistory(page, rowsPerPage);
+    }, []);
 
-  const [historyList, setHistoryList] = useState([]);
+    const fetchHistory = async (page, length) => {
+        try {
+            const res = await userService.getUserHistory(page, length); 
+            setPage(res.data.current_page)
+            setHistoryList(res.data.data);
+            setRowsPerPage(parseInt(res.data.per_page))
+            setLastPage(res.data.last_page)
+            setIsLoading(false)
+        } catch (error) {
+            console.log(error)
+        }
+    };
 
-  useEffect(() => {
-    fetchHistory()
-  }, [])
+    return (
+        <>
+            {isLoading ?
+                <Modal className={classes.center} disableEnforceFocus disableAutoFocus open>
+                    <CircularProgress color="primary" />
+                </Modal>
+                :
+                <>
 
-  const fetchHistory = async () => {
-    const res = await userService.getUserHistory();
-    console.log(res.data)
-    setHistoryList(res.data);
-  }
-
-  return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell align="right">Tipo</TableCell>
-            <TableCell align="right">Usuario</TableCell>
-            <TableCell align="right">Código</TableCell>
-            <TableCell align="right">Pontos</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-            <TableRow>
-              <TableCell component="th" scope="row"></TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell align="right"></TableCell>
-              <TableCell align="right"></TableCell>
-            </TableRow>
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
+                    <TableContainer component={Paper}>
+                    <Table className={classes.table}>
+                        <TableHead>
+                            <TableRow>
+                            <TableCell>ID</TableCell>
+                            <TableCell align="right">Data</TableCell>
+                            <TableCell align="right">Nome</TableCell>
+                            <TableCell align="right">Produto</TableCell>
+                            <TableCell align="right">Pontuação</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {historyList.map((history) => (
+                            <TableRow key={history.id}>
+                                <TableCell component="th" scope="row">{history.id}</TableCell>
+                                <TableCell align="right">{moment(history.created_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
+                                <TableCell align="right">{history.client}</TableCell>
+                                <TableCell align="right">{history.product}</TableCell>
+                                <TableCell align="right">{history.amount}</TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                        <TableFooter>
+                        <TableRow>
+                            <TablePagination
+                            rowsPerPageOptions={[5, 10, 25, 100]}
+                            colSpan={5}
+                            count={historyList.length - 1}
+                            rowsPerPage={rowsPerPage}
+                            page={page - 1}
+                            SelectProps={{inputProps: { 'aria-label': 'rows per page' }}}
+                            onChangePage={() => null}
+                            onChangeRowsPerPage={(event) => fetchHistory(1, event.target.value)}
+                            ActionsComponent={() => (
+                                <div className={classes.root}>
+                                <IconButton
+                                    onClick={() => fetchHistory(1, rowsPerPage)}
+                                    disabled={page === 1}
+                                    aria-label="first page">
+                                    {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+                                </IconButton>
+                                <IconButton 
+                                    onClick={() => fetchHistory(page - 1, rowsPerPage)} 
+                                    disabled={page === 1} 
+                                    aria-label="previous page">
+                                    {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                                </IconButton>
+                                <IconButton
+                                    onClick={() => fetchHistory(page + 1, rowsPerPage)}
+                                    disabled={page === lastPage}
+                                    aria-label="next page">
+                                    {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                                </IconButton>
+                                <IconButton
+                                    onClick={() => fetchHistory(lastPage, rowsPerPage)}
+                                    disabled={page === lastPage}
+                                    aria-label="last page">
+                                    {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+                                </IconButton>
+                                </div>
+                            )}/>
+                        </TableRow>
+                        </TableFooter>
+                    </Table>
+                    </TableContainer>
+                </>
+            }
+        </>
+    )
+};
 
 export default History;

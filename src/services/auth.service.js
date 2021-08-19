@@ -1,16 +1,16 @@
 import axios from 'axios';
 
-const url = 'http://127.0.0.1:8000';
+const url = process.env.REACT_APP_BASE_URL;
 
 const authService = {
 
     async authenticate(data){
-        const endPoint = `${url}/oauth/token`
+        const endPoint = `${url}oauth/token`
         return axios.post(endPoint, data);
     },
 
     async setLoggedUser(data){
-        const endPoint = `${url}/api/user`
+        const endPoint = `${url}api/user`
         let res;
         if(data){
             res = await axios.get(endPoint, { headers: { Authorization: `${data.token_type} ${data.access_token}` }})
@@ -65,10 +65,13 @@ const authService = {
     },
 
     async setNewUser(data){
-        const endPoint = `${url}/api/users/sign-up`;
+        const endPoint = `${url}api/users/sign-up`;
         return axios.post(endPoint, data)
-    }
+    },
 
+    async cpfVerifier(cpf){
+        return axios.get(`${url}api/registered-user/${cpf}`);
+    }
 }
 
 export default authService;

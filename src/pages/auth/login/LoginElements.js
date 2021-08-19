@@ -99,7 +99,7 @@ export const LoginForm = styled(Form)`
 export const RegisterForm = styled(Form)`
     z-index: 1;
     opacity: 0;
-
+    padding: 8px;
     &.register-mode{
         z-index: 2;
         opacity: 1;

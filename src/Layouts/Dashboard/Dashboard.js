@@ -63,23 +63,21 @@ export default function Dashboard(props) {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
+            Painel de controle
           </Typography>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <Avatar aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>{userObj.name}</Avatar>
+          <Avatar aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} src={process.env.REACT_APP_BASE_URL + userObj.photo}>{userObj.name}</Avatar>
           <Menu
             id="simple-menu"
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleClose}>
-              <Link to="/dashboard/profile">
-                <MenuItem onClick={handleClose}>Minha conta</MenuItem>
-              </Link>
+                <MenuItem component={Link} to="/dashboard/profile">Minha conta</MenuItem>
             <MenuItem onClick={handleLogout}>Sair</MenuItem>
           </Menu>
         </Toolbar>
@@ -97,8 +95,8 @@ export default function Dashboard(props) {
         </div>
         <Divider />
         <List {...props}>{mainListItems}</List>
-        {/* <Divider />
-        <List>{secondaryListItems}</List> */}
+        <Divider />
+        <List>{secondaryListItems}</List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />

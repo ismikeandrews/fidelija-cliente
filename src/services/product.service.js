@@ -1,11 +1,10 @@
 import axios from 'axios';
 import { authService } from './';
 
-const url = 'http://127.0.0.1:8000';
-// const url = 'https://gsk.scel.net.br';
+const url = process.env.REACT_APP_BASE_URL;
 
 const AuthData = authService.getAuthData();
-const UserData = authService.getLoggedUser();
+
 
 let AuthStr = {} 
 
@@ -17,19 +16,35 @@ if(AuthData){
 const productService = {
 
     async getUserProducts() {
-        const endPoint = `${url}/api/products`;
-        return axios.get(endPoint);
+        const endPoint = `${url}api/products/list`;
+        return axios.get(endPoint, AuthStr);
     },
 
     async getCategories() {
-        const endPoint = `${url}/api/categories`
+        const endPoint = `${url}api/categories`
         return axios.get(endPoint);
     },
 
     async setProduct(data) {
-        const endPoint = `${url}/api/products/new`
+        const endPoint = `${url}api/products/create`;
         return axios.post(endPoint, data, AuthStr);
+    },
+
+    async editProduct(data, id){
+        const endPoint = `${url}api/products/${id}/edit`;
+        return axios.post(endPoint, data, AuthStr);
+    },
+
+    async deleteProduct(id){
+        const endPoint = `${url}api/products/${id}/delete`;
+        return axios.delete(endPoint, AuthStr);
+    },
+
+    async pauseProduct(id){
+        const endPoint = `${url}api/products/${id}/toggle-active`
+        return axios.put(endPoint, {} ,AuthStr);
     }
+
 };
 
 export default productService;

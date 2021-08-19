@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -10,76 +11,56 @@ import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
 import LocalActivityIcon from '@material-ui/icons/LocalActivity';
 import CardMembershipIcon from '@material-ui/icons/CardMembership';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-
-function ListItemLink(props) {
-  return <ListItem button component="a" {...props} />;
-}
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 
 export const mainListItems = (
   <div>
-    <Link to="/dashboard/home">
-      <ListItem>
-        <ListItemIcon>
-          <DashboardIcon />
-        </ListItemIcon>
-        <ListItemText primary="Home" />
-      </ListItem>
-    </Link>
-    <Link to="/dashboard/history">
-      <ListItem button>
-        <ListItemIcon>
-          <HistoryIcon />
-        </ListItemIcon>
-        <ListItemText primary="Histórico"/>
-      </ListItem>
-    </Link>
-    <Link to="/dashboard/services">
-      <ListItem button>
-        <ListItemIcon>
-          <BusinessCenterIcon />
-        </ListItemIcon>
-        <ListItemText primary="Serviços" />
-      </ListItem>
-    </Link>
-    <Link to="/dashboard/prizes">
-      <ListItem button>
-        <ListItemIcon>
-          <LocalActivityIcon />
-        </ListItemIcon>
-        <ListItemText primary="Prêmios" />
-      </ListItem>
-    </Link>
-    <Link to="/dashboard/subscription">
-      <ListItem button>
-        <ListItemIcon>
-          <CardMembershipIcon />
-        </ListItemIcon>
-        <ListItemText primary="Assinatura" />
-      </ListItem>
-    </Link>
+    <ListItem button component={Link} to="/dashboard/home">
+      <ListItemIcon>
+        <DashboardIcon />
+      </ListItemIcon>
+      <ListItemText primary="Home" />
+    </ListItem>
+    <ListItem button component={Link} to="/dashboard/history">
+      <ListItemIcon>
+        <HistoryIcon />
+      </ListItemIcon>
+      <ListItemText primary="Histórico"/>
+    </ListItem>
+    <ListItem button component={Link} to="/dashboard/users">
+      <ListItemIcon>
+        <PeopleAltIcon />
+      </ListItemIcon>
+      <ListItemText primary="Usuários"/>
+    </ListItem>
+    <ListItem button component={Link} to="/dashboard/services">
+      <ListItemIcon>
+        <BusinessCenterIcon />
+      </ListItemIcon>
+      <ListItemText primary="Serviços" />
+    </ListItem>
+    <ListItem button component={Link} to="/dashboard/prizes">
+      <ListItemIcon>
+        <LocalActivityIcon />
+      </ListItemIcon>
+      <ListItemText primary="Prêmios" />
+    </ListItem>
   </div>
 );
 
 export const secondaryListItems = (
   <div>
-    <ListSubheader inset>Saved reports</ListSubheader>
-    <ListItem button>
+    <ListItem button component={Link} to="/dashboard/subscription">
       <ListItemIcon>
-        <AssignmentIcon />
+        <CardMembershipIcon />
       </ListItemIcon>
-      <ListItemText primary="Current month" />
+      <ListItemText primary="Assinatura" />
     </ListItem>
-    <ListItem button>
+    <ListItem button component={Link} to="/dashboard/wallet">
       <ListItemIcon>
-        <AssignmentIcon />
+        <AccountBalanceWalletIcon />
       </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
+      <ListItemText primary="Carteira" />
     </ListItem>
   </div>
 );

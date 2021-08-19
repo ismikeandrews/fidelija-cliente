@@ -6,11 +6,8 @@ import {
     DialogActions, 
     DialogContent, 
     DialogTitle, 
+    DialogContentText,
     Slide,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
     CircularProgress,
     Snackbar,
     Grid,
@@ -19,20 +16,20 @@ import {
     CardActions,
     CardContent,
     CardMedia,
-    Typography,
-    AppBar,
-    Tab } from '@material-ui/core';
-import { Skeleton, TabPanel, TabContext, TabList, Alert } from '@material-ui/lab';
+    Typography } from '@material-ui/core';
+import { Skeleton, Alert } from '@material-ui/lab';
 import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-
-import CustomPaginationActionsTable from './table';
 import { productService } from '../../../services';
 import { CenterModal } from './prizesElements';
+import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
+
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
+
+const filter = createFilterOptions();
 
 const SnackType = props => {
     return (
@@ -49,42 +46,76 @@ const Prizes = () => {
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [toggleSkeleton, setToggleSkeleton] = useState(true);
-    const [openDialog, setOpenDialog] = useState(false);
+    const [openFormDialog, setOpenFormDialog] = useState(false);
     const [products, setProducts] = useState([{},{},{},{},{},{},{},{}]);
+    const [productId, setProductId] = useState('');
     const [categories, setCategories] = useState([]);
     const [categoryId, setCategoryId] = useState('');
-    const [productName, setProductName] = useState('');
-    const [productStock, setProductStock] = useState('');
-    const [productPrice, setProductPrice] = useState('');
-    const [tabsValue, setTabsValue] = useState('1');
     const [categoryName, setCategoryName] = useState('');
+    const [productName, setProductName] = useState('');
+    const [productPrice, setProductPrice] = useState('');
+    const [productStock, setProductStock] = useState('');
+    const [uploadedFile, setUploadedFile] = useState({});
+    const [editMode, setEditMode] = useState(false);
+    const [openQuestionDialog, setOpenQuestionDialog] = useState(false);
+    const [pauseMode, setPauseMode] = useState(false);
+    const [isPix, setIsPix] = useState(false);
 
     useEffect(() => {
         fetchData()
     }, [])
 
-    const handleOpenDialog = () => {
-        setOpenDialog(true);
-      };
+    const handleOpenFormDialog = () => {
+        setOpenFormDialog(true);
+    }
     
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
+    const handleCloseFormDialog = () => {
+        setOpenFormDialog(false);
+    };
+
+    const handleOpenQuestionDialog = (id) => {
+        setOpenQuestionDialog(true);
+        setProductId(id)
+    }
+    
+    const handleCloseQuestionDialog = () => {
+        setOpenQuestionDialog(false);
     };
 
     const closeSnack = () => {
-        setToggleSuccessSnack(false)
-        setToggleFailureSnack(false)
+        setToggleSuccessSnack(false);
+        setToggleFailureSnack(false);
     }
 
+    const toggleEditMode = id => {
+        const product = products.find(product => product.id = id);
+        const category = categories.find(category => category.id = product.category_id);
+        setCategoryName(category.name);
+        setProductName(product.name);
+        setProductStock(product.stock);
+        setProductPrice(product.cost);
+        setCategoryId(product.category_id);
+        setUploadedFile(product.image);
+        setProductId(id);
+        setEditMode(true);
+        handleOpenFormDialog();
+    }
+
+    const togglePauseMode = id => {
+        setPauseMode(true);
+        handleOpenQuestionDialog(id)
+    }
+
+    const toggleCreateMode = () => {
+        setEditMode(false)
+        handleOpenFormDialog();
+    }
 
     const fetchData = async () => {
         try {
             const productsRes = await productService.getUserProducts();
+            console.log(productsRes)
             const categoriesRes = await productService.getCategories();
-
-            console.log(productsRes.data);
-            console.log(categoriesRes.data);
-
             setProducts(productsRes.data);
             setCategories(categoriesRes.data);
             setToggleSkeleton(false);
@@ -93,22 +124,93 @@ const Prizes = () => {
             setToggleFailureSnack(true);
         }
     }
-    
 
     const newProduct = async () => {
-        handleCloseDialog()
+        handleCloseFormDialog()
         setIsLoading(true)
-        const data = {
-            name: productName,
-            stock: parseInt(productStock),
-            cost: parseInt(productPrice),
-            category_id: parseInt(categoryId),
-        }  
+
+        let data = new FormData()
+
+        data.append('image', uploadedFile)
+        data.append('name', productName)
+        data.append('stock', parseInt(productStock))
+        data.append('cost', parseInt(productPrice))
+        data.append('category_id', categoryId)
+        data.append('category_name', categoryName)
+
+        
         try {
             await productService.setProduct(data)
             await fetchData()
             setIsLoading(false)
             setToggleSuccessSnack(true)
+            setCategoryId('')
+            setProductName('')
+            setProductStock('')
+            setProductPrice('')
+            setUploadedFile({})
+        } catch (error) {
+            console.log(error)
+            setIsLoading(false);
+            setToggleFailureSnack(true)
+        }
+    }
+
+    const editProduct = async () => {
+        handleCloseFormDialog()
+        setIsLoading(true)
+
+        let data = new FormData()
+
+        data.append('image', uploadedFile)
+        data.append('name', productName)
+        data.append('stock', parseInt(productStock))
+        data.append('cost', parseInt(productPrice))
+        data.append('category_id', categoryId)
+        data.append('category_name', categoryName)
+
+        try {
+            await productService.editProduct(data, productId);
+            await fetchData();
+            setIsLoading(false);
+            setToggleSuccessSnack(true);
+            setCategoryId('');
+            setProductName('');
+            setProductStock('');
+            setProductPrice('');
+            setProductId('');
+            setUploadedFile({})
+        } catch (error) {
+            console.log(error)
+            setIsLoading(false);
+            setToggleFailureSnack(true)
+        }
+    }
+
+    const handleDelete = async (id) => {
+        handleCloseQuestionDialog()
+        setIsLoading(true)
+        try {  
+            await productService.deleteProduct(id);
+            await fetchData();
+            setIsLoading(false);
+            setToggleSuccessSnack(true);
+        } catch (error) {
+            console.log(error)
+            setIsLoading(false);
+            setToggleFailureSnack(true)
+        }
+    }
+
+    const handlePause = async (id) => {
+        handleCloseQuestionDialog()
+        setIsLoading(true)
+        try {
+           await productService.pauseProduct(id)
+           await fetchData()
+           setIsLoading(false);
+           setPauseMode(false)
+           setToggleSuccessSnack(true);
         } catch (error) {
             console.log(error)
             setIsLoading(false);
@@ -132,71 +234,205 @@ const Prizes = () => {
                 Ocorreu um erro durante a conexão, tente novamente mais tarde
             </SnackType>
 
-            <Dialog maxWidth="lg" open={openDialog} onClose={handleCloseDialog} TransitionComponent={Transition} keepMounted>
-                <TabContext value={tabsValue}>
-                    <AppBar position="static">
-                        <TabList onChange={(event, newValue) => setTabsValue(newValue)}>
-                            <Tab label="Produto" value="1" />
-                            <Tab label="Categoria" value="2" />
-                        </TabList>
-                    </AppBar>
-                    <TabPanel value="1">
+            <Dialog maxWidth="lg" open={openFormDialog} onClose={() => handleCloseFormDialog()} TransitionComponent={Transition} keepMounted>
+                {editMode ? 
+                    <>
+                        <DialogTitle>Editar</DialogTitle>
+                        <DialogContent>
+                            <form>
+                                <TextField autoFocus margin="dense" label="Nome do produto" variant="outlined" fullWidth value={productName} onChange={(e) => setProductName(e.target.value)}/>
+                                <TextField autoFocus margin="dense" label="Estoque" variant="outlined" fullWidth value={productStock} onChange={(e) => setProductStock(e.target.value)}/>
+                                <TextField autoFocus margin="dense" label="Valor" variant="outlined" fullWidth value={productPrice} onChange={(e) => setProductPrice(e.target.value)}/> 
+
+                                <Autocomplete
+                                    value={categoryName}
+                                    onChange={(event, newValue) => {
+                                        if (typeof newValue === 'string') {
+                                            
+                                            setCategoryName({
+                                                name: newValue,
+                                            });
+                                        } else if (newValue && newValue.inputValue) {
+                                            setCategoryId("");
+
+                                            setCategoryName(newValue.inputValue);
+                                        } else {
+                                            newValue === null ? setCategoryId("") : setCategoryId(newValue.id);
+                                            setCategoryName(newValue);
+                                        }
+                                    }}
+                                    filterOptions={(options, params) => {
+                                        const filtered = filter(options, params);
+
+                                        // Suggest the creation of a new value
+                                        if (params.inputValue !== '') {
+                                            filtered.push({
+                                                inputValue: params.inputValue,
+                                                name: `Add "${params.inputValue}"`,
+                                            });
+                                        }
+
+                                        return filtered;
+                                    }}
+                                    selectOnFocus
+                                    clearOnBlur
+                                    handleHomeEndKeys
+                                    id="category_name"
+                                    options={categories}
+                                    getOptionLabel={(option) => {
+                                        // Value selected with enter, right from the input
+                                        if (typeof option === 'string') {
+                                        return option;
+                                        }
+                                        // Add "xxx" option created dynamically
+                                        if (option.inputValue) {
+                                        return option.inputValue;
+                                        }
+                                        // Regular option
+                                        return option.name;
+                                    }}
+                                    renderOption={(option) => option.name}
+                                    freeSolo
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Categoria" variant="outlined" />
+                                    )}
+                                    />
+                                    
+                                <label htmlFor="button-file" >
+                                    <Button variant="contained" color="primary" startIcon={<CloudUploadIcon />} component="span">
+                                        Imagem
+                                    </Button>
+                                </label>
+                                <input accept="image/*" style={{ display: "none"}} id="button-file" multiple type="file" onChange={(e) => setUploadedFile(e.target.files[0])}/>
+                            </form>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={handleCloseFormDialog} color="secondary">
+                                Cancelar
+                            </Button>
+                            <Button onClick={editProduct} color="primary">
+                                Editar
+                            </Button>
+                        </DialogActions>
+                    </>
+                    :
+                    <>
                         <DialogTitle>Criar um novo produto</DialogTitle>
                         <DialogContent>
                             <form>
                                 <TextField autoFocus margin="dense" label="Nome do produto" variant="outlined" fullWidth value={productName} onChange={(e) => setProductName(e.target.value)}/>
                                 <TextField autoFocus margin="dense" label="Estoque" variant="outlined" fullWidth value={productStock} onChange={(e) => setProductStock(e.target.value)}/>
                                 <TextField autoFocus margin="dense" label="Valor" variant="outlined" fullWidth value={productPrice} onChange={(e) => setProductPrice(e.target.value)}/>
-                                <FormControl variant="outlined" fullWidth>
-                                    <InputLabel id="category-select">Categoria</InputLabel>
-                                    <Select labelId="category-select" value={categoryId} onChange={e => setCategoryId(e.target.value)} label="Categoria">
-                                        <MenuItem value="">
-                                            <em>None</em>
-                                        </MenuItem>
-                                        {categories.map(category => (
-                                            <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>    
+
+                                <Autocomplete
+                                    value={categoryName}
+                                    onChange={(event, newValue) => {
+                                        if (typeof newValue === 'string') {
+                                            setCategoryName({
+                                                name: newValue,
+                                            });
+                                        } else if (newValue && newValue.inputValue) {
+                                            setCategoryId("");
+
+                                            setCategoryName(newValue.inputValue);
+                                        } else {
+                                            newValue === null ? setCategoryId("") : setCategoryId(newValue.id);
+                                            setCategoryName(newValue);
+                                        }
+                                    }}
+                                    filterOptions={(options, params) => {
+                                        const filtered = filter(options, params);
+
+                                        // Suggest the creation of a new value
+                                        if (params.inputValue !== '') {
+                                            filtered.push({
+                                                inputValue: params.inputValue,
+                                                name: `Add "${params.inputValue}"`,
+                                            });
+                                        }
+
+                                        return filtered;
+                                    }}
+                                    selectOnFocus
+                                    clearOnBlur
+                                    handleHomeEndKeys
+                                    id="category_name"
+                                    options={categories}
+                                    getOptionLabel={(option) => {
+                                        // Value selected with enter, right from the input
+                                        if (typeof option === 'string') {
+                                        return option;
+                                        }
+                                        // Add "xxx" option created dynamically
+                                        if (option.inputValue) {
+                                        return option.inputValue;
+                                        }
+                                        // Regular option
+                                        return option.name;
+                                    }}
+                                    renderOption={(option) => option.name}
+                                    freeSolo
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Categoria" variant="outlined" />
+                                    )}
+                                    />    
                                 <label htmlFor="button-file" >
                                     <Button variant="contained" color="primary" startIcon={<CloudUploadIcon />} component="span">
                                         Imagem
                                     </Button>
                                 </label>
-                                <input accept="image/*" style={{ display: "none"}} id="button-file" multiple type="file"/>
+                                <input accept="image/*" style={{ display: "none"}} id="button-file" multiple type="file" onChange={(e) => setUploadedFile(e.target.files[0])}/>
                             </form>
                         </DialogContent>
                         <DialogActions>
-                            <Button onClick={handleCloseDialog} color="secondary">
+                            <Button onClick={handleCloseFormDialog} color="secondary">
                                 Cancelar
                             </Button>
                             <Button onClick={newProduct} color="primary">
                                 Cadastrar
                             </Button>
                         </DialogActions>
-                    </TabPanel>
-                    <TabPanel value="2">
-                        <DialogTitle>Criar uma nova categoria</DialogTitle>
-                        <DialogContent>
-                            <form>
-                                <TextField autoFocus margin="dense" label="Nome do produto" variant="outlined" fullWidth value={categoryName} onChange={(e) => setCategoryName(e.target.value)}/>
-                            </form>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleCloseDialog} color="secondary">
+                    </>
+                }
+            </Dialog>
+
+            <Dialog
+            open={openQuestionDialog}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={() => handleCloseQuestionDialog()}>
+                <DialogTitle>{pauseMode === false ? "Deseja excluir?" : "Deseja ativar?" }</DialogTitle>
+                <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description">
+                    {pauseMode === false ? "Você pode pausar o seu produto ao invés de excluir." : "Ative o seu produto"}
+                </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    {pauseMode === false ? (
+                        <>
+                            <Button onClick={() => handleCloseQuestionDialog()} color="primary">
                                 Cancelar
                             </Button>
-                            <Button onClick={newProduct} color="primary">
-                                Cadastrar
+                            <Button onClick={() => handlePause(productId)} color="primary">
+                                Pausar
                             </Button>
-                        </DialogActions>
-                    </TabPanel>
-                </TabContext>
+                            <Button onClick={() => handleDelete(productId)} color="secondary">
+                                Excluir
+                            </Button>
+                        </>
+                    )
+                    :
+                    <Button onClick={() => handlePause(productId)} color="primary">
+                        Ativar
+                    </Button>
+                    }
+                    
+                </DialogActions>
             </Dialog>
 
             <h1>Recompensas</h1>
 
-            <Button variant="contained" color="primary" startIcon={<AddCircleOutlineOutlinedIcon/>} onClick={handleOpenDialog}>
+            <Button variant="contained" color="primary" startIcon={<AddCircleOutlineOutlinedIcon/>} onClick={() => toggleCreateMode()}>
                 Novo Produto
             </Button>
             
@@ -228,7 +464,7 @@ const Prizes = () => {
                                 <CardActionArea>
                                     <CardMedia
                                     style={{height: 150}}
-                                    image="https://via.placeholder.com/390x150/f0f0f0"
+                                    image={process.env.REACT_APP_BASE_URL + product.image}
                                     title="Contemplative Reptile"/>
                                     <CardContent>
                                         <Typography gutterBottom variant="h5" component="h2">
@@ -244,17 +480,26 @@ const Prizes = () => {
                                     </CardContent>
                                 </CardActionArea>
                                 <CardActions>
-                                    <Button size="small" color="secondary">
-                                        Editar
-                                    </Button>
+                                    {product.active === 0 ? (
+                                        <>
+                                            <Button size="small" color="secondary" onClick={() => handleOpenQuestionDialog(product.id)}>
+                                                Excluir
+                                            </Button>
+                                            <Button size="small" color="primary" onClick={() => toggleEditMode(product.id)}>
+                                                Editar
+                                            </Button>
+                                        </>) :
+                                        <Button size="small" color="primary" onClick={() => togglePauseMode(product.id)}>
+                                            Ativar
+                                        </Button>
+                                    }
+                                    
                                 </CardActions>
                             </Card>
                         </Grid>
                     ))
                 )}
             </Grid>
-
-            <CustomPaginationActionsTable/>
         </div>  
     )
 }
