@@ -11,38 +11,24 @@ var firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const messaging = firebase.messaging();
 
+
 export const getToken = (setTokenFound) => {
-    return messaging.getToken({vapidKey: 'BPUT8GBeypp5jI3O0ggLb-Tze3BVVqrii1lBrO2VRChHW6-qxxfakbYkX4OhTnCwHIQcEXVugIQ1AtaqGLWPmwQ'}).then((currentToken) => {
-      if (currentToken) {
-        console.log('teste2')
-        console.log('current token for client: ', currentToken);
-        setTokenFound(true);
-        // Track the token -> client mapping, by sending to backend server
-        // show on the UI that permission is secured
-      } else {
-        console.log('teste3')
-        console.log('No registration token available. Request permission to generate one.');
-        setTokenFound(false);
-        // shows on the UI that permission is required 
-      }
-    }).catch((err) => {
-        console.log('teste4')
-      console.log('An error occurred while retrieving token. ', err);
-      // catch error while creating client token
-    });
+  return messaging.getToken({vapidKey: 'BPUT8GBeypp5jI3O0ggLb-Tze3BVVqrii1lBrO2VRChHW6-qxxfakbYkX4OhTnCwHIQcEXVugIQ1AtaqGLWPmwQ'}).then((currentToken) => {
+    if (currentToken) {
+      console.log('current token for client: ', currentToken);
+      // Track the token -> client mapping, by sending to backend server
+      // show on the UI that permission is secured
+    } else {
+      console.log('No registration token available. Request permission to generate one.');
+      // shows on the UI that permission is required 
+    }
+  }).catch((err) => {
+    console.log('An error occurred while retrieving token. ', err);
+    // catch error while creating client token
+  });
 }
-
-messaging.onMessage(function(payload) {
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-  };
-
-  window.self.registration.showNotification(notificationTitle, notificationOptions);
-});
 
 export const onMessageListener = () =>
   new Promise((resolve) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import 'fontsource-roboto';
 import './App.css';
@@ -28,18 +28,18 @@ export default function App(props) {
 
   const [show, setShow] = useState(false);
   const [notification, setNotification] = useState({title: '', body: ''});
-  const [isTokenFound, setTokenFound] = useState(false);
 
-  getToken(setTokenFound);
+  useEffect(() => {
+    getToken();
+  }, [])
+
 
   onMessageListener().then(payload => {
     setShow(true);
     setNotification({title: payload.notification.title, body: payload.notification.body})
-    console.log(
-      
-    );
+    console.log(payload);
   }).catch(err => console.log('failed: ', err));
-
+  
   return (
      <BrowserRouter>
         <Switch>

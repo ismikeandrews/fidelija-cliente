@@ -97,7 +97,8 @@ export default function Login(props){
     const [city, setCity] = useState('');
     const [number, setNumber] = useState('');
     const [complementation, setComplementation] = useState('');
-    const [tabValue, setTabValue] = useState(0)
+    const [tabValue, setTabValue] = useState(0);
+    const [token, setToken] = useState('');
 
     const classes = useStyles();
 
@@ -113,7 +114,8 @@ export default function Login(props){
             scope: "*",
             client_id: 1,
             grant_type: "password",
-            client_secret: "IQLstf5Jhow51iiBGDxp9BPxlfMDwLvnxrsTF6n6"
+            client_secret: "IQLstf5Jhow51iiBGDxp9BPxlfMDwLvnxrsTF6n6",
+            fcm: token
         }
         try {
             let res = await authService.authenticate(data);
