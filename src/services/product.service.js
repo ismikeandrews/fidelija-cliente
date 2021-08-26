@@ -15,14 +15,24 @@ if(AuthData){
 
 const productService = {
 
-    async getUserProducts() {
-        const endPoint = `${url}api/products/list`;
+    async getUserProducts(page, item, data) {
+        const endPoint = `${url}api/products/list?page=${page}&itens=${item}`;
+        return axios.get(endPoint, AuthStr);
+    },
+
+    async searchUserProducts(page, item, data) {
+        const endPoint = `${url}api/products/list?filter=${data}&page=${page}&itens=${item}`;
+        return axios.get(endPoint, AuthStr);
+    },
+
+    async getProduct(id){
+        const endPoint = `${url}api/products/${id}`
         return axios.get(endPoint, AuthStr);
     },
 
     async getCategories() {
         const endPoint = `${url}api/categories`
-        return axios.get(endPoint);
+        return axios.get(endPoint, AuthStr);
     },
 
     async setProduct(data) {

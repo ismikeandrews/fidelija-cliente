@@ -19,44 +19,34 @@ import {
   History,  
   Subscription, 
   Payment,
-  Wallet 
+  Wallet,
+  CreatePrize,
+  EditPrize 
 } from './pages';
-
-import { getToken, onMessageListener } from './firebase';
+import { SnackbarProvider } from 'notistack'
 
 export default function App(props) {
-
-  const [show, setShow] = useState(false);
-  const [notification, setNotification] = useState({title: '', body: ''});
-
-  useEffect(() => {
-    getToken();
-  }, [])
-
-
-  onMessageListener().then(payload => {
-    setShow(true);
-    setNotification({title: payload.notification.title, body: payload.notification.body})
-    console.log(payload);
-  }).catch(err => console.log('failed: ', err));
-  
   return (
-     <BrowserRouter>
-        <Switch>
-          <UnprotectedRoute path="/" exact component={Welcome}/>
-          <UnprotectedRoute path="/login" component={Login}/>
-          <UnprotectedRoute path="/plans" component={Plans}/>
-          <UnprotectedRoute path="/about" component={About}/>
-          <ProtectedRoute path="/dashboard/users" component={Users}/>
-          <ProtectedRoute path="/dashboard/prizes" component={Prizes}/>
-          <ProtectedRoute path="/dashboard/profile" component={Profile}/>
-          <ProtectedRoute path="/dashboard/services" component={Services}/>
-          <ProtectedRoute path="/dashboard/home" component={Home}/>
-          <ProtectedRoute path="/dashboard/history" component={History}/>
-          <ProtectedRoute path="/dashboard/subscription" component={Subscription}/>
-          <ProtectedRoute path="/dashboard/payment" component={Payment}/>
-          <ProtectedRoute path="/dashboard/wallet" component={Wallet}/>
-        </Switch>
-      </BrowserRouter>
+    <SnackbarProvider maxSnack={3} anchorOrigin={{vertical: 'top', horizontal: 'right'}} hideIconVariant>
+      <BrowserRouter>
+          <Switch>
+            <UnprotectedRoute path="/" exact component={Welcome}/>
+            <UnprotectedRoute path="/login" component={Login}/>
+            <UnprotectedRoute path="/plans" component={Plans}/>
+            <UnprotectedRoute path="/about" component={About}/>
+            <ProtectedRoute path="/dashboard/users" component={Users}/>
+            <ProtectedRoute path="/dashboard/prizes" component={Prizes}/>
+            <ProtectedRoute path="/dashboard/create-prize" component={CreatePrize}/>
+            <ProtectedRoute path="/dashboard/edit-prize/:id" component={EditPrize}/>
+            <ProtectedRoute path="/dashboard/profile" component={Profile}/>
+            <ProtectedRoute path="/dashboard/services" component={Services}/>
+            <ProtectedRoute path="/dashboard/home" component={Home}/>
+            <ProtectedRoute path="/dashboard/history" component={History}/>
+            <ProtectedRoute path="/dashboard/subscription" component={Subscription}/>
+            <ProtectedRoute path="/dashboard/payment" component={Payment}/>
+            <ProtectedRoute path="/dashboard/wallet" component={Wallet}/>
+          </Switch>
+        </BrowserRouter>
+    </SnackbarProvider>
     );
 };

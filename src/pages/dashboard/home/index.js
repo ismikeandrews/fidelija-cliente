@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
     },
 }));
+
   
 const Home = () => {
   const classes = useStyles();
@@ -37,7 +38,6 @@ const Home = () => {
       setValuesInfo(res.data.values);
       setPointsInfo(res.data.points);
       setLabels(res.data.labels);
-      console.log(res.data)
     } catch (error) {
       console.log(error)
     }

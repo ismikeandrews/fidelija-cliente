@@ -79,4 +79,7 @@ export const useStyles = makeStyles((theme) => ({
     fixedHeight: {
       height: 240,
     },
-  }));
+    nested: {
+      paddingLeft: theme.spacing(4),
+    },
+}));

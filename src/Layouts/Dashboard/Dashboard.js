@@ -1,27 +1,90 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import MenuIcon from '@material-ui/icons/Menu';
-import { CssBaseline, Drawer, AppBar, Toolbar, List, Typography, Divider, IconButton, Badge, Container, Avatar, Menu, MenuItem } from '@material-ui/core'
+import MenuIcon from '@material-ui/icons/Menu'
+import PeopleAltIcon from '@material-ui/icons/PeopleAlt'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import NotificationsIcon from '@material-ui/icons/Notifications'
+import DashboardIcon from '@material-ui/icons/Dashboard'
+import HistoryIcon from '@material-ui/icons/History'
+import BusinessCenterIcon from '@material-ui/icons/BusinessCenter'
+import CardMembershipIcon from '@material-ui/icons/CardMembership'
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined';
 
-import { mainListItems, secondaryListItems } from './listItems';
+import { 
+  CssBaseline, 
+  Collapse,
+  Drawer, 
+  AppBar, 
+  Button,
+  Toolbar, 
+  List, 
+  ListItem,
+  Typography, 
+  Divider, 
+  IconButton, 
+  Badge, 
+  Container, 
+  Avatar, 
+  Menu, 
+  MenuItem,
+  ListItemText, 
+  ListSubheader,
+  Grid,
+  ListItemIcon,
+} from '@material-ui/core'
+
+import { useSnackbar } from 'notistack';
+
+import { onMessageListener } from '../../firebase';
+
 import { useStyles } from './DashboardElements'
-import { authService } from '../../services';
+import { authService, userService } from '../../services';
 
 export default function Dashboard(props) {
   const classes = useStyles();
+
   const [open, setOpen] = useState(true);
+  const [openNest, setOpenNest] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userObj, setUserObj] = useState({});
+  const [notMenu, setNotMenu] = useState(null)
+  const [notificationList, setNotificationList] = useState([])
 
+  const { enqueueSnackbar } = useSnackbar();
+
+  
+  onMessageListener().then(async (payload) => {
+    console.log(payload)
+    if(payload.data.silent === "false"){
+      await fetchUser()
+      isNewNotification(payload.notification.title)
+      new Notification(payload.notification.title);
+    } else if(payload.data.silent === 'true'){
+      console.log("notificação silenciosa")
+    }
+  }).catch(err => console.log('failed: ', err));
+  
   useEffect(() => {
     fetchUser()
   }, [])
+  
+  const isNewNotification = (title) => {
+    enqueueSnackbar(title, {variant: 'info'});
+  };
 
-  const fetchUser = () => {
-    setUserObj(authService.getLoggedUser());
+  const fetchUser = async () => {
+    setUserObj(authService.getLoggedUser())
+    try {
+      const res = await userService.notificationList(1, 20);
+      console.log(res.data)
+      setNotificationList(res.data.data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const handleClick = (event) => {
@@ -31,13 +94,22 @@ export default function Dashboard(props) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
+
+  const handleNotOpen = (event) => {
+    setNotMenu(event.currentTarget)
+  }
+
+  const handleNotClose = () => {
+    setNotMenu(null);
+  }
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
   const handleDrawerClose = () => {
     setOpen(false);
+    setOpenNest(false)
   };
 
   const handleLogout = () => {
@@ -48,6 +120,16 @@ export default function Dashboard(props) {
         alert("Error")
       }
   }
+
+  const markAllAsRead = async () => {
+    try {
+      await userService.notificationMarkAllRead();
+      fetchUser()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 
   return (
     <div className={classes.root}>
@@ -65,14 +147,61 @@ export default function Dashboard(props) {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             Painel de controle
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
+          <IconButton color="inherit" onClick={handleNotOpen} >
+            <Badge badgeContent={notificationList.length} color="secondary">
               <NotificationsIcon />
             </Badge>
           </IconButton>
+
+          <Menu
+            anchorEl={notMenu}
+            keepMounted
+            open={Boolean(notMenu)}
+            onClose={handleNotClose}
+            PaperProps={{
+              style: {
+                maxHeight: '300px',
+                width: '60ch',
+              },
+            }}>
+            
+            {notificationList.length > 0 ? (
+              <List>
+                <ListSubheader style={{background: 'white', textAlign: 'center'}}>
+                  <Grid container>
+                    <Grid item xs={5}>
+                      <Button color="primary" onClick={() => markAllAsRead()}>Marcar como lidas</Button>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <Typography variant="overline">
+                          Minhas notificações
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </ListSubheader>
+                {notificationList.map(notification => (
+                  <div key={notification.id}>
+                    <ListItem button alignItems="center">
+                      <ListItemText
+                        primary={notification.title}
+                        secondary={notification.message}/>
+                        {notification.read === 0 && (
+                          <Badge color="primary" overlap="circular" variant="dot" style={{marginRight: '45px', zIndex: '0'}}/>
+                        )}
+                    </ListItem>
+                    <Divider/>
+                  </div>
+                ))}
+              </List>  
+            ) : (
+              <div>
+                Nem uma notificação
+              </div>
+            )}
+          </Menu>
+
           <Avatar aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} src={process.env.REACT_APP_BASE_URL + userObj.photo}>{userObj.name}</Avatar>
           <Menu
-            id="simple-menu"
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
@@ -94,9 +223,67 @@ export default function Dashboard(props) {
           </IconButton>
         </div>
         <Divider />
-        <List {...props}>{mainListItems}</List>
+        <List>
+          <ListItem button component={Link} to="/dashboard/home">
+            <ListItemIcon>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText primary="Home" />
+          </ListItem>
+          <ListItem button component={Link} to="/dashboard/history">
+            <ListItemIcon>
+              <HistoryIcon />
+            </ListItemIcon>
+            <ListItemText primary="Histórico"/>
+          </ListItem>
+          <ListItem button component={Link} to="/dashboard/users">
+            <ListItemIcon>
+              <PeopleAltIcon />
+            </ListItemIcon>
+            <ListItemText primary="Usuários"/>
+          </ListItem>
+          <ListItem button component={Link} to="/dashboard/services">
+            <ListItemIcon>
+              <BusinessCenterIcon />
+            </ListItemIcon>
+            <ListItemText primary="Serviços" />
+          </ListItem>
+
+          <ListItem button onClick={() => setOpenNest(!openNest)}>
+            <ListItemIcon>
+              <ShoppingCartOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Produtos" />
+            {openNest ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+
+          <Collapse in={openNest} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/prizes">
+                <ListItemText primary="Lista" />
+              </ListItem>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/create-prize">
+                <ListItemText primary="Criar" />
+              </ListItem>
+            </List>
+          </Collapse>
+
+        </List>
         <Divider />
-        <List>{secondaryListItems}</List>
+        <List>
+          <ListItem button component={Link} to="/dashboard/subscription">
+            <ListItemIcon>
+              <CardMembershipIcon />
+            </ListItemIcon>
+            <ListItemText primary="Assinatura" />
+          </ListItem>
+          <ListItem button component={Link} to="/dashboard/wallet">
+            <ListItemIcon>
+              <AccountBalanceWalletIcon />
+            </ListItemIcon>
+            <ListItemText primary="Carteira" />
+          </ListItem>
+        </List>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
@@ -107,3 +294,4 @@ export default function Dashboard(props) {
     </div>
   );
 }
+

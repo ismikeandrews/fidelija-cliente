@@ -1,5 +1,21 @@
 import React, { useState } from 'react';
-import { TextField, Snackbar, AppBar, Toolbar, IconButton, Typography, Slide, Box } from '@material-ui/core';
+import { 
+    TextField, 
+    Snackbar, 
+    AppBar, 
+    Toolbar, 
+    IconButton, 
+    Typography, 
+    Slide, 
+    Box, 
+    Dialog, 
+    DialogActions, 
+    DialogContent, 
+    DialogTitle 
+} from '@material-ui/core';
+
+import { Button as MuiButton } from '@material-ui/core'
+
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -9,7 +25,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import InputMask from 'react-input-mask';
 import { cpf as vcpf, cnpj as vcnpj } from 'cpf-cnpj-validator';
 
-import { addressService, authService, cnpjService } from '../../../services'
+import { addressService, authService, cnpjService, userService } from '../../../services'
 import { 
     Footer, 
     Button,
@@ -17,6 +33,7 @@ import {
     Header, 
     ScrollToTop 
 } from '../../../components';
+
 import { 
     Container, 
     FormContainer, 
@@ -36,8 +53,10 @@ import {
     ImageLeft,
     AccessWrapper,
 } from './LoginElements';
+
 import LoginIcon from '../../../assets/images/svg/login.svg';
 import RegisterIcon from '../../../assets/images/svg/register.svg';
+import { getToken } from '../../../firebase'
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -46,6 +65,12 @@ const useStyles = makeStyles((theme) => ({
     title: {
       marginLeft: theme.spacing(2),
       flex: 1,
+    },
+    closeButton: {
+        position: 'absolute',
+        right: theme.spacing(1),
+        top: theme.spacing(1),
+        color: theme.palette.grey[500],
     },
   }));
   
@@ -98,14 +123,14 @@ export default function Login(props){
     const [number, setNumber] = useState('');
     const [complementation, setComplementation] = useState('');
     const [tabValue, setTabValue] = useState(0);
-    const [token, setToken] = useState('');
+    const [open, setOpen] = useState(false);
 
     const classes = useStyles();
 
-
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
-      };
+    };
+
 
     const submitLogin = async () => {
         let data = {
@@ -115,8 +140,9 @@ export default function Login(props){
             client_id: 1,
             grant_type: "password",
             client_secret: "IQLstf5Jhow51iiBGDxp9BPxlfMDwLvnxrsTF6n6",
-            fcm: token
+            fcm: await getToken()
         }
+
         try {
             let res = await authService.authenticate(data);
             await authService.setLoggedUser(res.data);
@@ -124,6 +150,7 @@ export default function Login(props){
         } catch (error) {
             console.log(error)
             setToggleSnack(true)
+            handleClickOpen();
         }
     }
 
@@ -155,10 +182,7 @@ export default function Login(props){
                 grant_type: "password",
                 client_secret: "IQLstf5Jhow51iiBGDxp9BPxlfMDwLvnxrsTF6n6"
             }
-        
-            let authRes = await authService.authenticate(data);
-            await authService.setLoggedUser(authRes.data);
-            window.location.reload()
+            handleClickOpen()
         } catch (error) {
             console.log(error)
         }
@@ -187,15 +211,55 @@ export default function Login(props){
         setUf(res.data.uf)
     }
     
-    const searchCnpj = async () => {
-        let cnpjNumbers = cnpj.match(/\d/g).join("");
-        const res = await cnpjService.getCompanty(cnpjNumbers)
-        setStabliment(res.fantasia)
+    const handleClickOpen = () => {
+        setOpen(true);
+      };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const resendEmail = async () => {
+        const data = {
+            email: 'michaelcl98@hotmail.com'
+        }
+        try {
+            await userService.resendLink(data);
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
         <>  
-            <ScrollToTop/>
+            <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+                <DialogTitle disableTypography>
+                    <Typography variant="h6">Validação de email</Typography>
+                        <IconButton aria-label="close" onClick={handleClose} className={classes.closeButton}>
+                            <CloseIcon />
+                        </IconButton>
+                </DialogTitle>
+                <DialogContent dividers>
+                    <Typography gutterBottom>
+                        Verifique a sua caixa de email e acesse o link de confirmação.
+                    </Typography>
+                    <Typography gutterBottom>
+                        Confira o lixo eletronico e a caixa de spam.
+                    </Typography>
+                    <Typography gutterBottom>
+                        Realize o login após a confirmação
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <MuiButton onClick={() => resendEmail()} color="primary">
+                        Reenviar o link
+                    </MuiButton>
+                    <MuiButton onClick={handleClose} color="secondary">
+                        Continuar
+                    </MuiButton>
+                </DialogActions>
+            </Dialog>
+
             <Header/>
             <Snackbar open={toggleSnack} autoHideDuration={3500} onClose={() => closeSnack()}  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
                 <Alert onClose={closeSnack} severity="error" variant="filled">
@@ -299,7 +363,7 @@ export default function Login(props){
                                    
                             </TabPanel>
                             <TabPanel value={tabValue} index={1}>
-                                <InputMask mask="99.999.999/9999-99" value={cnpj} onChange={(e) => setCnpj(e.target.value)} onBlur={() => searchCnpj()}>
+                                <InputMask mask="99.999.999/9999-99" value={cnpj} onChange={(e) => setCnpj(e.target.value)}>
                                     {(props) => (
                                         <InputField>
                                             <TextField 

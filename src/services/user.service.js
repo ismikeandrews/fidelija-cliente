@@ -65,8 +65,28 @@ const userService = {
     async checkout(data){
         const endPoint = `${url}api/payments/checkout`;
         return axios.post(endPoint, data, AuthStr);
-    }
+    },
+
+    async notificationList(page, length){
+        const endPoint = `${url}api/notifications/list?page=${page}&itens=${length}`;
+        return axios.get(endPoint, AuthStr);
+    },
+
+    async notificationRead(id){
+        const endPoint = `${url}api/notifications/mark-read/${id}`;
+        return axios.put(endPoint, {} ,AuthStr);
+    }, 
+
+    async notificationMarkAllRead(){
+        const endPoint = `${url}api/notifications/mark-all-read`;
+        return axios.put(endPoint, {},AuthStr);
+    }, 
+
     
+    async resendLink(data){
+        const endPoint = `${url}api/validation/resend`
+        return axios.post(endPoint, data, AuthStr)
+    }
 };
 
 export default userService;

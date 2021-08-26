@@ -105,6 +105,10 @@ const useStyles = makeStyles((theme) => ({
     },
     infoText: {
         marginBottom: '20px'
+    },
+    content: {
+        paddingTop: '30px',
+        paddingBottom: '50px'
     }
 }));
 
@@ -335,7 +339,7 @@ function Wallet(){
                 </Modal>
             ) : (
                 <>
-                    <Paper variant="outlined">
+                    <Paper variant="outlined" className={classes.content}>
                         <Container className={classes.root}>
                             {cardList.length ? (
                                 <div>

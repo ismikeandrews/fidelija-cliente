@@ -7,3 +7,5 @@ export { default as Subscription } from "./subscription";
 export { default as History } from "./history";
 export { default as Payment } from "./payment";
 export { default as Wallet} from "./wallet";
+export { default as CreatePrize } from "./createPrize";
+export { default as EditPrize } from "./editPrize";

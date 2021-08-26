@@ -13,5 +13,7 @@ export {
     Subscription, 
     History, 
     Payment, 
-    Wallet 
+    Wallet,
+    CreatePrize,
+    EditPrize
 } from './dashboard';
