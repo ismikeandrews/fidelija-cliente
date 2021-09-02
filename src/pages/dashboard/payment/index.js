@@ -333,9 +333,9 @@ function Payment(){
                 <div className={classes.root}>
                     <Stepper activeStep={activeStep} alternativeLabel>
                         {steps.map((label) => (
-                        <Step key={label}>
-                            <StepLabel>{label}</StepLabel>
-                        </Step>
+                            <Step key={label}>
+                                <StepLabel>{label}</StepLabel>
+                            </Step>
                         ))}
                     </Stepper>
                     <div>

@@ -103,10 +103,6 @@ export default function Dashboard(props) {
     setNotMenu(null);
   }
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
   const handleDrawerClose = () => {
     setOpen(false);
     setOpenNest(false)
@@ -140,12 +136,12 @@ export default function Dashboard(props) {
             edge="start"
             color="inherit"
             aria-label="open drawer"
-            onClick={handleDrawerOpen}
+            onClick={() => setOpen(true)}
             className={clsx(classes.menuButton, open && classes.menuButtonHidden)}>
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Painel de controle
+            {userObj.stablishment?.name}
           </Typography>
           <IconButton color="inherit" onClick={handleNotOpen} >
             <Badge badgeContent={notificationList.length} color="secondary">
@@ -200,7 +196,7 @@ export default function Dashboard(props) {
             )}
           </Menu>
 
-          <Avatar aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} src={process.env.REACT_APP_BASE_URL + userObj.photo}>{userObj.name}</Avatar>
+          <Avatar aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} src={process.env.REACT_APP_BASE_URL + 'imgs/' + userObj.stablishment?.photo}>{userObj.stablishment?.name}</Avatar>
           <Menu
             anchorEl={anchorEl}
             keepMounted
@@ -242,14 +238,14 @@ export default function Dashboard(props) {
             </ListItemIcon>
             <ListItemText primary="Usuários"/>
           </ListItem>
-          <ListItem button component={Link} to="/dashboard/services">
+          <ListItem button component={Link} to="/dashboard/services" disabled>
             <ListItemIcon>
               <BusinessCenterIcon />
             </ListItemIcon>
             <ListItemText primary="Serviços" />
           </ListItem>
 
-          <ListItem button onClick={() => setOpenNest(!openNest)}>
+          <ListItem button onClick={() => {setOpenNest(!openNest); setOpen(true);}}>
             <ListItemIcon>
               <ShoppingCartOutlinedIcon />
             </ListItemIcon>
@@ -263,7 +259,7 @@ export default function Dashboard(props) {
                 <ListItemText primary="Lista" />
               </ListItem>
               <ListItem button className={classes.nested} component={Link} to="/dashboard/create-prize">
-                <ListItemText primary="Criar" />
+                <ListItemText primary="Novo Produto" />
               </ListItem>
             </List>
           </Collapse>
@@ -284,6 +280,9 @@ export default function Dashboard(props) {
             <ListItemText primary="Carteira" />
           </ListItem>
         </List>
+        <div className={classes.drawerImg}>
+          <Avatar variant="rounded" src={process.env.REACT_APP_BASE_URL +  userObj.photo}>{userObj.name}</Avatar>
+        </div>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />

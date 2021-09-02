@@ -1,42 +1,37 @@
 import React, { useEffect, useState } from 'react'
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import moment from 'moment';
+import { Link } from 'react-router-dom';
+
 import { KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import LastPageIcon from '@material-ui/icons/LastPage';
-import moment from 'moment';
+import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Paper, 
-  TextField, 
-  TableFooter,
-  TablePagination,
-  IconButton,
-  CircularProgress,
-  Modal
+import {
+    Link as MuiLink,
+    Breadcrumbs,
+    Backdrop,
+    CircularProgress,
+    Typography,
+    IconButton,
+    useTheme,
+    Paper,
+    Tooltip,
+    Divider,
+    Table,
+    TableHead,
+    TableBody,
+    TableRow,
+    TableCell,
+    TablePagination,
+    Container
 } from '@material-ui/core';
 
+import Void from '../../../assets/images/svg/void.svg';
+import { Snackbar } from '../../../components';
 import { userService } from '../../../services';
-
-const useStyles = makeStyles((theme) => ({
-    table: {
-      minWidth: 650,
-    },
-    center: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    root: {
-      flexShrink: 0,
-      marginLeft: theme.spacing(2.5),
-    },
-}));
+import { useStyles } from './HistoryElements';
 
 function History() {
     const classes = useStyles();
@@ -44,104 +39,145 @@ function History() {
   
     const [historyList, setHistoryList] = useState([]);
     const [page, setPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [item, setItem] = useState(10);
     const [isLoading, setIsLoading] = useState(true);
     const [lastPage, setLastPage] = useState(null);
+    const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
 
     useEffect(() => {
-        fetchHistory(page, rowsPerPage);
+        fetchData(page, item);
     }, []);
 
-    const fetchHistory = async (page, length) => {
+    const fetchData = async (currentPage, rowsPerPage) => {
         try {
-            const res = await userService.getUserHistory(page, length); 
-            setPage(res.data.current_page)
-            setHistoryList(res.data.data);
-            setRowsPerPage(parseInt(res.data.per_page))
-            setLastPage(res.data.last_page)
-            setIsLoading(false)
+            const historyRes = await userService.getUserHistory(currentPage, rowsPerPage); 
+            console.log(historyRes.data);
+            setPage(historyRes.data.current_page);
+            setHistoryList(historyRes.data.data);
+            setItem(historyRes.data.per_page);
+            setLastPage(historyRes.data.last_page);
+            setIsLoading(false);
         } catch (error) {
-            console.log(error)
+            console.log(error);
+            setIsLoading(false);
+            setToggleFailureSnack(true);
         }
     };
 
     return (
-        <>
-            {isLoading ?
-                <Modal className={classes.center} disableEnforceFocus disableAutoFocus open>
-                    <CircularProgress color="primary" />
-                </Modal>
-                :
-                <>
-
-                    <TableContainer component={Paper}>
-                    <Table className={classes.table}>
-                        <TableHead>
-                            <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell align="right">Data</TableCell>
-                            <TableCell align="right">Nome</TableCell>
-                            <TableCell align="right">Produto</TableCell>
-                            <TableCell align="right">Pontuação</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                        {historyList.map((history) => (
-                            <TableRow key={history.id}>
-                                <TableCell component="th" scope="row">{history.id}</TableCell>
-                                <TableCell align="right">{moment(history.created_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
-                                <TableCell align="right">{history.client}</TableCell>
-                                <TableCell align="right">{history.product}</TableCell>
-                                <TableCell align="right">{history.amount}</TableCell>
-                            </TableRow>
-                        ))}
-                        </TableBody>
-                        <TableFooter>
-                        <TableRow>
-                            <TablePagination
-                            rowsPerPageOptions={[5, 10, 25, 100]}
-                            colSpan={5}
-                            count={historyList.length - 1}
-                            rowsPerPage={rowsPerPage}
-                            page={page - 1}
-                            SelectProps={{inputProps: { 'aria-label': 'rows per page' }}}
-                            onChangePage={() => null}
-                            onChangeRowsPerPage={(event) => fetchHistory(1, event.target.value)}
-                            ActionsComponent={() => (
-                                <div className={classes.root}>
-                                <IconButton
-                                    onClick={() => fetchHistory(1, rowsPerPage)}
-                                    disabled={page === 1}
-                                    aria-label="first page">
-                                    {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-                                </IconButton>
-                                <IconButton 
-                                    onClick={() => fetchHistory(page - 1, rowsPerPage)} 
-                                    disabled={page === 1} 
-                                    aria-label="previous page">
-                                    {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                                </IconButton>
-                                <IconButton
-                                    onClick={() => fetchHistory(page + 1, rowsPerPage)}
-                                    disabled={page === lastPage}
-                                    aria-label="next page">
-                                    {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                                </IconButton>
-                                <IconButton
-                                    onClick={() => fetchHistory(lastPage, rowsPerPage)}
-                                    disabled={page === lastPage}
-                                    aria-label="last page">
-                                    {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-                                </IconButton>
+        <div>
+            <Snackbar toggleSnack={toggleFailureSnack} time={4000} color="warning">
+                Ocorreu um erro ao carregar os dados, tente novamente mais tarde.
+            </Snackbar>
+            <Backdrop className={classes.backdrop} open={isLoading}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+            <div className={classes.header}>
+                <Typography variant="h5">
+                    Meu histórico
+                </Typography>
+                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                    <MuiLink color="inherit" component={Link} to="/">
+                        Home
+                    </MuiLink>
+                    <MuiLink color="inherit" component={Link} to="#">
+                        Histórico
+                    </MuiLink>
+                </Breadcrumbs>
+            </div>
+            <div>
+                {isLoading || (
+                    <Paper variant="outlined">
+                        {historyList.length > 0 ? (
+                            <>
+                                <div className={classes.paperHeader}>
+                                    <Typography variant="h6">
+                                        Histórico
+                                    </Typography>
+                                    <Tooltip title="Mais opções">
+                                        <IconButton aria-label="more">
+                                            <MoreHorizIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
                                 </div>
-                            )}/>
-                        </TableRow>
-                        </TableFooter>
-                    </Table>
-                    </TableContainer>
-                </>
-            }
-        </>
+                                <Divider/>
+                                <div>
+                                    <Table>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Imagem</TableCell>
+                                                <TableCell>Produto</TableCell>
+                                                <TableCell>Data</TableCell>
+                                                <TableCell>Cliente</TableCell>
+                                                <TableCell>Valor</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {historyList.map(history => (
+                                                <TableRow key={history.id} hover>
+                                                    <TableCell><img src={process.env.REACT_APP_BASE_URL + history.image} width="100"/></TableCell>
+                                                    <TableCell>{history.product}</TableCell>
+                                                    <TableCell>{moment(history.created_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
+                                                    <TableCell>{history.client}</TableCell>
+                                                    <TableCell>{history.amount}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                    <TablePagination
+                                    rowsPerPageOptions={[5, 10, 25, 100]}
+                                    component="div"
+                                    count={historyList.length - 1}
+                                    rowsPerPage={item}
+                                    page={page - 1}
+                                    onChangePage={() => null}
+                                    labelRowsPerPage="Produtos por página:"
+                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count !== 0 ? count : `more than ${to}`}`}
+                                    onChangeRowsPerPage={(event) => fetchData(1, event.target.value)}
+                                    ActionsComponent={() => (
+                                        <div className={classes.paginationIcons}>
+                                            <IconButton
+                                                onClick={() => fetchData(1, item)}
+                                                disabled={page === 1}
+                                                aria-label="first page">
+                                                {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+                                            </IconButton>
+                                            <IconButton 
+                                                onClick={() => fetchData(page - 1, item)} 
+                                                disabled={page === 1} 
+                                                aria-label="previous page">
+                                                {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                                            </IconButton>
+                                            <IconButton
+                                                onClick={() => fetchData(page + 1, item)}
+                                                disabled={page === lastPage}
+                                                aria-label="next page">
+                                                {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                                            </IconButton>
+                                            <IconButton
+                                                onClick={() => fetchData(lastPage, item)}
+                                                disabled={page === lastPage}
+                                                aria-label="last page">
+                                                {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+                                            </IconButton>
+                                        </div>
+                                    )}/>
+                                </div>
+                            </>
+                        ) : (
+                            <div className={classes.noHistory}>
+                                <Container>
+                                    <img src={Void} width="250"/>
+                                    <Typography variant="h6" className={classes.noHistoryMg}>
+                                        Sem registros de histórico.
+                                    </Typography>
+                                </Container>
+                            </div>
+                        )}
+                    </Paper>
+                )}
+            </div>
+        </div>
     )
 };
 

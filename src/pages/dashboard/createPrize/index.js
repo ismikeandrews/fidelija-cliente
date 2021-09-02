@@ -95,15 +95,6 @@ const CreatePrize = () => {
     const handleNewImage = (file) => {
         setUploadedFile(file)
         setImgUrl(URL.createObjectURL(file))
-        setDimentionError(false)
-        setSizeError(false)
-        let dimention = {
-            dimentionError: false,
-            message: '',
-            width: '',
-            height: '',
-        }
-        let size = {message: '', sizeError: false}
         let reader = new FileReader()
         reader.onload = e => {
             let img = new Image;
@@ -187,7 +178,7 @@ const CreatePrize = () => {
                     <MuiLink color="inherit" component={Link} to="/dashboard/prizes">
                         Produtos
                     </MuiLink>
-                    <MuiLink color="inherit" component={Link} to="/dashboard/create-prize">
+                    <MuiLink color="inherit" component={Link} to="#">
                         Criar novo produto
                     </MuiLink>
                 </Breadcrumbs>

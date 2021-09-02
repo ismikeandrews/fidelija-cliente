@@ -82,4 +82,9 @@ export const useStyles = makeStyles((theme) => ({
     nested: {
       paddingLeft: theme.spacing(4),
     },
+    drawerImg:{
+      display: 'flex',
+      justifyContent: 'center',
+      marginTop: '85%'
+    },
 }));

@@ -9,3 +9,4 @@ export { default as Payment } from "./payment";
 export { default as Wallet} from "./wallet";
 export { default as CreatePrize } from "./createPrize";
 export { default as EditPrize } from "./editPrize";
+export { default as CreateCreditCard } from "./createCreditCard";

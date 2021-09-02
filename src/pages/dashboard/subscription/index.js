@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 
-import Upgrade from '../../../assets/images/svg/upgrade.svg';
+import Rocket from '../../../assets/images/svg/rocket.svg';
 import { Button } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -89,7 +89,7 @@ const Subscription = () => {
                 <Grid item xs={5}>
                   <Grid container direction="column" className={classes.elementsContent}>
                     <Grid item xs={12} className={classes.elementsContent}>
-                      <img className={classes.img} src={Upgrade}/>
+                      <img className={classes.img} src={Rocket}/>
                     </Grid>
                     <Grid item xs={12}> 
                       <Button fullWidth variant="contained" color='primary' component={Link} to="/dashboard/payment">Comece agora</Button>

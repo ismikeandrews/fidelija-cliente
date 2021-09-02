@@ -21,7 +21,9 @@ import {
   Payment,
   Wallet,
   CreatePrize,
-  EditPrize 
+  EditPrize,
+  CreateCreditCard,
+  Register 
 } from './pages';
 import { SnackbarProvider } from 'notistack'
 
@@ -32,9 +34,11 @@ export default function App(props) {
           <Switch>
             <UnprotectedRoute path="/" exact component={Welcome}/>
             <UnprotectedRoute path="/login" component={Login}/>
+            <UnprotectedRoute path="/register" component={Register}/>
             <UnprotectedRoute path="/plans" component={Plans}/>
             <UnprotectedRoute path="/about" component={About}/>
             <ProtectedRoute path="/dashboard/users" component={Users}/>
+            <ProtectedRoute path="/dashboard/create-cc" component={CreateCreditCard}/>
             <ProtectedRoute path="/dashboard/prizes" component={Prizes}/>
             <ProtectedRoute path="/dashboard/create-prize" component={CreatePrize}/>
             <ProtectedRoute path="/dashboard/edit-prize/:id" component={EditPrize}/>
