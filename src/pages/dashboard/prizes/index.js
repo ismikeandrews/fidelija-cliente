@@ -116,10 +116,7 @@ const Prizes = () => {
         setOpenQuestionDialog(true);
         setProductId(id);
     }
-    
-    const handleCloseQuestionDialog = () => {
-        setOpenQuestionDialog(false);
-    };
+
 
     const togglePauseMode = id => {
         setPauseMode(true);
@@ -132,7 +129,7 @@ const Prizes = () => {
     }
 
     const handleDelete = async (id) => {
-        handleCloseQuestionDialog();
+        setOpenQuestionDialog(false);
         setIsLoading(true);
         try {  
             await productService.deleteProduct(id);
@@ -149,7 +146,7 @@ const Prizes = () => {
     }
 
     const handlePause = async (id) => {
-        handleCloseQuestionDialog();
+        setOpenQuestionDialog(false);
         setIsLoading(true);
         try {
            await productService.pauseProduct(id);
@@ -184,7 +181,7 @@ const Prizes = () => {
             TransitionComponent={Transition}
             keepMounted
             maxWidth="lg"
-            onClose={() => handleCloseQuestionDialog()}>
+            onClose={() =>  setOpenQuestionDialog(false)}>
                 <DialogTitle>{pauseMode === false ? "Selecione uma ação" : "Deseja ativar?" }</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-slide-description">
@@ -194,7 +191,7 @@ const Prizes = () => {
                 <DialogActions>
                     {pauseMode === false ? (
                         <>
-                            <Button onClick={() => handleCloseQuestionDialog()} color="primary">
+                            <Button onClick={() =>  setOpenQuestionDialog(false)} color="primary">
                                 Cancelar
                             </Button>
                             <Button onClick={() => handlePause(productId)} color="primary">
@@ -207,7 +204,7 @@ const Prizes = () => {
                     )
                     :
                     <>
-                        <Button onClick={() => handleCloseQuestionDialog()} color="secondary">
+                        <Button onClick={() =>  setOpenQuestionDialog(false)} color="secondary">
                             Cancelar
                         </Button>
                         <Button onClick={() => handlePause(productId)} color="primary">
@@ -299,7 +296,7 @@ const Prizes = () => {
                                                             </IconButton>
                                                         </Tooltip>
                                                         {product.active === 1 ? (
-                                                            <Tooltip title="Excluir/Pausar">
+                                                                <Tooltip title="Excluir/Pausar">
                                                                     <IconButton aria-label="Configurações">
                                                                         <SettingsRoundedIcon onClick={() => handleOpenQuestionDialog(product.id)}/>
                                                                     </IconButton>

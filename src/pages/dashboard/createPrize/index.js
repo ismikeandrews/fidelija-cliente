@@ -35,7 +35,7 @@ import Button from '../../../components/FormsUI/Button';
 const INITIAL_FORM_STATE = {
     productPrice: '',
     productName: '',
-    productStock: '',
+    productStock: '0',
 }
 
 const FORM_VALIDATION = Yup.object().shape({
@@ -256,7 +256,7 @@ const CreatePrize = () => {
                                             </Grid>
                                             <Grid item xs={6}>
                                                 <FormControl fullWidth className={classes.formControl}>
-                                                        <Textfield variant="outlined" label="Estoque" name="productStock"/>
+                                                        <Textfield variant="outlined" label="Estoque" name="productStock" type="number"/>
                                                 </FormControl>
                                             </Grid>
                                         </Grid>

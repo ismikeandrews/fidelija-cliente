@@ -135,7 +135,7 @@ function Users() {
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell align="left">ID</TableCell>
+                        <TableCell align="left">#</TableCell>
                         <TableCell align="left">Nome</TableCell>
                         <TableCell align="left">Loja</TableCell>
                         <TableCell align="right">Pontos acumulados</TableCell>

@@ -33,11 +33,13 @@ import Files from '../../../assets/images/svg/files.svg';
 import { Footer, Header } from '../../../components'
 import { useStyles } from './RegisterElements';
 import Textfield from '../../../components/FormsUI/Textfield';
+import MaskedTextfield from '../../../components/FormsUI/MaskedTextField';
 import Button from '../../../components/FormsUI/Button';
 import { addressService, authService, userService } from '../../../services';
 import { Snackbar } from '../../../components';
 
 const Register = () => {
+    const [isNew, setIsNew] = useState(true);
     const [currentStep, setCurrentStep] = useState(0);
     const [showInputs, setShowInputs] = useState(false);
     const [infoMsg, setInfoMsg] = useState('');
@@ -51,6 +53,10 @@ const Register = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [openTerms, setOpenTerms] = useState(false);
     const [openAlert, setOpenAlert] = useState(false);
+    const [step1Error, setStep1Error] = useState(false);
+    const [step2Error, setStep2Error] = useState(false);
+    const [step3Error, setStep3Error] = useState(false);
+    const [step4Error, setStep4Error] = useState(false);
     const classes = useStyles();
     const steps = ["Dados Pessoais", "Dados da empresa", "Dados de endereço", "Senha e termos de uso"];
     const inputFile = useRef(null);
@@ -69,17 +75,33 @@ const Register = () => {
             number: '',
             addressLine: '',
             password: '',
-            confirmPassword: ''
+            confirmPassword: '',
+            isNew: isNew
         },
         validationSchema: yup.object({
+            isNew: yup
+            .boolean(),
+            name: yup
+            .string()
+            .when('isNew', {
+                is: true,
+                then: yup
+                .string()
+                .required(),
+            }),
+            email: yup
+            .string()
+            .email()
+            .when('isNew', {
+                is: true,
+                then: yup
+                .string()
+                .email()
+                .required(),
+            }),
             cpf: yup
             .string()
             .required("CPF é obrigatório"),
-            name: yup
-            .string(),
-            email: yup
-            .string()
-            .email(),
             cnpj: yup
             .string()
             .required("CNPJ é obrigatório"),
@@ -108,6 +130,7 @@ const Register = () => {
             .string(),
             password: yup
             .string()
+            .min(8, 'Senha deve ter mais de 8 caracteres')
             .required("Senha é obrigatório"),
             confirmPassword: yup.string().when("password", {
                 is: val => (val && val.length > 0 ? true : false),
@@ -118,8 +141,10 @@ const Register = () => {
             })
         }),
         onSubmit: (values, onSubmitProps) => {
+            console.log("teste")
             submitUser(values, onSubmitProps)
         },
+        enableReinitialize: true
     });
     const transition = useTransition(showInputs, {
         from: {y: 200, opacity: 0},
@@ -131,8 +156,8 @@ const Register = () => {
         if(e.target.value.length === 14){
             try {
                 const authRes = await authService.cpfVerifier(e.target.value);
-                console.log(authRes.data)
                 setShowInputs(authRes.data === 1 ? false : true);
+                setIsNew(authRes.data === 1 ? false : true);
             } catch (error) {
                 console.log(error)
                 setInfoMsg("Usuário já possui estabelecimento cadastrado em seu CPF")
@@ -246,6 +271,71 @@ const Register = () => {
             setToggleFailure(true)
         }
     }
+    const handleBack = (step) => {
+        setCurrentStep(step);
+         if (currentStep === 0) {
+            if(formik.errors.cpf || formik.errors.name || formik.errors.email){
+                setStep1Error(true)
+            }else{
+                setStep1Error(false)
+            }
+        }
+        if (currentStep === 1) {
+            if (formik.errors.cnpj || formik.errors.companyName || dimentionError || sizeError) {
+                setStep2Error(true)
+            }
+            else{
+                setStep2Error(false)
+            }
+        }
+        if (currentStep === 2) {
+            if (formik.errors.postalcode || formik.errors.address || formik.errors.neighborhood || formik.errors.state || formik.errors.city || formik.errors.number || formik.errors.addressLine) {
+                setStep3Error(true)
+            }
+            else{
+                setStep3Error(false)
+            }
+        }
+        if (currentStep === 3) {
+            if (formik.errors.password || formik.errors.confirmPassword) {
+                setStep4Error(true)
+            }else{
+                setStep4Error(false)
+            }
+        }
+    }
+    const handleNext = (step) => {
+        setCurrentStep(step);
+        if (currentStep === 0) {
+            if(formik.errors.cpf || formik.errors.name || formik.errors.email){
+                setStep1Error(true)
+            }
+            else{
+                setStep1Error(false)
+            }
+        }
+        if (currentStep === 1) {
+            if (formik.errors.cnpj || formik.errors.companyName || dimentionError || sizeError) {
+                setStep2Error(true)
+            }else{
+                setStep2Error(false)
+            }
+        }
+        if (currentStep === 2) {
+            if (formik.errors.postalcode || formik.errors.address || formik.errors.neighborhood || formik.errors.state || formik.errors.city || formik.errors.number || formik.errors.addressLine) {
+                setStep3Error(true)
+            }else{
+                setStep3Error(false)
+            }
+        }
+        if (currentStep === 3) {
+            if (formik.errors.password || formik.errors.confirmPassword) {
+                setStep4Error(true)
+            }else{
+                setStep4Error(false)
+            }
+        }
+    }
     const currentStepContent = step => {
         switch (step) {
             case 0:
@@ -257,11 +347,7 @@ const Register = () => {
                             </Typography> 
                         </Grid>
                         <Grid item xs={12}>
-                            <InputMask maskChar="" required mask="999.999.999-99" value={formik.values.cpf} onChange={e => checkCpf(e)}>
-                                {(props) => (
-                                    <Textfield name="cpf" label="CPF" type="text"/>
-                                )}
-                            </InputMask>
+                            <MaskedTextfield mask="999.999.999-99" name="cpf" label="CPF" type="text" value={formik.values.cpf} onChange={e => checkCpf(e)}/>
                         </Grid>
                         <Grid item xs={6}>
                             {transition((style, item) => 
@@ -287,7 +373,7 @@ const Register = () => {
                 return (
                     <Grid container spacing={3}>
                         <Grid item xs={6}>
-                            <Textfield name="cnpj" label="CNPJ" value={formik.values.cnpj} onChange={formik.handleChange}/>
+                            <MaskedTextfield mask="99.999.999/9999-99" name="cnpj" label="CNPJ" value={formik.values.cnpj} onChange={formik.handleChange}/>                            
                         </Grid>
                         <Grid item xs={6}>
                             <Textfield name="companyName" label="Nome fantasia" value={formik.values.companyName} onChange={formik.handleChange}/>
@@ -394,7 +480,6 @@ const Register = () => {
                 break;
         }
     }
-
     return (
         <div>
             <Snackbar toggleSnack={toggleSuccess || toggleFailure} time={toggleFailure ? 4500 : 3500} onClose={closeSnack}  color={toggleSuccess ? "success" : "warning"}>
@@ -453,19 +538,26 @@ const Register = () => {
                     <Container>
                         <FormikProvider value={formik}>
                             <Form>
-                                <Stepper activeStep={currentStep} alternativeLabel>
-                                    {steps.map(label => (
-                                        <Step key={label}>
-                                            <StepLabel>{label}</StepLabel>
-                                        </Step>
-                                    ))}
-                                </Stepper>
                                 <Paper variant="outlined" className={classes.content}>
+                                    <Stepper activeStep={currentStep} alternativeLabel>
+                                        <Step>
+                                            <StepLabel error={step1Error}>Dados Pessoais</StepLabel>
+                                        </Step>
+                                        <Step>
+                                            <StepLabel error={step2Error}>Dados da empresa</StepLabel>
+                                        </Step>
+                                        <Step>
+                                            <StepLabel error={step3Error}>Dados de endereço</StepLabel>
+                                        </Step>
+                                        <Step>
+                                            <StepLabel error={step4Error}>Senha e termos de uso</StepLabel>
+                                        </Step>
+                                    </Stepper>
                                     <div className={classes.form}>
                                         {currentStepContent(currentStep)}
                                     </div>
                                     <div className={classes.buttons}>
-                                        <MuiButton disabled={currentStep === 0} onClick={() => setCurrentStep((prevActiveStep) => prevActiveStep - 1)} className={classes.backButton}>
+                                        <MuiButton disabled={currentStep === 0} onClick={() => handleBack((prevActiveStep) => prevActiveStep - 1)} className={classes.backButton}>
                                             Voltar
                                         </MuiButton>
                                         {currentStep === steps.length - 1 ? (
@@ -473,7 +565,7 @@ const Register = () => {
                                                 Finalizar
                                             </Button>
                                         ) : (
-                                            <MuiButton variant="contained" color="primary" onClick={() => setCurrentStep((prevActiveStep) => prevActiveStep + 1)}>
+                                            <MuiButton variant="contained" color="primary" onClick={() => handleNext((prevActiveStep) => prevActiveStep + 1)}>
                                                 Próximo
                                             </MuiButton>
                                         )}

@@ -74,18 +74,43 @@ const userService = {
 
     async notificationRead(id){
         const endPoint = `${url}api/notifications/mark-read/${id}`;
-        return axios.put(endPoint, {} ,AuthStr);
+        return axios.put(endPoint, {}, AuthStr);
     }, 
 
     async notificationMarkAllRead(){
         const endPoint = `${url}api/notifications/mark-all-read`;
-        return axios.put(endPoint, {},AuthStr);
+        return axios.put(endPoint, {}, AuthStr);
     }, 
 
     
     async resendLink(data){
-        const endPoint = `${url}api/validation/resend`
-        return axios.post(endPoint, data, AuthStr)
+        const endPoint = `${url}api/validation/resend`;
+        return axios.post(endPoint, data, AuthStr);
+    },
+
+    async setNewEmployee(data){
+        const endPoint = `${url}api/new-employee`;
+        return axios.post(endPoint, data, AuthStr);
+    },
+
+    async getEmployees(){
+        const endPoint = `${url}api/employees`;
+        return axios.get(endPoint, AuthStr);
+    },
+
+    async deleteEmployee(id){
+        const endPoint = `${url}api/employees/${id}/delete`
+        return axios.delete(endPoint, AuthStr);
+    },
+
+    async findEmployee(data){
+        const endPoint = `${url}api/employee/search`;
+        return axios.post(endPoint, data, AuthStr);
+    },
+
+    async updatePassword(data){
+        const endpoint = `${url}api/user`;
+        return axios.put(endpoint, data, AuthStr);
     }
 };
 

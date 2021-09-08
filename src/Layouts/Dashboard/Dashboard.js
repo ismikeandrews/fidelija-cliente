@@ -35,6 +35,7 @@ import {
   ListSubheader,
   Grid,
   ListItemIcon,
+  withStyles
 } from '@material-ui/core'
 
 import { useSnackbar } from 'notistack';
@@ -49,6 +50,7 @@ export default function Dashboard(props) {
 
   const [open, setOpen] = useState(true);
   const [openNest, setOpenNest] = useState(false);
+  const [openUserNest, setOpenUserNest] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userObj, setUserObj] = useState({});
   const [notMenu, setNotMenu] = useState(null)
@@ -58,7 +60,6 @@ export default function Dashboard(props) {
 
   
   onMessageListener().then(async (payload) => {
-    console.log(payload)
     if(payload.data.silent === "false"){
       await fetchUser()
       isNewNotification(payload.notification.title)
@@ -80,7 +81,6 @@ export default function Dashboard(props) {
     setUserObj(authService.getLoggedUser())
     try {
       const res = await userService.notificationList(1, 20);
-      console.log(res.data)
       setNotificationList(res.data.data)
     } catch (error) {
       console.log(error)
@@ -106,6 +106,7 @@ export default function Dashboard(props) {
   const handleDrawerClose = () => {
     setOpen(false);
     setOpenNest(false)
+    setOpenUserNest(false)
   };
 
   const handleLogout = () => {
@@ -143,7 +144,7 @@ export default function Dashboard(props) {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             {userObj.stablishment?.name}
           </Typography>
-          <IconButton color="inherit" onClick={handleNotOpen} >
+          <IconButton color="inherit" onClick={handleNotOpen} style={{marginRight: '10px'}} >
             <Badge badgeContent={notificationList.length} color="secondary">
               <NotificationsIcon />
             </Badge>
@@ -151,6 +152,14 @@ export default function Dashboard(props) {
 
           <Menu
             anchorEl={notMenu}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
             keepMounted
             open={Boolean(notMenu)}
             onClose={handleNotClose}
@@ -182,7 +191,7 @@ export default function Dashboard(props) {
                         primary={notification.title}
                         secondary={notification.message}/>
                         {notification.read === 0 && (
-                          <Badge color="primary" overlap="circular" variant="dot" style={{marginRight: '45px', zIndex: '0'}}/>
+                          <Badge color="primary" overlap="circle" variant="dot" style={{marginRight: '45px', zIndex: '0'}}></Badge>
                         )}
                     </ListItem>
                     <Divider/>
@@ -195,14 +204,19 @@ export default function Dashboard(props) {
               </div>
             )}
           </Menu>
-
-          <Avatar aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick} src={process.env.REACT_APP_BASE_URL + 'imgs/' + userObj.stablishment?.photo}>{userObj.stablishment?.name}</Avatar>
+          
+          <Badge
+          overlap="circle"
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right'}}
+          badgeContent={<Avatar className={classes.smallAvatar} alt={userObj.name} src={process.env.REACT_APP_BASE_URL +  userObj.photo} />}>
+            <Avatar className={classes.largeAvatar} onClick={handleClick} alt={userObj.stablishment?.name} src={process.env.REACT_APP_BASE_URL + 'imgs/' + userObj.stablishment?.photo}/>
+          </Badge>
           <Menu
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
             onClose={handleClose}>
-                <MenuItem component={Link} to="/dashboard/profile">Minha conta</MenuItem>
+                <MenuItem component={Link} to="/dashboard/profile" onClick={handleClose}>Minha conta</MenuItem>
             <MenuItem onClick={handleLogout}>Sair</MenuItem>
           </Menu>
         </Toolbar>
@@ -232,12 +246,25 @@ export default function Dashboard(props) {
             </ListItemIcon>
             <ListItemText primary="Histórico"/>
           </ListItem>
-          <ListItem button component={Link} to="/dashboard/users">
+
+          <ListItem button onClick={() => {setOpenUserNest(!openUserNest); setOpen(true)}}>
             <ListItemIcon>
-              <PeopleAltIcon />
+              <PeopleAltIcon/>
             </ListItemIcon>
             <ListItemText primary="Usuários"/>
+            {openUserNest ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
+          <Collapse in={openUserNest} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/users">
+                <ListItemText primary="Clientes" />
+              </ListItem>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/employee">
+                <ListItemText primary="Funcionarios" />
+              </ListItem>
+            </List>
+          </Collapse>
+
           <ListItem button component={Link} to="/dashboard/services" disabled>
             <ListItemIcon>
               <BusinessCenterIcon />
@@ -252,7 +279,6 @@ export default function Dashboard(props) {
             <ListItemText primary="Produtos" />
             {openNest ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
-
           <Collapse in={openNest} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItem button className={classes.nested} component={Link} to="/dashboard/prizes">
@@ -280,9 +306,6 @@ export default function Dashboard(props) {
             <ListItemText primary="Carteira" />
           </ListItem>
         </List>
-        <div className={classes.drawerImg}>
-          <Avatar variant="rounded" src={process.env.REACT_APP_BASE_URL +  userObj.photo}>{userObj.name}</Avatar>
-        </div>
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />

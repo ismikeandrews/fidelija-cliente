@@ -2,11 +2,9 @@ import React, { useState, useRef } from 'react';
 import { useChain, useSpring, useTransition, animated, useSpringRef } from 'react-spring';
 import moment from 'moment';
 import MomentUtils from '@date-io/moment';
-import InputMask from 'react-input-mask';
 import { Link } from 'react-router-dom';
 import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
-
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import { 
     Breadcrumbs, 
@@ -20,13 +18,12 @@ import {
     CircularProgress
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-
 import { userService } from '../../../services';
 import { Snackbar } from '../../../components';
 import { useStyles } from './CreditCardElements';
 import Textfield from '../../../components/FormsUI/Textfield'
+import MaskedTextField from '../../../components/FormsUI/MaskedTextField';
 import Button from '../../../components/FormsUI/Button';
-
 import Amex from '../../../assets/images/img/amex.png';
 import Chip from '../../../assets/images/img/chip.png';
 import Diners from '../../../assets/images/img/dinersclub.png';
@@ -219,16 +216,7 @@ const CreateCreditCard = () => {
                                         <div>
                                             <Grid container spacing={3}>
                                                 <Grid item xs={12}>
-                                                <InputMask maskChar="" mask={isAmex ? "9999 999999 99999" : "9999 9999 9999 9999"} value={formik.values.number} onChange={(e) => getCurrentFlag(e)}>
-                                                    {(props) => (
-                                                        <Textfield 
-                                                        required
-                                                        name="number" 
-                                                        label="Número do cartão" 
-                                                        margin="normal"/>
-                                                    )}
-                                                </InputMask>
-                                                    
+                                                    <MaskedTextField name="number" label="Número do cartão" margin="normal" mask={isAmex ? "9999 999999 99999" : "9999 9999 9999 9999"} value={formik.values.number} onChange={(e) => getCurrentFlag(e)}/>    
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     <Textfield
@@ -267,15 +255,7 @@ const CreateCreditCard = () => {
                                                     </MuiPickersUtilsProvider>
                                                 </Grid>
                                                 <Grid item xs={6}>
-                                                <InputMask maskChar="" mask={isAmex ? "9999" : "999"} value={formik.values.cvv} onChange={formik.handleChange} onFocus={() => setFlipped(true)} onBlur={() => setFlipped(false)}>
-                                                    {(props) => (
-                                                        <Textfield 
-                                                        required
-                                                        name="cvv" 
-                                                        label="CVV" 
-                                                        margin="normal"/>
-                                                    )}
-                                                </InputMask>
+                                                    <MaskedTextField mask={isAmex ? "9999" : "999"} value={formik.values.cvv} onChange={formik.handleChange} onFocus={() => setFlipped(true)} onBlur={() => setFlipped(false)} name="cvv" label="CVV" margin="normal"/>
                                                 </Grid>
                                                 <Grid item xs={12}>
                                                     <FormControlLabel

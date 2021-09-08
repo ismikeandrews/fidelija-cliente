@@ -87,4 +87,13 @@ export const useStyles = makeStyles((theme) => ({
       justifyContent: 'center',
       marginTop: '85%'
     },
+    smallAvatar: {
+      width: 25,
+      height: 25,
+      border: `2px solid ${theme.palette.background.paper}`,
+    },
+    largeAvatar: {
+      width: theme.spacing(6),
+      height: theme.spacing(6),
+    }
 }));

@@ -2,7 +2,8 @@ import React from 'react';
 import { TextField } from '@material-ui/core';
 import { useField } from 'formik';
 import InputMask from 'react-input-mask';
-function TextFieldWrapper({ name, ...otherProps }){
+
+function MaskedTextFieldWrapper({ name, ...otherProps }){
     const [field, meta] = useField(name)
 
     const configTextfield = {
@@ -10,6 +11,7 @@ function TextFieldWrapper({ name, ...otherProps }){
         ...otherProps,
         fullWidth: true,
         variant: 'outlined',
+        maskChar: "",
     }
 
     if(meta && meta.touched && meta.error){
@@ -18,8 +20,12 @@ function TextFieldWrapper({ name, ...otherProps }){
     }
 
     return (
-        <TextField {...configTextfield}/>
+        <InputMask {...configTextfield}>
+            {(props) => (
+                <TextField {...props}/>
+            )}
+        </InputMask>
     )
 }
 
-export default TextFieldWrapper;
+export default MaskedTextFieldWrapper;

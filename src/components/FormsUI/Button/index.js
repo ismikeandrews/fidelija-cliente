@@ -3,20 +3,15 @@ import { Button } from '@material-ui/core';
 import { useFormikContext } from 'formik';
 
 const ButtonWrapper = ({children, ...otherProps}) => {
-    const { submitForm } = useFormikContext();
-
-    const handleSubmit = () => {
-        submitForm();
-    }
 
     const configButton = {
+        ...otherProps,
         variant: 'contained',
         color: 'primary',
-        onClick: handleSubmit
     }
 
     return (
-        <Button {...configButton}>
+        <Button {...configButton} onClick={otherProps.onClick}>
             {children}
         </Button>
     )

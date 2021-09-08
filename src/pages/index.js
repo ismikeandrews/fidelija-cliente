@@ -16,5 +16,7 @@ export {
     Wallet,
     CreatePrize,
     EditPrize,
-    CreateCreditCard
+    CreateCreditCard,
+    EditAddress,
+    Employee
 } from './dashboard';

@@ -13,7 +13,6 @@ const authService = {
         const endPoint = `${url}api/user`
         if(data){
             const res = await axios.get(endPoint, { headers: { Authorization: `${data.token_type} ${data.access_token}` }})
-            console.log(res.data)
             const stringAuthData = JSON.stringify(data);
             const stringUserData = JSON.stringify(res.data);
             localStorage.setItem("authData", stringAuthData);

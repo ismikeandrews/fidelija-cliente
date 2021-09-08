@@ -10,3 +10,5 @@ export { default as Wallet} from "./wallet";
 export { default as CreatePrize } from "./createPrize";
 export { default as EditPrize } from "./editPrize";
 export { default as CreateCreditCard } from "./createCreditCard";
+export { default as EditAddress } from "./editAddress";
+export { default as Employee } from "./employee";
