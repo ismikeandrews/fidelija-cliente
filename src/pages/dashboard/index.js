@@ -13,3 +13,4 @@ export { default as CreateCreditCard } from "./createCreditCard";
 export { default as EditAddress } from "./editAddress";
 export { default as Employee } from "./employee";
 export { default as EditStablishment } from "./editStablishment";
+export { default as Notifications } from "./notifications";

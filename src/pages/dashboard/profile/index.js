@@ -19,7 +19,6 @@ import {
     Paper,
     Grid,
     Button as MuiButton,
-    TextField,
     Checkbox,
     FormControlLabel,
     IconButton,
@@ -59,7 +58,8 @@ const Profile = () => {
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const classes = useStyles();
-    const inputFile = useRef(null);
+    const inputFileL = useRef(null);
+    const inputFileP = useRef(null);
     const formik = useFormik({
         initialValues: {
             currentPassword: '',
@@ -130,7 +130,7 @@ const Profile = () => {
     }
 
     const submitProfileImg = async () => {
-        setOpenProfileCropper(false)
+        handleDialogClose()
         setIsLoading(true);
         const authObj = authService.getAuthData();
         try {
@@ -148,8 +148,6 @@ const Profile = () => {
                     await userService.update(data);
                     await authService.setLoggedUser(authObj)
                     await fetchData()
-                    setZoom(1)
-                    setRotation(0)
                     setIsLoading(false)
                     setInfoMsg("Foto de perfil atualizada.")
                     setToggleSuccessSnack(true);
@@ -176,7 +174,7 @@ const Profile = () => {
     }
 
     const submitLogoImg = async () => {
-        setOpenLogoCropper(false)
+        handleDialogClose()
         setIsLoading(true);
         const authObj = authService.getAuthData();
         try {
@@ -195,8 +193,6 @@ const Profile = () => {
                     await userService.updateStablishment(data);
                     await authService.setLoggedUser(authObj)
                     await fetchData()
-                    setZoom(1)
-                    setRotation(0)
                     setIsLoading(false)
                     setInfoMsg("Logo atualizado.")
                     setToggleSuccessSnack(true);
@@ -216,12 +212,23 @@ const Profile = () => {
           }
     }
 
+    const handleDialogClose = () => {
+        setOpenProfileCropper(false); 
+        setOpenLogoCropper(false)
+        setRotation(0); 
+        setZoom(1);
+        setProfile(null)
+        setProfileUrl('')
+        setLogo(null)
+        setLogoUrl('')
+    }
+
     return (
         <div>
-            <Dialog open={openProfileCropper} onClose={() => setOpenProfileCropper(false)} maxWidth="lg">
+            <Dialog open={openProfileCropper} onClose={() => handleDialogClose()} maxWidth="lg">
                 <DialogTitle>
                     <Typography variant="h6">Cortar imagem</Typography>
-                    <IconButton aria-label="close" className={classes.closeButton} onClick={() => setOpenProfileCropper(false)}>
+                    <IconButton aria-label="close" className={classes.closeButton} onClick={() => handleDialogClose()}>
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
@@ -266,10 +273,10 @@ const Profile = () => {
                     </Grid>
                 </DialogActions>
             </Dialog>
-            <Dialog open={openLogoCropper} onClose={() => setOpenLogoCropper(false)} maxWidth="lg">
+            <Dialog open={openLogoCropper} onClose={() => handleDialogClose()} maxWidth="lg">
                 <DialogTitle>
                     <Typography variant="h6">Cortar imagem</Typography>
-                    <IconButton aria-label="close" className={classes.closeButton} onClick={() => setOpenLogoCropper(false)}>
+                    <IconButton aria-label="close" className={classes.closeButton} onClick={() => handleDialogClose()}>
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
@@ -281,6 +288,7 @@ const Profile = () => {
                         image={logoUrl}
                         crop={crop}
                         zoom={zoom}
+                        rotation={rotation}
                         aspect={10 / 10}
                         onCropChange={setCrop}
                         onCropComplete={(croppedArea, croppedAreaPixels) => setCroppedLogo(croppedAreaPixels)}
@@ -358,10 +366,10 @@ const Profile = () => {
                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={12}>
-                                                <MuiButton color="primary" variant="outlined" onClick={() => inputFile.current.click()}>
+                                                <MuiButton color="primary" variant="outlined" onClick={() => inputFileP.current.click()}>
                                                     Alterar foto de perfil
                                                 </MuiButton>
-                                                <input accept="image/*" hidden id="button-file" type="file" ref={inputFile} onChange={(e) => handleProfileImg(e.target.files[0])}/>
+                                                <input accept="image/*" hidden id="profileInput" type="file" ref={inputFileP} onChange={(e) => handleProfileImg(e.target.files[0])}/>
                                             </Grid>
                                         </Grid>
                                     </Paper>
@@ -500,10 +508,10 @@ const Profile = () => {
                                                 </Typography>
                                             </Grid>
                                             <Grid item xs={12}>
-                                                <MuiButton color="primary" variant="outlined" onClick={() => inputFile.current.click()}>
-                                                    Alterar foto de perfil
+                                                <MuiButton color="primary" variant="outlined" onClick={() => inputFileL.current.click()}>
+                                                    Alterar logo
                                                 </MuiButton>
-                                                <input accept="image/*" hidden id="button-file" type="file" ref={inputFile} onChange={(e) => handleLogoImg(e.target.files[0])}/>
+                                                <input accept="image/*" hidden id="logoInput" type="file" ref={inputFileL} onChange={(e) => handleLogoImg(e.target.files[0])}/>
                                             </Grid>
                                         </Grid>
                                     </Paper>

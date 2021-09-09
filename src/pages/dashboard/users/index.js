@@ -28,7 +28,11 @@ import {
   IconButton,
   TablePagination,
   Divider,
-  Avatar
+  Avatar,
+  Tabs,
+  Tab,
+  Select,
+  MenuItem
 } from '@material-ui/core';
 
 import People from '../../../assets/images/svg/people.svg'
@@ -42,12 +46,14 @@ function Users() {
   const timeoutRef = useRef(null);
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState('');
   const [page, setPage] = useState(1);
   const [item, setItem] = useState(10);
   const [isLoading, setIsLoading] = useState(true);
   const [lastPage, setLastPage] = useState(null);
   const [feedbackAlert, setFeedbackAlert] = useState('');
   const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
+  const [tabValue, setTabValue] = useState(0)
 
   useEffect(() => {
     fetchData(page, item);
@@ -115,8 +121,15 @@ function Users() {
           <Paper variant="outlined">
             {userList.length > 0 ? (
               <>
+                <Tabs value={tabValue} onChange={(event, newValue) => setTabValue(newValue)}>
+                    <Tab label="Todos"/>
+                    <Tab label="Recentes"/>
+                    <Tab label="Antigos"/>
+                    <Tab label="Melhores clientes"/>
+                </Tabs>
+                <Divider/>
                 <div className={classes.topMenu}>
-                  <Grid container justify="flex-end">
+                  <Grid container spacing={5}>
                       <Grid item xs={4}>
                           <FormControl variant="outlined" fullWidth>
                               <InputLabel htmlFor="search">Procurar</InputLabel>
@@ -127,6 +140,21 @@ function Users() {
                               onChange={e => handleSearch(e.target.value)}
                               endAdornment={<InputAdornment position="end"><SearchIcon color="primary"/></InputAdornment>}/>
                           </FormControl>
+                      </Grid>
+                      <Grid item xs={3}>
+                        <FormControl fullWidth variant="outlined" className={classes.formControl}>
+                            <InputLabel id="filter">Filtro</InputLabel>
+                            <Select
+                            labelId="filter"
+                            value={filter}
+                            onChange={e => setFilter(e.target.value)}
+                            label="Filtro">
+                                 <MenuItem value="filtro1">Filtro 1</MenuItem>
+                                 <MenuItem value="filtro2">Filtro 2</MenuItem>
+                                 <MenuItem value="filtro3">Filtro 3</MenuItem>
+                                 <MenuItem value="filtro4">Filtro 4</MenuItem>
+                            </Select>
+                        </FormControl>
                       </Grid>
                   </Grid>
                 </div>
@@ -151,7 +179,7 @@ function Users() {
                               {user.client}
                             </div>
                           </TableCell>
-                          <TableCell align="left">São Paulo - SP</TableCell>
+                          <TableCell align="left">{user.city} - {user.state}</TableCell>
                           <TableCell align="left">{moment(user.updated_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
                           <TableCell align="left">R$ 300,00</TableCell>
                           <TableCell align="right">{user.pontos} <spam>pts.</spam></TableCell>

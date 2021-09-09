@@ -178,9 +178,7 @@ export default function Dashboard(props) {
                       <Button color="primary" onClick={() => markAllAsRead()}>Marcar como lidas</Button>
                     </Grid>
                     <Grid item xs={7}>
-                      <Typography variant="overline">
-                          Minhas notificações
-                      </Typography>
+                      <Button color="primary" component={Link} to="/dashboard/notifications" onClick={() => setNotMenu(false)}>Minhas notificações</Button>
                     </Grid>
                   </Grid>
                 </ListSubheader>

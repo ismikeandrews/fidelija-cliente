@@ -19,5 +19,6 @@ export {
     CreateCreditCard,
     EditAddress,
     Employee,
-    EditStablishment
+    EditStablishment,
+    Notifications
 } from './dashboard';

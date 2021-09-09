@@ -26,7 +26,8 @@ import {
   Register,
   EditAddress,
   Employee,
-  EditStablishment
+  EditStablishment,
+  Notifications
 } from './pages';
 import { SnackbarProvider } from 'notistack'
 
@@ -41,6 +42,7 @@ export default function App(props) {
             <UnprotectedRoute path="/plans" component={Plans}/>
             <UnprotectedRoute path="/about" component={About}/>
             <ProtectedRoute path="/dashboard/users" component={Users}/>
+            <ProtectedRoute path="/dashboard/notifications" component={Notifications}/>
             <ProtectedRoute path="/dashboard/create-cc" component={CreateCreditCard}/>
             <ProtectedRoute path="/dashboard/prizes" component={Prizes}/>
             <ProtectedRoute path="/dashboard/create-prize" component={CreatePrize}/>
