@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-
+import moment from 'moment';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
 import LastPageIcon from '@material-ui/icons/LastPage';
 import { KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
@@ -27,7 +27,8 @@ import {
   useTheme,
   IconButton,
   TablePagination,
-  Divider
+  Divider,
+  Avatar
 } from '@material-ui/core';
 
 import People from '../../../assets/images/svg/people.svg'
@@ -39,7 +40,6 @@ function Users() {
   const classes = useStyles();
   const theme = useTheme();
   const timeoutRef = useRef(null);
-
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
@@ -56,7 +56,7 @@ function Users() {
   const fetchData = async (currentPage, rowsPerPage) => {
     try {
       const clientRes = await userService.getClientList(currentPage, rowsPerPage);
-      console.log(clientRes);
+      console.log(clientRes.data);
       setPage(clientRes.data.current_page);
       setItem(clientRes.data.per_page);
       setLastPage(clientRes.data.last_page);
@@ -135,18 +135,25 @@ function Users() {
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell align="left">#</TableCell>
                         <TableCell align="left">Nome</TableCell>
-                        <TableCell align="left">Loja</TableCell>
+                        <TableCell align="left">Localização</TableCell>
+                        <TableCell align="left">Ultima visita</TableCell>
+                        <TableCell align="left">Valor total</TableCell>
                         <TableCell align="right">Pontos acumulados</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
                       {userList.map(user => (
                         <TableRow key={user.id} hover>
-                          <TableCell align="left">{user.id}</TableCell>
-                          <TableCell align="left">{user.client}</TableCell>
-                          <TableCell align="left">{user.stablishment}</TableCell>
+                          <TableCell align="left">
+                            <div className={classes.imgText}>
+                              <Avatar alt={user.client} src={process.env.REACT_APP_BASE_URL + user.photo} style={{marginRight: "10px"}}/>
+                              {user.client}
+                            </div>
+                          </TableCell>
+                          <TableCell align="left">São Paulo - SP</TableCell>
+                          <TableCell align="left">{moment(user.updated_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
+                          <TableCell align="left">R$ 300,00</TableCell>
                           <TableCell align="right">{user.pontos} <spam>pts.</spam></TableCell>
                         </TableRow>
                       ))}

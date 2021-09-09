@@ -30,7 +30,8 @@ import {
     Radio,
     Chip,
     Tooltip,
-    IconButton
+    IconButton,
+    Avatar
 } from '@material-ui/core';
 import { useStyles } from './EmployeeElements';
 import { userService } from '../../../services';
@@ -210,7 +211,6 @@ const Employee = () => {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>#</TableCell>
                                 <TableCell>Nome</TableCell>
                                 <TableCell>CPF</TableCell>
                                 <TableCell align="center">Tipo de funcionario</TableCell>
@@ -220,8 +220,12 @@ const Employee = () => {
                         <TableBody>
                             {employeeList.map(employee => (
                                 <TableRow key={employee.id}>
-                                    <TableCell>{employee.id}</TableCell>
-                                    <TableCell>{employee.name}</TableCell>
+                                    <TableCell>
+                                        <div className={classes.imgText}>
+                                            <Avatar alt={employee.name} src={process.env.REACT_APP_BASE_URL + employee.photo} style={{marginRight: "10px"}}/>
+                                            {employee.name}
+                                        </div>
+                                    </TableCell>
                                     <TableCell>{employee.cpf}</TableCell>
                                     <TableCell align="center">
                                         {employee.type === 3 ? (

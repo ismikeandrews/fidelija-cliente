@@ -252,7 +252,7 @@ const EditPrize = () => {
                                                     </div>
                                                     <Tooltip title="Remover">
                                                         <IconButton aria-label="delete" className={classes.margin} onClick={() => setUploadedFile(null)}>
-                                                            <ClearIcon fontSize="medium"/>
+                                                            <ClearIcon fontSize="default"/>
                                                         </IconButton>
                                                     </Tooltip>
                                                 </div>

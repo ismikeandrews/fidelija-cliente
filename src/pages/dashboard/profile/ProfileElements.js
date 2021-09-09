@@ -50,4 +50,26 @@ export const useStyles = makeStyles((theme) => ({
         zIndex: theme.zIndex.drawer + 1,
         color: '#fff',
     },
+    cropArea: {
+        width: "500px",
+        height: "500px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        position: "relative"
+    },
+    slider: {
+        padding: "32px"
+    },
+    closeButton: {
+        position: 'absolute',
+        right: theme.spacing(1),
+        top: theme.spacing(1),
+        color: theme.palette.grey[500],
+    },
+    rotationButtons: {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '20px',
+    }
 }))

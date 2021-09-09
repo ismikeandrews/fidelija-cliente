@@ -22,5 +22,9 @@ export const useStyles = makeStyles((theme) => ({
     noUsersMg: {
         marginTop: '20px',
         marginBottom: '20px'
+    },
+    imgText: {
+        display: "flex",
+        alignItems: "center",
     }
 }));

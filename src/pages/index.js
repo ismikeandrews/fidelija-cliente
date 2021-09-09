@@ -18,5 +18,6 @@ export {
     EditPrize,
     CreateCreditCard,
     EditAddress,
-    Employee
+    Employee,
+    EditStablishment
 } from './dashboard';

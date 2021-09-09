@@ -4,6 +4,10 @@ import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import EditIcon from '@material-ui/icons/Edit';
+import CloseIcon from '@material-ui/icons/Close';
+import RotateRightIcon from '@material-ui/icons/RotateRight';
+import RotateLeftIcon from '@material-ui/icons/RotateLeft';
+import Cropper from 'react-easy-crop'
 import { 
     Avatar,
     Typography,
@@ -21,21 +25,36 @@ import {
     IconButton,
     Tooltip,
     Backdrop,
-    CircularProgress
+    CircularProgress,
+    Dialog,
+    DialogContent,
+    Slider,
+    DialogActions,
+    DialogTitle
 } from '@material-ui/core';
 import { useStyles } from './ProfileElements';
 import { authService, userService } from '../../../services';
 import Textfield from '../../../components/FormsUI/Textfield';
 import Button from '../../../components/FormsUI/Button';
+import getCroppedImg from '../../../components/imageCropper/'
 import { Snackbar } from '../../../components';
 
 const Profile = () => {
+    const [openProfileCropper, setOpenProfileCropper] = useState(false);
+    const [openLogoCropper, setOpenLogoCropper] = useState(false);
+    const [crop, setCrop] = useState({ x: 0, y: 0 })
+    const [zoom, setZoom] = useState(1);
+    const [rotation, setRotation] = useState(0)
     const [tabValue, setTabValue] = useState(0)
     const [userObj, setUserObj] = useState({});
     const [logo, setLogo] = useState(null);
     const [profile, setProfile] = useState(null);
+    const [profileUrl, setProfileUrl] = useState('');
+    const [logoUrl, setLogoUrl] = useState('');
     const [alerts, setAlerts] = useState(true);
     const [infoMsg, setInfoMsg] = useState('');
+    const [croppedProfile, setCroppedProfile] = useState(null)
+    const [croppedLogo, setCroppedLogo] = useState(null)
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -70,10 +89,10 @@ const Profile = () => {
     });
 
     useEffect(() => {
-        fetcData()
+        fetchData()
       }, [])
 
-    const fetcData = async () => {
+    const fetchData = async () => {
         try {
             setUserObj(authService.getLoggedUser());
             setIsLoading(false);
@@ -92,7 +111,7 @@ const Profile = () => {
             password: values.newPassword
         }
         try {
-            await userService.updatePassword(data);
+            await userService.update(data);
             onSubmitProps.resetForm();
             setIsLoading(false)
             setInfoMsg('Senha atualizada.')
@@ -104,8 +123,196 @@ const Profile = () => {
         }
     }
 
+    const handleProfileImg = (file) => {
+        setProfile(file)
+        setProfileUrl(URL.createObjectURL(file))
+        setOpenProfileCropper(true)
+    }
+
+    const submitProfileImg = async () => {
+        setOpenProfileCropper(false)
+        setIsLoading(true);
+        const authObj = authService.getAuthData();
+        try {
+            const croppedImage = await getCroppedImg(
+                profileUrl,
+                croppedProfile,
+                rotation
+            )
+            fetch(croppedImage)
+            .then(res => res.blob())
+            .then(async (blob) => {
+                let data = new FormData();
+                data.append('image', blob);
+                try {
+                    await userService.update(data);
+                    await authService.setLoggedUser(authObj)
+                    await fetchData()
+                    setZoom(1)
+                    setRotation(0)
+                    setIsLoading(false)
+                    setInfoMsg("Foto de perfil atualizada.")
+                    setToggleSuccessSnack(true);
+                } catch (error) {
+                    console.log(error);
+                    setZoom(1)
+                    setIsLoading(false);
+                    setInfoMsg('Ocorreu um erro ao atuliazar');
+                    setToggleFailureSnack(true);
+                }
+            });
+          } catch (error) {
+            console.log(error)
+            setIsLoading(false);
+            setInfoMsg("Ocorreu um erro ao tentar salvar a imagem.");
+            setToggleFailureSnack(true);
+          }
+    }
+
+    const handleLogoImg = (file) => {
+        setLogo(file)
+        setLogoUrl(URL.createObjectURL(file))
+        setOpenLogoCropper(true)
+    }
+
+    const submitLogoImg = async () => {
+        setOpenLogoCropper(false)
+        setIsLoading(true);
+        const authObj = authService.getAuthData();
+        try {
+            const croppedImage = await getCroppedImg(
+                logoUrl,
+                croppedLogo,
+                rotation
+            )
+            fetch(croppedImage)
+            .then(res => res.blob())
+            .then(async (blob) => {
+                let data = new FormData();
+                data.append('image', blob);
+                try {
+                    console.log(data)
+                    await userService.updateStablishment(data);
+                    await authService.setLoggedUser(authObj)
+                    await fetchData()
+                    setZoom(1)
+                    setRotation(0)
+                    setIsLoading(false)
+                    setInfoMsg("Logo atualizado.")
+                    setToggleSuccessSnack(true);
+                } catch (error) {
+                    console.log(error);
+                    setIsLoading(false);
+                    setInfoMsg('Ocorreu um erro ao atuliazar.');
+                    setToggleFailureSnack(true);
+                }
+            });
+          } catch (error) {
+            console.log(error)
+            setZoom(1)
+            setIsLoading(false);
+            setInfoMsg("Ocorreu um erro ao tentar salvar a imagem.");
+            setToggleFailureSnack(true);
+          }
+    }
+
     return (
         <div>
+            <Dialog open={openProfileCropper} onClose={() => setOpenProfileCropper(false)} maxWidth="lg">
+                <DialogTitle>
+                    <Typography variant="h6">Cortar imagem</Typography>
+                    <IconButton aria-label="close" className={classes.closeButton} onClick={() => setOpenProfileCropper(false)}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+               
+                <DialogContent>
+                    <div className={classes.cropArea}>
+                        <Cropper
+                        objectFit="contain"
+                        image={profileUrl}
+                        crop={crop}
+                        zoom={zoom}
+                        rotation={rotation}
+                        aspect={10 / 10}
+                        onCropChange={setCrop}
+                        onCropComplete={(croppedArea, croppedAreaPixels) => setCroppedProfile(croppedAreaPixels)}
+                        onZoomChange={setZoom}/>
+                    </div>
+                </DialogContent>
+                <DialogActions className={classes.slider}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} className={classes.rotationButtons}>
+                            <IconButton color="primary" onClick={() => setRotation(rotation - 90)}>
+                                <RotateLeftIcon/>
+                            </IconButton>
+                            <IconButton color="primary" onClick={() => setRotation(rotation + 90)}>
+                                <RotateRightIcon/>
+                            </IconButton>
+                        </Grid>
+                        <Grid item xs={12}>     
+                            <Slider
+                            value={zoom}
+                            min={1}
+                            max={3}
+                            step={0.1}
+                            aria-labelledby="Zoom"
+                            onChange={(e, zoom) => setZoom(zoom)}
+                            classes={{ root: 'slider' }}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <MuiButton variant="contained" color="primary" fullWidth onClick={submitProfileImg}>Salvar</MuiButton>
+                        </Grid>
+                    </Grid>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={openLogoCropper} onClose={() => setOpenLogoCropper(false)} maxWidth="lg">
+                <DialogTitle>
+                    <Typography variant="h6">Cortar imagem</Typography>
+                    <IconButton aria-label="close" className={classes.closeButton} onClick={() => setOpenLogoCropper(false)}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+               
+                <DialogContent>
+                    <div className={classes.cropArea}>
+                        <Cropper
+                        objectFit="contain"
+                        image={logoUrl}
+                        crop={crop}
+                        zoom={zoom}
+                        aspect={10 / 10}
+                        onCropChange={setCrop}
+                        onCropComplete={(croppedArea, croppedAreaPixels) => setCroppedLogo(croppedAreaPixels)}
+                        onZoomChange={setZoom}/>
+                    </div>
+                </DialogContent>
+                <DialogActions className={classes.slider}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} className={classes.rotationButtons}>
+                            <IconButton color="primary" onClick={() => setRotation(rotation - 90)}>
+                                <RotateLeftIcon/>
+                            </IconButton>
+                            <IconButton color="primary" onClick={() => setRotation(rotation + 90)}>
+                                <RotateRightIcon/>
+                            </IconButton>
+                        </Grid>
+                        <Grid item xs={12}>     
+                            <Slider
+                            value={zoom}
+                            min={1}
+                            max={3}
+                            step={0.1}
+                            aria-labelledby="Zoom"
+                            onChange={(e, zoom) => setZoom(zoom)}
+                            classes={{ root: 'slider' }}/>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <MuiButton variant="contained" color="primary" fullWidth onClick={submitLogoImg}>Salvar</MuiButton>
+                        </Grid>
+                    </Grid>
+                </DialogActions>
+            </Dialog>
             <Backdrop className={classes.backdrop} open={isLoading}>
                 <CircularProgress color="inherit" />
             </Backdrop>
@@ -154,7 +361,7 @@ const Profile = () => {
                                                 <MuiButton color="primary" variant="outlined" onClick={() => inputFile.current.click()}>
                                                     Alterar foto de perfil
                                                 </MuiButton>
-                                                <input accept="image/*" hidden id="button-file" type="file" ref={inputFile} onChange={(e) => setProfile(e.target.files[0])}/>
+                                                <input accept="image/*" hidden id="button-file" type="file" ref={inputFile} onChange={(e) => handleProfileImg(e.target.files[0])}/>
                                             </Grid>
                                         </Grid>
                                     </Paper>
@@ -203,7 +410,7 @@ const Profile = () => {
                                             </Typography>
                                             <Tooltip title="Editar">
                                                 <IconButton color="primary" component={Link} to={`/dashboard/edit-address/0`}>
-                                                    <EditIcon fontSize="medium" />
+                                                    <EditIcon fontSize="default" />
                                                 </IconButton>
                                             </Tooltip>
                                         </div>
@@ -296,7 +503,7 @@ const Profile = () => {
                                                 <MuiButton color="primary" variant="outlined" onClick={() => inputFile.current.click()}>
                                                     Alterar foto de perfil
                                                 </MuiButton>
-                                                <input accept="image/*" hidden id="button-file" type="file" ref={inputFile} onChange={(e) => setLogo(e.target.files[0])}/>
+                                                <input accept="image/*" hidden id="button-file" type="file" ref={inputFile} onChange={(e) => handleLogoImg(e.target.files[0])}/>
                                             </Grid>
                                         </Grid>
                                     </Paper>
@@ -308,8 +515,8 @@ const Profile = () => {
                                                 Dados da Loja
                                             </Typography>
                                             <Tooltip title="Editar">
-                                                <IconButton color="primary">
-                                                    <EditIcon fontSize="medium" />
+                                                <IconButton color="primary" component={Link} to="/dashboard/edit-stablishment">
+                                                    <EditIcon fontSize="default" />
                                                 </IconButton>
                                             </Tooltip>
                                         </div>
@@ -350,7 +557,7 @@ const Profile = () => {
                                             </Typography>
                                             <Tooltip title="Editar">
                                                 <IconButton color="primary" component={Link} to={`/dashboard/edit-address/1`}>
-                                                    <EditIcon fontSize="medium" />
+                                                    <EditIcon fontSize="default" />
                                                 </IconButton>
                                             </Tooltip>
                                         </div>

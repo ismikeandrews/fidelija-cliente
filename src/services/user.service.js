@@ -108,9 +108,14 @@ const userService = {
         return axios.post(endPoint, data, AuthStr);
     },
 
-    async updatePassword(data){
+    async update(data){
         const endpoint = `${url}api/user`;
-        return axios.put(endpoint, data, AuthStr);
+        return axios.post(endpoint, data, AuthStr);
+    },
+
+    async updateStablishment(data){
+        const endpoint = `${url}api/stablishment/update`;
+        return axios.post(endpoint, data, AuthStr);
     }
 };
 

@@ -24,6 +24,7 @@
     "react": "^17.0.1",
     "react-chartjs-2": "^3.0.4",
     "react-dom": "^17.0.1",
+    "react-easy-crop": "^3.5.2",
     "react-file-drop": "^3.1.2",
     "react-input-mask": "^2.0.4",
     "react-router-dom": "^5.2.0",

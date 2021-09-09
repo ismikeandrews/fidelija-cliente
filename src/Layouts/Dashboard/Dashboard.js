@@ -208,8 +208,10 @@ export default function Dashboard(props) {
           <Badge
           overlap="circle"
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right'}}
-          badgeContent={<Avatar className={classes.smallAvatar} alt={userObj.name} src={process.env.REACT_APP_BASE_URL +  userObj.photo} />}>
-            <Avatar className={classes.largeAvatar} onClick={handleClick} alt={userObj.stablishment?.name} src={process.env.REACT_APP_BASE_URL + 'imgs/' + userObj.stablishment?.photo}/>
+          badgeContent={<Avatar className={classes.smallAvatar} alt={userObj.name} src={process.env.REACT_APP_BASE_URL +  userObj.photo} />}
+          style={{cursor: 'pointer'}}
+          onClick={handleClick}>
+            <Avatar className={classes.largeAvatar} alt={userObj.stablishment?.name} src={process.env.REACT_APP_BASE_URL + 'imgs/' + userObj.stablishment?.photo}/>
           </Badge>
           <Menu
             anchorEl={anchorEl}
@@ -236,7 +238,7 @@ export default function Dashboard(props) {
         <List>
           <ListItem button component={Link} to="/dashboard/home">
             <ListItemIcon>
-              <DashboardIcon />
+              <DashboardIcon/>
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItem>
