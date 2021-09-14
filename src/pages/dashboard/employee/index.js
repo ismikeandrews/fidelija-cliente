@@ -213,7 +213,7 @@ const Employee = () => {
                             <TableRow>
                                 <TableCell>Nome</TableCell>
                                 <TableCell>CPF</TableCell>
-                                <TableCell align="center">Tipo de funcionario</TableCell>
+                                <TableCell align="center">Tipo de funcionário</TableCell>
                                 <TableCell align="right">Ações</TableCell>
                             </TableRow>
                         </TableHead>
@@ -230,7 +230,7 @@ const Employee = () => {
                                     <TableCell align="center">
                                         {employee.type === 3 ? (
                                             <Chip style={{backgroundColor: '#36f4d8' , color: 'black'}} size="small" label="Funcionário"/>
-                                        ) : (
+                                        ) : employee.type === 2 && (
                                             <Chip style={{backgroundColor: '#c536f4' , color: 'white'}} size="small" label="Admin"/>
                                         )}
                                     </TableCell>

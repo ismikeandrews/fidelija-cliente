@@ -308,7 +308,7 @@ const EditPrize = () => {
                                     </div>
                                 </Container>
                             </Paper>
-                            <Button>Salvar</Button>
+                            <Button type="submit">Salvar</Button>
                         </Grid>
                     </Grid>
                 </Form>

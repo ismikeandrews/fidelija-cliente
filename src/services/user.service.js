@@ -6,7 +6,6 @@ const url = process.env.REACT_APP_BASE_URL;
 // const url = 'https://gsk.scel.net.br';
 
 const AuthData = authService.getAuthData();
-const UserData = authService.getLoggedUser();
 
 let AuthStr = {} 
 

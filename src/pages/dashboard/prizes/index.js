@@ -303,7 +303,7 @@ const Prizes = () => {
                                                                 </Tooltip>
                                                             ) :
                                                             <Tooltip title="Ativar">
-                                                                <IconButton aria-label="delete">
+                                                                <IconButton aria-label="resume">
                                                                     <PlayArrowRoundedIcon onClick={() => togglePauseMode(product.id)}/>
                                                                 </IconButton>
                                                             </Tooltip>
