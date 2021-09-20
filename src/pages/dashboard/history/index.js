@@ -51,7 +51,6 @@ function History() {
     const fetchData = async (currentPage, rowsPerPage) => {
         try {
             const historyRes = await userService.getUserHistory(currentPage, rowsPerPage); 
-            console.log(historyRes.data);
             setPage(historyRes.data.current_page);
             setHistoryList(historyRes.data.data);
             setItem(historyRes.data.per_page);
@@ -105,9 +104,9 @@ function History() {
                                     <Table>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell>Imagem</TableCell>
                                                 <TableCell>Produto</TableCell>
                                                 <TableCell>Data</TableCell>
+                                                <TableCell>Funcionário</TableCell>
                                                 <TableCell>Cliente</TableCell>
                                                 <TableCell>Valor</TableCell>
                                             </TableRow>
@@ -115,9 +114,9 @@ function History() {
                                         <TableBody>
                                             {historyList.map(history => (
                                                 <TableRow key={history.id} hover>
-                                                    <TableCell><img src={process.env.REACT_APP_BASE_URL + history.image} width="100"/></TableCell>
                                                     <TableCell>{history.product}</TableCell>
                                                     <TableCell>{moment(history.created_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
+                                                    <TableCell>{history.employee}</TableCell>
                                                     <TableCell>{history.client}</TableCell>
                                                     <TableCell>{history.amount}</TableCell>
                                                 </TableRow>
