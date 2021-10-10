@@ -20,5 +20,6 @@ export {
     EditAddress,
     Employee,
     EditStablishment,
-    Notifications
+    Notifications,
+    Points
 } from './dashboard';

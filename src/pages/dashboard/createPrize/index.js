@@ -293,7 +293,7 @@ const CreatePrize = () => {
                                     </div>
                                 </Container>
                             </Paper>
-                            <Button>Criar Produto</Button>
+                            <Button type="submit">Criar Produto</Button>
                         </Grid>
                     </Grid>
                 </Form>

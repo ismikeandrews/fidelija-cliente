@@ -262,6 +262,9 @@ export default function Dashboard(props) {
               <ListItem button className={classes.nested} component={Link} to="/dashboard/employee">
                 <ListItemText primary="Funcionarios" />
               </ListItem>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/points">
+                <ListItemText primary="Pontuar" />
+              </ListItem>
             </List>
           </Collapse>
 
