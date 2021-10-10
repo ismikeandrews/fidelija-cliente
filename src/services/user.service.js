@@ -115,7 +115,15 @@ const userService = {
     async updateStablishment(data){
         const endpoint = `${url}api/stablishment/update`;
         return axios.post(endpoint, data, AuthStr);
-    }
+    },
+    async getUserByCpf(data){
+        const enpoint = `${url}api/user/cpf`
+        return axios.post(enpoint, data, AuthStr)
+    },
+    async registerPoints(data){
+        const enpoint = `${url}api/points/stablishment`
+        return axios.post(enpoint, data, AuthStr);
+    },
 };
 
 export default userService;
