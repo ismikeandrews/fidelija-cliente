@@ -5,7 +5,6 @@ import InputMask from 'react-input-mask';
 import { useTransition, animated } from 'react-spring';
 import { FileDrop } from 'react-file-drop';
 import fileSize from 'filesize';
-
 import ClearIcon from '@material-ui/icons/Clear'
 import {
     Grid,
@@ -28,15 +27,14 @@ import {
     CircularProgress,
     DialogContentText
 } from '@material-ui/core';
+import { useStyles } from './RegisterElements';
 
 import { FilesSvg } from '../../../../Assets';
-import { Footer, Header } from '../../../../components'
-import { useStyles } from './RegisterElements';
-import Textfield from '../../../../components/FormsUI/Textfield';
-import MaskedTextfield from '../../../../components/FormsUI/MaskedTextField';
-import Button from '../../../../components/FormsUI/Button';
-import { addressService, authService, userService } from '../../../../services';
-import { Snackbar } from '../../../../components';
+import Textfield from '../../../../Components/FormsUI/Textfield';
+import MaskedTextfield from '../../../../Components/FormsUI/MaskedTextField';
+import Button from '../../../../Components/FormsUI/Button';
+import { Snackbar, Footer, Header } from '../../../../Components';
+import { AddressService, AuthService, UserService } from '../../../../Services';
 
 const Register = () => {
     const [isNew, setIsNew] = useState(true);
@@ -155,7 +153,7 @@ const Register = () => {
         formik.handleChange(e)
         if(e.target.value.length === 14){
             try {
-                const authRes = await authService.cpfVerifier(e.target.value);
+                const authRes = await AuthService.cpfVerifier(e.target.value);
                 setShowInputs(authRes.data === 1 ? false : true);
                 setIsNew(authRes.data === 1 ? false : true);
             } catch (error) {
@@ -170,7 +168,7 @@ const Register = () => {
         formik.handleChange(e)
         if(e.target.value.length === 9){
             try {
-                const { data } = await addressService.getAddress(e.target.value);
+                const { data } = await AddressService.getAddress(e.target.value);
                 if(data.erro){
                     setInfoMsg("Endereço não encotrado");
                     setToggleFailure(true);
@@ -248,7 +246,7 @@ const Register = () => {
         data.append('address_complementation', values.addressLine);
 
         try {
-            const res = await authService.setNewUser(data);
+            const res = await AuthService.setNewUser(data);
             console.log(res.data);
             setIsLoading(false);
             setOpenAlert(true);
@@ -262,7 +260,7 @@ const Register = () => {
     const resendEmail = async () => {
         const data = {email: formik.values.email}
         try {
-            await userService.resendLink(data);
+            await UserService.resendLink(data);
             setInfoMsg("Email de confirmação enviado");
             setToggleSuccess(true);
         } catch (error) {

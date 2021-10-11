@@ -18,7 +18,7 @@ import {
     Link as MuiLink
 } from '@material-ui/core';
 import { useStyles } from './NotificationsElements';
-import { userService } from '../../../services';
+import { UserService } from '../../../Services';
 
 const Notifications = () => {
     const [notificationList, setNotificationList] = useState([]);
@@ -34,7 +34,7 @@ const Notifications = () => {
 
     const fetchData = async () => {
         try {
-            const res = await userService.notificationList(1, 20);
+            const res = await UserService.notificationList(1, 20);
             console.log(res)
             setNotificationList(res.data.data)
             setIsLoading(false);

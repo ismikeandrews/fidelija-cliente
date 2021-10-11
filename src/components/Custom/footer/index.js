@@ -21,7 +21,7 @@ import {
     LogoImg
 } from './footerElements';
 
-import { Logo } from '../../Assets/';
+import { Logo } from '../../../Assets/';
 
 const Footer = () => {
     return (

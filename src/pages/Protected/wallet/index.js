@@ -29,7 +29,7 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 
-import { userService } from '../../../services';
+import { UserService } from '../../../Services';
 import { useStyles } from './WalletElements';
 import { VisaSvg, MastercardSvg, AmexSvg, DinersclubSvg, NothingSvg } from '../../../Assets';
 
@@ -60,7 +60,7 @@ function Wallet(){
 
     const fetchData = async () => {
         try {
-            const res = await userService.getCreditCards();
+            const res = await UserService.getCreditCards();
             console.log(res.data)
             setCardList(res.data);
             setIsLoading(false)
@@ -75,7 +75,7 @@ function Wallet(){
         setIsLoading(true);
         setExpanded(false);
         try {
-            await userService.deleteCreditCard(id);
+            await UserService.deleteCreditCard(id);
             await fetchData();
             setIsLoading(false);
             setInfoMsg('Cartão excluido com sucesso.');

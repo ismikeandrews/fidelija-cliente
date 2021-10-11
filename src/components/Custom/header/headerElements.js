@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Link as LinkR } from 'react-router-dom';
 
-import { colorSchema } from '../colorSchema';
+import { colorSchema } from '../../../Styles/colorSchema';
 
 export const Navbar = styled.div`
     background: ${colorSchema.lprimary};

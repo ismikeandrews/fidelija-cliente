@@ -16,14 +16,14 @@ import { Button as MuiButton } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 
-import { authService, userService } from '../../../../services';
+import { AuthService, UserService } from '../../../../Services';
 import { 
     Footer,
     Button,
     LButton,
     Header,
     Snackbar 
-} from '../../../../components';
+} from '../../../../Components';
 
 import { 
     Container, 
@@ -87,8 +87,8 @@ export default function Login(props){
             fcm: await getToken()
         }
         try {
-            const res = await authService.authenticate(data);
-            await authService.setLoggedUser(res.data);
+            const res = await AuthService.authenticate(data);
+            await AuthService.setLoggedUser(res.data);
             setIsLoading(false);
             window.location.reload()
         } catch (error) {
@@ -106,7 +106,7 @@ export default function Login(props){
         setIsLoading(true);
         const data = {email: email}
         try {
-            await userService.resendLink(data);
+            await UserService.resendLink(data);
             setIsLoading(false);
             setInfoMsg("Email de confirmação enviado");
             setToggleSuccess(true);

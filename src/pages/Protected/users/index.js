@@ -35,8 +35,8 @@ import {
   MenuItem
 } from '@material-ui/core';
 import { PeopleSvg } from '../../../Assets'
-import { Snackbar } from '../../../components';
-import { userService } from '../../../services';
+import { Snackbar } from '../../../Components';
+import { UserService } from '../../../Services';
 import { useStyles } from './UsersElements';
 
 function Users() {
@@ -60,7 +60,7 @@ function Users() {
 
   const fetchData = async (currentPage, rowsPerPage) => {
     try {
-      const clientRes = await userService.getClientList(currentPage, rowsPerPage);
+      const clientRes = await UserService.getClientList(currentPage, rowsPerPage);
       console.log(clientRes.data);
       setPage(clientRes.data.current_page);
       setItem(clientRes.data.per_page);
@@ -81,7 +81,7 @@ function Users() {
     timeoutRef.current = window.setTimeout(async () => {
       try {
             setIsLoading(true);
-            const clientRes = await userService.searchUser(name, page, item);
+            const clientRes = await UserService.searchUser(name, page, item);
             setUserList(clientRes.data.data);
             setIsLoading(false);
         } catch (error) {

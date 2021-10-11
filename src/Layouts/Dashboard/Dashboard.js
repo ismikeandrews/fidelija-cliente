@@ -43,7 +43,7 @@ import { useSnackbar } from 'notistack';
 import { onMessageListener } from '../../firebase';
 
 import { useStyles } from './DashboardElements'
-import { authService, userService } from '../../services';
+import { AuthService, UserService } from '../../Services';
 
 export default function Dashboard(props) {
   const classes = useStyles();
@@ -78,9 +78,9 @@ export default function Dashboard(props) {
   };
 
   const fetchUser = async () => {
-    setUserObj(authService.getLoggedUser())
+    setUserObj(AuthService.getLoggedUser())
     try {
-      const res = await userService.notificationList(1, 20);
+      const res = await UserService.notificationList(1, 20);
       setNotificationList(res.data.data)
     } catch (error) {
       console.log(error)
@@ -110,7 +110,7 @@ export default function Dashboard(props) {
   };
 
   const handleLogout = () => {
-      const res = authService.clearLoggedUser()
+      const res = AuthService.clearLoggedUser()
       if(res){
         window.location.reload();
       }else {
@@ -120,7 +120,7 @@ export default function Dashboard(props) {
 
   const markAllAsRead = async () => {
     try {
-      await userService.notificationMarkAllRead();
+      await UserService.notificationMarkAllRead();
       fetchUser()
     } catch (error) {
       console.log(error)

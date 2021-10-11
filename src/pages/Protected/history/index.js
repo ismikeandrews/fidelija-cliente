@@ -28,8 +28,8 @@ import {
     Container
 } from '@material-ui/core';
 import { VoidSvg } from '../../../Assets'
-import { Snackbar } from '../../../components';
-import { userService } from '../../../services';
+import { Snackbar } from '../../../Components';
+import { UserService } from '../../../Services';
 import { useStyles } from './HistoryElements';
 
 function History() {
@@ -49,7 +49,7 @@ function History() {
 
     const fetchData = async (currentPage, rowsPerPage) => {
         try {
-            const historyRes = await userService.getUserHistory(currentPage, rowsPerPage); 
+            const historyRes = await UserService.getUserHistory(currentPage, rowsPerPage); 
             setPage(historyRes.data.current_page);
             setHistoryList(historyRes.data.data);
             setItem(historyRes.data.per_page);

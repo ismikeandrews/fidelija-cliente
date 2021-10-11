@@ -1,11 +1,11 @@
 import { CheckOutlined } from '@material-ui/icons';
 import axios from 'axios';
-import { authService } from './';
+import { AuthService } from '.';
 
 const url = process.env.REACT_APP_BASE_URL;
 // const url = 'https://gsk.scel.net.br';
 
-const AuthData = authService.getAuthData();
+const AuthData = AuthService.getAuthData();
 
 let AuthStr = {} 
 
@@ -14,7 +14,7 @@ if(AuthData){
 }
 
 
-const userService = {
+const UserService = {
     async getUserHistory(page, length) {
         const endPoint = `${url}api/user/history?page=${page}&itens=${length}`;
         return axios.get(endPoint, AuthStr);
@@ -126,4 +126,4 @@ const userService = {
     },
 };
 
-export default userService;
+export default UserService;

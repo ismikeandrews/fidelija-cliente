@@ -32,11 +32,11 @@ import {
     DialogTitle
 } from '@material-ui/core';
 import { useStyles } from './ProfileElements';
-import { authService, userService } from '../../../services';
-import Textfield from '../../../components/FormsUI/Textfield';
-import Button from '../../../components/FormsUI/Button';
-import getCroppedImg from '../../../components/imageCropper/'
-import { Snackbar } from '../../../components';
+import { AuthService, UserService } from '../../../Services';
+import Textfield from '../../../Components/FormsUI/Textfield';
+import Button from '../../../Components/FormsUI/Button';
+import getCroppedImg from '../../../Components/imageCropper/'
+import { Snackbar } from '../../../Components';
 
 const Profile = () => {
     const [openProfileCropper, setOpenProfileCropper] = useState(false);
@@ -94,7 +94,7 @@ const Profile = () => {
 
     const fetchData = async () => {
         try {
-            setUserObj(authService.getLoggedUser());
+            setUserObj(AuthService.getLoggedUser());
             setIsLoading(false);
         } catch (error) {
             console.log(error);
@@ -111,7 +111,7 @@ const Profile = () => {
             password: values.newPassword
         }
         try {
-            await userService.update(data);
+            await UserService.update(data);
             onSubmitProps.resetForm();
             setIsLoading(false)
             setInfoMsg('Senha atualizada.')
@@ -132,7 +132,7 @@ const Profile = () => {
     const submitProfileImg = async () => {
         handleDialogClose()
         setIsLoading(true);
-        const authObj = authService.getAuthData();
+        const authObj = AuthService.getAuthData();
         try {
             const croppedImage = await getCroppedImg(
                 profileUrl,
@@ -145,8 +145,8 @@ const Profile = () => {
                 let data = new FormData();
                 data.append('image', blob);
                 try {
-                    await userService.update(data);
-                    await authService.setLoggedUser(authObj)
+                    await UserService.update(data);
+                    await AuthService.setLoggedUser(authObj)
                     await fetchData()
                     setIsLoading(false)
                     setInfoMsg("Foto de perfil atualizada.")
@@ -176,7 +176,7 @@ const Profile = () => {
     const submitLogoImg = async () => {
         handleDialogClose()
         setIsLoading(true);
-        const authObj = authService.getAuthData();
+        const authObj = AuthService.getAuthData();
         try {
             const croppedImage = await getCroppedImg(
                 logoUrl,
@@ -190,8 +190,8 @@ const Profile = () => {
                 data.append('image', blob);
                 try {
                     console.log(data)
-                    await userService.updateStablishment(data);
-                    await authService.setLoggedUser(authObj)
+                    await UserService.updateStablishment(data);
+                    await AuthService.setLoggedUser(authObj)
                     await fetchData()
                     setIsLoading(false)
                     setInfoMsg("Logo atualizado.")

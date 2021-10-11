@@ -13,11 +13,11 @@ import {
     Link as MuiLink,
 } from '@material-ui/core';
 import { useStyles } from './EditStablishmentElements';
-import { authService, userService } from '../../../services';
-import MaskedTextField from '../../../components/FormsUI/MaskedTextField';
-import Textfield from '../../../components/FormsUI/Textfield';
-import Button from '../../../components/FormsUI/Button';
-import { Snackbar } from '../../../components';
+import { AuthService, UserService } from '../../../Services';
+import MaskedTextField from '../../../Components/FormsUI/MaskedTextField';
+import Textfield from '../../../Components/FormsUI/Textfield';
+import Button from '../../../Components/FormsUI/Button';
+import { Snackbar } from '../../../Components';
 
 const EditStablishment = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -49,7 +49,7 @@ const EditStablishment = () => {
 
     const fetchData = () => {
         try {
-            const res = authService.getLoggedUser()
+            const res = AuthService.getLoggedUser()
             formik.setFieldValue('name', res.stablishment.name)
             formik.setFieldValue('phone', res.stablishment.phone)
             setIsLoading(false);
@@ -64,10 +64,10 @@ const EditStablishment = () => {
     const submit = async (values) => {
         setIsLoading(true);
         const data = { name: values.name, phone: values.phone }
-        const authObj = authService.getAuthData();
+        const authObj = AuthService.getAuthData();
         try {
-            await userService.updateStablishment(data);
-            await authService.setLoggedUser(authObj);
+            await UserService.updateStablishment(data);
+            await AuthService.setLoggedUser(authObj);
             fetchData()
             setIsLoading(false);
             setInfoMsg('Dados atualizados');

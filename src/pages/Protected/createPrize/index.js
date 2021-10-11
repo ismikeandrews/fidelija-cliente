@@ -25,12 +25,12 @@ import {
     TextField
 } from '@material-ui/core'
 
-import { Snackbar } from '../../../components'
-import { productService } from '../../../services';
+import { Snackbar } from '../../../Components'
+import { ProductService } from '../../../Services';
 import { useStyles } from './CreatePrizeElements';
 import { FilesSvg } from '../../../Assets'
-import Textfield from '../../../components/FormsUI/Textfield';
-import Button from '../../../components/FormsUI/Button';
+import Textfield from '../../../Components/FormsUI/Textfield';
+import Button from '../../../Components/FormsUI/Button';
 
 const INITIAL_FORM_STATE = {
     productPrice: '',
@@ -74,7 +74,7 @@ const CreatePrize = () => {
 
     const fetchData = async () => {
         try {
-            const categoryRes = await productService.getCategories();
+            const categoryRes = await ProductService.getCategories();
             setCategoryList(categoryRes.data);
             setIsLoading(false)
             setToggleSuccessSnack(false);
@@ -137,7 +137,7 @@ const CreatePrize = () => {
         data.append('category_name', categoryName)
         
         try {
-            await productService.setProduct(data);
+            await ProductService.setProduct(data);
             await fetchData();
             setCategoryId('');
             setCategoryName('');

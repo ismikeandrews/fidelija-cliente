@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const url = process.env.REACT_APP_BASE_URL;
 
-const authService = {
+const AuthService = {
 
     async authenticate(data){
         const endPoint = `${url}oauth/token`
@@ -72,4 +72,4 @@ const authService = {
     }
 }
 
-export default authService;
+export default AuthService;

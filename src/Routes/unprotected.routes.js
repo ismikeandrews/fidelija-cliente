@@ -1,13 +1,13 @@
 import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 
-import { authService } from '../services'
+import { AuthService } from '../Services'
 
 export const Unprotected = ({component: Component, ...rest}) => {
     return (
         <Route {...rest} render={
             (props) =>{
-                if(!authService.isAuthenticated()){
+                if(!AuthService.isAuthenticated()){
                     return <Component {...props}/>
                 }else{
                     return <Redirect to={

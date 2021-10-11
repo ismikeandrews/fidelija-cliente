@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { colorSchema } from '../../../components';
+import { colorSchema } from '../../../Styles/colorSchema';
 
 export const MainSection = styled.section`
     flex: 1;

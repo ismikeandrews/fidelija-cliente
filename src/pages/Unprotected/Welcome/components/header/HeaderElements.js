@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Link as LinkR } from 'react-router-dom';
 import { Link as LinkS } from 'react-scroll';
 
-import { colorSchema } from '../../../../../components';
+import { colorSchema } from '../../../../../Styles/colorSchema';
 
 export const Navbar = styled.div`
     background: ${({scrollNav}) => (scrollNav ? colorSchema.black : 'transparent')};

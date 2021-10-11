@@ -12,12 +12,12 @@ import {
     Paper,
     Grid,
 } from '@material-ui/core';
-import { authService, addressService } from '../../../services';
+import { AuthService, AddressService } from '../../../Services';
 import { useStyles } from './EditAddressElements';
-import { Snackbar } from '../../../components';
-import Textfield from '../../../components/FormsUI/Textfield';
-import MaskedTextField from '../../../components/FormsUI/MaskedTextField';
-import Button from '../../../components/FormsUI/Button';
+import { Snackbar } from '../../../Components';
+import Textfield from '../../../Components/FormsUI/Textfield';
+import MaskedTextField from '../../../Components/FormsUI/MaskedTextField';
+import Button from '../../../Components/FormsUI/Button';
 
 const EditAddress = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +73,7 @@ const EditAddress = () => {
         formik.handleChange(e)
         if(e.target.value.length === 9){
             try {
-                const { data } = await addressService.getAddress(e.target.value);
+                const { data } = await AddressService.getAddress(e.target.value);
                 if(data.erro){
                     setInfoMsg("Endereço não encotrado");
                     setToggleFailureSnack(true);
@@ -97,7 +97,7 @@ const EditAddress = () => {
     const fetchData = async () => {
         setIsLoading(true)
         try {
-            const authRes = await authService.getLoggedUser();
+            const authRes = await AuthService.getLoggedUser();
             if(id === '0'){
                 if(authRes.address !== null){
                     formik.setFieldValue('street', authRes.address.street)
@@ -139,12 +139,12 @@ const EditAddress = () => {
             complementation: values.addressLine,
             number: values.number
         }
-        const authObj = authService.getAuthData();
+        const authObj = AuthService.getAuthData();
         if (id === '0') {
             try {
                 console.log(data)
-                await addressService.editUserAddress(data)
-                await authService.setLoggedUser(authObj)
+                await AddressService.editUserAddress(data)
+                await AuthService.setLoggedUser(authObj)
                 fetchData()
                 setIsLoading(false);
                 setInfoMsg("Endereço atualizado");
@@ -158,8 +158,8 @@ const EditAddress = () => {
         }
         if(id === '1') {
             try {
-                await addressService.editStablishmentAddress(data);
-                await authService.setLoggedUser(authObj)
+                await AddressService.editStablishmentAddress(data);
+                await AuthService.setLoggedUser(authObj)
                 fetchData()
                 setIsLoading(false)
                 setInfoMsg("Endereço atualizado");

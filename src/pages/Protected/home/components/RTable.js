@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Link from '@material-ui/core/Link'
 import Title from './Title';
 
-import { userService } from "../../../../services";
+import { UserService } from "../../../../Services";
 
 const useStyles = makeStyles((theme) => ({
   seeMore: {
@@ -32,7 +32,7 @@ export default function RTable() {
 
   const fetchHistory = async () => {
     try {
-      const res = await userService.getUserHistory(1, 15)
+      const res = await UserService.getUserHistory(1, 15)
       setHistoryList(res.data.data)
     } catch (error) {
       console.log(error)

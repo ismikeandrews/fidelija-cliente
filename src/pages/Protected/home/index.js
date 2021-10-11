@@ -4,9 +4,9 @@ import { Grid, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, RTable } from './components';
 import { Line } from 'react-chartjs-2';
-import { colorSchema } from "../../../components/colorSchema";
+import { colorSchema } from "../../../Styles/colorSchema";
 
-import { userService } from '../../../services';
+import { UserService } from '../../../Services';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -33,7 +33,7 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const res = await userService.getHomeInfo();
+      const res = await UserService.getHomeInfo();
       setUserInfo(res.data.users);
       setValuesInfo(res.data.values);
       setPointsInfo(res.data.points);

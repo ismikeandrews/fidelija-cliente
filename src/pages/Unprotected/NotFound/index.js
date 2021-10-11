@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Header, LButton } from '../../../components';
+import { Header, LButton } from '../../../Components';
 import { NotFoundSvg } from '../../../Assets';
 import { NotFoundSection, NotFoundImage, NotFoundTitle, NotFoundText } from './notFoundElements';
 

@@ -1,16 +1,16 @@
 import axios from 'axios';
-import { authService } from './';
+import { AuthService } from '.';
 const viacepUrl = 'https://viacep.com.br/ws/';
 const url = process.env.REACT_APP_BASE_URL;
 
-const AuthData = authService.getAuthData();
+const AuthData = AuthService.getAuthData();
 let AuthStr = {} 
 
 if(AuthData){
      AuthStr = { headers: { Authorization: `${AuthData.token_type} ${AuthData.access_token}` }}
 }
 
-const addressService = {
+const AddressService = {
     async getAddress(cep){
         const endpoint = `${viacepUrl}${cep}/json`;
         return axios.get(endpoint);
@@ -27,4 +27,4 @@ const addressService = {
 
 };
 
-export default addressService;
+export default AddressService;

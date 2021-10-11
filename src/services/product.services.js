@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { authService } from './';
+import { AuthService } from '.';
 
 const url = process.env.REACT_APP_BASE_URL;
 
-const AuthData = authService.getAuthData();
+const AuthData = AuthService.getAuthData();
 
 
 let AuthStr = {} 
@@ -13,7 +13,7 @@ if(AuthData){
 }
 
 
-const productService = {
+const ProductService = {
 
     async getUserProducts(page, item, data) {
         const endPoint = `${url}api/products/list?page=${page}&itens=${item}`;
@@ -57,4 +57,4 @@ const productService = {
 
 };
 
-export default productService;
+export default ProductService;

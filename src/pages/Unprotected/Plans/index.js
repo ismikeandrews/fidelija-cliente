@@ -5,7 +5,7 @@ import {
     Footer, 
     Header, 
     ScrollToTop 
-} from '../../../components';
+} from '../../../Components';
 import { 
     PlansSection, 
     PlansContainer, 

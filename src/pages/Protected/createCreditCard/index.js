@@ -18,13 +18,13 @@ import {
     CircularProgress
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-import { userService } from '../../../services';
-import { Snackbar } from '../../../components';
+import { Snackbar } from '../../../Components';
 import { useStyles } from './CreditCardElements';
-import Textfield from '../../../components/FormsUI/Textfield'
-import MaskedTextField from '../../../components/FormsUI/MaskedTextField';
-import Button from '../../../components/FormsUI/Button';
+import Textfield from '../../../Components/FormsUI/Textfield'
+import MaskedTextField from '../../../Components/FormsUI/MaskedTextField';
+import Button from '../../../Components/FormsUI/Button';
 
+import { UserService } from '../../../Services';
 import { Amex, Chip, Dinersclub, Discover, Jcb, Mastercard, Troy, Unionpay, Visa } from '../../../Assets'
 
 const CreateCreditCard = () => {
@@ -116,7 +116,7 @@ const CreateCreditCard = () => {
             }
         }
         try {
-            await userService.setCreditCard(data);
+            await UserService.setCreditCard(data);
             onSubmitProps.resetForm();
             setValidThru(moment());
             setMain(false);

@@ -25,12 +25,12 @@ import {
     TextField
 } from '@material-ui/core'
 
-import { Snackbar } from '../../../components'
-import { productService } from '../../../services';
+import { Snackbar } from '../../../Components'
+import { ProductService } from '../../../Services';
 import { useStyles } from './EditPrizeElements';
 import { FilesSvg } from '../../../Assets'
-import Textfield from '../../../components/FormsUI/Textfield';
-import Button from '../../../components/FormsUI/Button';
+import Textfield from '../../../Components/FormsUI/Textfield';
+import Button from '../../../Components/FormsUI/Button';
 
 const FORM_VALIDATION = Yup.object().shape({
     productPrice: Yup.number().integer().typeError('Campo numérico').required('Campo obrigatório'),
@@ -71,8 +71,8 @@ const EditPrize = () => {
     const fetchData = async () => {
 
         try {
-            const categoryRes = await productService.getCategories();
-            const productRes = await productService.getProduct(id)
+            const categoryRes = await ProductService.getCategories();
+            const productRes = await ProductService.getProduct(id)
             const values = {
                 productPrice: productRes.data.cost, 
                 productName: productRes.data.name, 
@@ -141,7 +141,7 @@ const EditPrize = () => {
         data.append('category_name', categoryName)
         
         try {
-            await productService.editProduct(data, id);
+            await ProductService.editProduct(data, id);
             await fetchData();
             setCategoryName('');
             setUploadedFile(null);

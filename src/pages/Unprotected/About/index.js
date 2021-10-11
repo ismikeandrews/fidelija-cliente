@@ -9,7 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 
 
-import { Footer, Header, Button as PButton } from '../../../components';
+import { Footer, Header, Button as PButton } from '../../../Components';
 import { CollabSvg } from '../../../Assets/';
 import { MainSection, LeftSection, Title, Msg, RightSection, RightSectionImg } from './aboutElements';
 

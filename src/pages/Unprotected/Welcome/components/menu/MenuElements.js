@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Link as LinkS } from 'react-scroll';
 import CloseIcon from '@material-ui/icons/Close';
 
-import { colorSchema } from '../../../../../components';
+import { colorSchema } from '../../../../../Styles/colorSchema';
 
 export const MenuContainer = styled.aside`
     position: fixed;

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { colorSchema } from '../../../../../components';
+import { colorSchema } from '../../../../../Styles/colorSchema';
 
 export const InfoContainer = styled.div`
     color: ${colorSchema.white};

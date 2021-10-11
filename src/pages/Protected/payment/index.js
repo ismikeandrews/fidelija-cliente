@@ -37,12 +37,12 @@ import {
     Divider,
     Link as MuiLink
 } from '@material-ui/core';
-import Textfield from '../../../components/FormsUI/Textfield';
-import MaskedTextField from '../../../components/FormsUI/MaskedTextField';
-import Button from '../../../components/FormsUI/Button';
-import { Snackbar } from '../../../components';
+import Textfield from '../../../Components/FormsUI/Textfield';
+import MaskedTextField from '../../../Components/FormsUI/MaskedTextField';
+import Button from '../../../Components/FormsUI/Button';
+import { Snackbar } from '../../../Components';
 import { useStyles } from './PaymentElements';
-import { userService } from '../../../services';
+import { UserService } from '../../../Services';
 import { Amex, Chip, Dinersclub, Discover, Jcb, Mastercard, Troy, Unionpay, Visa} from '../../../Assets'
 
 function Payment(){
@@ -137,7 +137,7 @@ function Payment(){
 
     const fetchData = async () => {
         try {
-            const res = await userService.getCreditCards()
+            const res = await UserService.getCreditCards()
             setCardList(res.data)
             setIsLoading(false)
         } catch (error) {
@@ -169,7 +169,7 @@ function Payment(){
             }
         }
         try {
-            const res = await userService.checkout(data)
+            const res = await UserService.checkout(data)
             console.log(res.data)
             if(isPix){
                 setQrCode(res.data.pix.qrcode)

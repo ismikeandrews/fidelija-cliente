@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { Dashboard } from '../Layouts';
 
-import { authService } from '../services'
+import { AuthService } from '../Services'
 
 export const Protected = ({component: Component, ...rest}) => {
     return (
@@ -10,7 +10,7 @@ export const Protected = ({component: Component, ...rest}) => {
             <Dashboard>
                 <Route {...rest} render={
                     (props) =>{
-                        if(authService.isAuthenticated()){
+                        if(AuthService.isAuthenticated()){
                             return <Component {...props}/>
                         }else{
                             return <Redirect to={

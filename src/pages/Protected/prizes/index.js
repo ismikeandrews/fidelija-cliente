@@ -44,8 +44,8 @@ import {
     useTheme
 } from '@material-ui/core';
 
-import { Snackbar } from '../../../components'
-import { productService } from '../../../services';
+import { Snackbar } from '../../../Components'
+import { ProductService } from '../../../Services';
 import { useStyles } from './prizesElements';
 import { EmptySvg } from '../../../Assets'
 
@@ -78,7 +78,7 @@ const Prizes = () => {
 
     const fetchData = async (currentPage, rowsPerPage) => {
         try {
-            const productsRes = await productService.getUserProducts(currentPage, rowsPerPage);
+            const productsRes = await ProductService.getUserProducts(currentPage, rowsPerPage);
             console.log(productsRes);
             setProducts(productsRes.data.data);
             setPage(productsRes.data.current_page);
@@ -99,7 +99,7 @@ const Prizes = () => {
         timeoutRef.current = window.setTimeout(async () => {
             try {
                 setIsLoading(true);
-                const productsRes = await productService.searchUserProducts(page, item, name);
+                const productsRes = await ProductService.searchUserProducts(page, item, name);
                 setProducts(productsRes.data.data);
                 setIsLoading(false);
             } catch (error) {
@@ -131,7 +131,7 @@ const Prizes = () => {
         setOpenQuestionDialog(false);
         setIsLoading(true);
         try {  
-            await productService.deleteProduct(id);
+            await ProductService.deleteProduct(id);
             await fetchData(page, item);
             setIsLoading(false);
             setFeedbackAlert('Produto excluido.');
@@ -148,7 +148,7 @@ const Prizes = () => {
         setOpenQuestionDialog(false);
         setIsLoading(true);
         try {
-           await productService.pauseProduct(id);
+           await ProductService.pauseProduct(id);
            await fetchData(page, item)
            setIsLoading(false);
            setPauseMode(false);

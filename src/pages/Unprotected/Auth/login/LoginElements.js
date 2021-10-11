@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-import { colorSchema } from '../../../../components'
+import { colorSchema } from '../../../../Styles/colorSchema'
 
 export const Container = styled.div`
     position: relative;

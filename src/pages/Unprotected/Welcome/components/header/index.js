@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { animateScroll as scroll } from 'react-scroll';
 import { MenuRounded } from '@material-ui/icons';
 
-import { LButton } from '../../../../../components';
+import { LButton } from '../../../../../Components';
 import { 
     Navbar, 
     NavbarContainer, 

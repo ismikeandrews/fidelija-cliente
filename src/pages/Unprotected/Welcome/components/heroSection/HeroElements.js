@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { colorSchema } from '../../../../../components';
+import { colorSchema } from '../../../../../Styles/colorSchema';
 
 export const HeroContainer = styled.div`
     background: #0c0c0c;

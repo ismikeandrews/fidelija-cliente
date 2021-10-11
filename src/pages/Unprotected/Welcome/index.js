@@ -11,7 +11,7 @@ import {
     homeObjThree, 
     homeObjFour 
 } from './components';
-import { Footer } from '../../../components';
+import { Footer } from '../../../Components';
 
 export default function Welcome(){
     const [isOpen, setIsOpen] = useState(false);

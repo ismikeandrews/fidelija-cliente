@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const url = 'https://www.receitaws.com.br/v1/cnpj/';
 
-const cnpjService = {
+const CnpjService = {
 
     async getCompanty(cnpj){
         const endpoint = `${url}${cnpj}`
@@ -11,4 +11,4 @@ const cnpjService = {
 
 };
 
-export default cnpjService; 
+export default CnpjService; 

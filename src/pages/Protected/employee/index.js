@@ -34,8 +34,8 @@ import {
     Avatar
 } from '@material-ui/core';
 import { useStyles } from './EmployeeElements';
-import { userService } from '../../../services';
-import { Snackbar } from '../../../components';
+import { UserService } from '../../../Services';
+import { Snackbar } from '../../../Components';
 
 const Employee = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -57,7 +57,7 @@ const Employee = () => {
 
     const fetchData = async () => {
         try {
-            const {data} = await userService.getEmployees();
+            const {data} = await UserService.getEmployees();
             console.log(data)
             setEmployeeList(data);
             setIsLoading(false);
@@ -77,7 +77,7 @@ const Employee = () => {
         };
         if(alreadyExist === false && cpf !== ''){
             try {
-                await userService.setNewEmployee(data);
+                await UserService.setNewEmployee(data);
                 await fetchData();
                 setIsLoading(false);
                 setInfoMsg('Funcionário vinculado');
@@ -101,7 +101,7 @@ const Employee = () => {
         setOpenQuestionDialog(false);
         setIsLoading(true);
         try {
-            await userService.deleteEmployee(id)
+            await UserService.deleteEmployee(id)
             await fetchData();
             setIsLoading(false);
             setInfoMsg("Funcionário desvinculado");
@@ -121,7 +121,7 @@ const Employee = () => {
         }
         if (cpf.length === 14) {
             try {
-                const res = await userService.findEmployee(data);
+                const res = await UserService.findEmployee(data);
                 if (res.data !== '') {
                     setAlreadyExist(true);
                     setInfoMsg("Usuário já vinculado.");

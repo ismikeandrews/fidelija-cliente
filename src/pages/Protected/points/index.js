@@ -20,8 +20,8 @@ import {
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import { AccountBox, MonetizationOn} from '@material-ui/icons';
 import { styles } from './points.elements';
-import { Snackbar } from '../../../components'
-import { userService, authService } from '../../../services';
+import { Snackbar } from '../../../Components'
+import { UserService, AuthService } from '../../../Services';
 
 const Points = () => {
     const [cpf, setCpf] = useState('');
@@ -38,7 +38,7 @@ const Points = () => {
         setIsLoading(true)
         const data = {cpf}   
         try {
-            const res = await userService.getUserByCpf(data)
+            const res = await UserService.getUserByCpf(data)
             setUser(res.data)
             setIsLoading(false)
             if(!res.data && cpf.length > 0){
@@ -59,10 +59,10 @@ const Points = () => {
             user_id: user.id, 
             ammount: ammount,
             reference: reference,
-            employeeId: authService.getLoggedUser().id
+            employeeId: AuthService.getLoggedUser().id
         }
         try {
-            await userService.registerPoints(data)
+            await UserService.registerPoints(data)
             setUser(null)
             setAmmount('');
             setCpf('')

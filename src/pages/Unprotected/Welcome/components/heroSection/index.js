@@ -9,7 +9,7 @@ import {
     HeroBtnWrapper, 
     ImgBg 
 } from './HeroElements';
-import { LButton } from '../../../../../components';
+import { LButton } from '../../../../../Components';
 import { Pay } from '../../../../../Assets'
 
 const HeroSection = () => {
