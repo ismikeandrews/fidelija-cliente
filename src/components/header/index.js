@@ -6,7 +6,7 @@ import {
     NavLogo,
     LogoImg
 } from './headerElements';
-import Logo from '../../assets/images/img/fidelija-logo.png';
+import { Logo } from '../../Assets/';
 
 export default function Header(){
     return (

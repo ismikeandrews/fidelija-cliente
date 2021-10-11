@@ -21,7 +21,7 @@ import {
     LogoImg
 } from './footerElements';
 
-import Logo from '../../assets/images/img/fidelija-logo.png';
+import { Logo } from '../../Assets/';
 
 const Footer = () => {
     return (
