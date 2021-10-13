@@ -1,6 +1,5 @@
 import React from 'react';
 import 'fontsource-roboto';
-import './App.css';
 import { Routes } from './Routes';
 import { SnackbarProvider } from 'notistack'
 

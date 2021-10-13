@@ -30,10 +30,7 @@ import {
 import { useStyles } from './RegisterElements';
 
 import { FilesSvg } from '../../../../Assets';
-import Textfield from '../../../../Components/FormsUI/Textfield';
-import MaskedTextfield from '../../../../Components/FormsUI/MaskedTextField';
-import Button from '../../../../Components/FormsUI/Button';
-import { Snackbar, Footer, Header } from '../../../../Components';
+import { Snackbar, Footer, Header, FButton, MaskedTextField, Textfield } from '../../../../Components';
 import { AddressService, AuthService, UserService } from '../../../../Services';
 
 const Register = () => {
@@ -345,7 +342,7 @@ const Register = () => {
                             </Typography> 
                         </Grid>
                         <Grid item xs={12}>
-                            <MaskedTextfield mask="999.999.999-99" name="cpf" label="CPF" type="text" value={formik.values.cpf} onChange={e => checkCpf(e)}/>
+                            <MaskedTextField mask="999.999.999-99" name="cpf" label="CPF" type="text" value={formik.values.cpf} onChange={e => checkCpf(e)}/>
                         </Grid>
                         <Grid item xs={6}>
                             {transition((style, item) => 
@@ -371,7 +368,7 @@ const Register = () => {
                 return (
                     <Grid container spacing={3}>
                         <Grid item xs={6}>
-                            <MaskedTextfield mask="99.999.999/9999-99" name="cnpj" label="CNPJ" value={formik.values.cnpj} onChange={formik.handleChange}/>                            
+                            <MaskedTextField mask="99.999.999/9999-99" name="cnpj" label="CNPJ" value={formik.values.cnpj} onChange={formik.handleChange}/>                            
                         </Grid>
                         <Grid item xs={6}>
                             <Textfield name="companyName" label="Nome fantasia" value={formik.values.companyName} onChange={formik.handleChange}/>
@@ -559,9 +556,9 @@ const Register = () => {
                                             Voltar
                                         </MuiButton>
                                         {currentStep === steps.length - 1 ? (
-                                            <Button fullWidth={false} type="submit" disabled={acceptTerms === false ? true : false}>
+                                            <FButton fullWidth={false} type="submit" disabled={acceptTerms === false ? true : false}>
                                                 Finalizar
-                                            </Button>
+                                            </FButton>
                                         ) : (
                                             <MuiButton variant="contained" color="primary" onClick={() => handleNext((prevActiveStep) => prevActiveStep + 1)}>
                                                 Próximo

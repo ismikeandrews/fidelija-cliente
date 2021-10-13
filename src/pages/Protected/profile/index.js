@@ -33,10 +33,8 @@ import {
 } from '@material-ui/core';
 import { useStyles } from './ProfileElements';
 import { AuthService, UserService } from '../../../Services';
-import Textfield from '../../../Components/FormsUI/Textfield';
-import Button from '../../../Components/FormsUI/Button';
+import { Snackbar, Button, Textfield, FButton } from '../../../Components';
 import getCroppedImg from '../../../Components/imageCropper/'
-import { Snackbar } from '../../../Components';
 
 const Profile = () => {
     const [openProfileCropper, setOpenProfileCropper] = useState(false);
@@ -707,9 +705,9 @@ const Profile = () => {
                                         </div>
                                         <Divider/>
                                         <div className={classes.paperFooter}>
-                                            <Button type="submit">
+                                            <FButton type="submit">
                                                 Salvar
-                                            </Button>
+                                            </FButton>
                                         </div>
                                     </Form>
                                 </FormikProvider>

@@ -18,11 +18,9 @@ import {
     CircularProgress
 } from '@material-ui/core';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-import { Snackbar } from '../../../Components';
+import { Snackbar, MaskedTextField, Textfield, FButton } from '../../../Components';
 import { useStyles } from './CreditCardElements';
-import Textfield from '../../../Components/FormsUI/Textfield'
-import MaskedTextField from '../../../Components/FormsUI/MaskedTextField';
-import Button from '../../../Components/FormsUI/Button';
+
 
 import { UserService } from '../../../Services';
 import { Amex, Chip, Dinersclub, Discover, Jcb, Mastercard, Troy, Unionpay, Visa } from '../../../Assets'
@@ -260,7 +258,7 @@ const CreateCreditCard = () => {
                                                     control={<Checkbox color="primary" />}/>
                                                 </Grid>
                                                 <Grid item xs={12}>
-                                                    <Button type="submit">Cadastrar</Button>
+                                                    <FButton type="submit">Cadastrar</FButton>
                                                 </Grid>
                                             </Grid>
                                         </div>

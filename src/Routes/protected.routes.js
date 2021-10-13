@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import { Dashboard } from '../Layouts';
+import { Dashboard } from '../Components';
 
 import { AuthService } from '../Services'
 

@@ -25,12 +25,10 @@ import {
     TextField
 } from '@material-ui/core'
 
-import { Snackbar } from '../../../Components'
+import { Snackbar, Textfield, FButton } from '../../../Components'
 import { ProductService } from '../../../Services';
 import { useStyles } from './EditPrizeElements';
 import { FilesSvg } from '../../../Assets'
-import Textfield from '../../../Components/FormsUI/Textfield';
-import Button from '../../../Components/FormsUI/Button';
 
 const FORM_VALIDATION = Yup.object().shape({
     productPrice: Yup.number().integer().typeError('Campo numérico').required('Campo obrigatório'),
@@ -308,7 +306,7 @@ const EditPrize = () => {
                                     </div>
                                 </Container>
                             </Paper>
-                            <Button type="submit">Salvar</Button>
+                            <FButton type="submit">Salvar</FButton>
                         </Grid>
                     </Grid>
                 </Form>

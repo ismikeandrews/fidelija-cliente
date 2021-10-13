@@ -14,10 +14,8 @@ import {
 } from '@material-ui/core';
 import { AuthService, AddressService } from '../../../Services';
 import { useStyles } from './EditAddressElements';
-import { Snackbar } from '../../../Components';
-import Textfield from '../../../Components/FormsUI/Textfield';
-import MaskedTextField from '../../../Components/FormsUI/MaskedTextField';
-import Button from '../../../Components/FormsUI/Button';
+import { Snackbar, MaskedTextField, Textfield, FButton } from '../../../Components';
+
 
 const EditAddress = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -224,7 +222,7 @@ const EditAddress = () => {
                                     <Textfield name="addressLine" variant="outlined" label="Complemento" value={formik.values.addressLine} onChange={formik.handleChange}/>
                                 </Grid>  
                                 <Grid item xs={12}>
-                                    <Button type="submit">Salvar</Button>
+                                    <FButton type="submit">Salvar</FButton>
                                 </Grid>
                             </Grid>
                         </Form>

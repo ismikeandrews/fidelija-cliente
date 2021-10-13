@@ -37,10 +37,7 @@ import {
     Divider,
     Link as MuiLink
 } from '@material-ui/core';
-import Textfield from '../../../Components/FormsUI/Textfield';
-import MaskedTextField from '../../../Components/FormsUI/MaskedTextField';
-import Button from '../../../Components/FormsUI/Button';
-import { Snackbar } from '../../../Components';
+import { Snackbar, MaskedTextField, FButton, Textfield } from '../../../Components';
 import { useStyles } from './PaymentElements';
 import { UserService } from '../../../Services';
 import { Amex, Chip, Dinersclub, Discover, Jcb, Mastercard, Troy, Unionpay, Visa} from '../../../Assets'
@@ -597,9 +594,9 @@ function Payment(){
                                                         Finalizar
                                                     </MuiButton>
                                                 ) : (
-                                                    <Button variant="containerd" color="primary" type="submit">
+                                                    <FButton variant="containerd" color="primary" type="submit">
                                                         Finalizar
-                                                    </Button>
+                                                    </FButton>
                                                 )
                                             ) : (
                                                 <MuiButton variant="contained" color="primary" onClick={() => setActiveStep((prevActiveStep) => prevActiveStep + 1)}>

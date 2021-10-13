@@ -25,12 +25,10 @@ import {
     TextField
 } from '@material-ui/core'
 
-import { Snackbar } from '../../../Components'
+import { Snackbar, FButton, Textfield } from '../../../Components'
 import { ProductService } from '../../../Services';
 import { useStyles } from './CreatePrizeElements';
 import { FilesSvg } from '../../../Assets'
-import Textfield from '../../../Components/FormsUI/Textfield';
-import Button from '../../../Components/FormsUI/Button';
 
 const INITIAL_FORM_STATE = {
     productPrice: '',
@@ -293,7 +291,7 @@ const CreatePrize = () => {
                                     </div>
                                 </Container>
                             </Paper>
-                            <Button type="submit">Criar Produto</Button>
+                            <FButton type="submit">Criar Produto</FButton>
                         </Grid>
                     </Grid>
                 </Form>

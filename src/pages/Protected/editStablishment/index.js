@@ -14,10 +14,7 @@ import {
 } from '@material-ui/core';
 import { useStyles } from './EditStablishmentElements';
 import { AuthService, UserService } from '../../../Services';
-import MaskedTextField from '../../../Components/FormsUI/MaskedTextField';
-import Textfield from '../../../Components/FormsUI/Textfield';
-import Button from '../../../Components/FormsUI/Button';
-import { Snackbar } from '../../../Components';
+import { Snackbar, MaskedTextField, Textfield, FButton } from '../../../Components';
 
 const EditStablishment = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -116,7 +113,7 @@ const EditStablishment = () => {
                                     <MaskedTextField mask="(99) 99999-9999" name="phone" value={formik.values.phone} onChange={formik.handleChange} label="Telefone"/>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Button type="submit">Salvar</Button>
+                                    <FButton type="submit">Salvar</FButton>
                                 </Grid>
                             </Grid>
                         </Form>

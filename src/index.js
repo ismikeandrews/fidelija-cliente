@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+import './Styles/index.css';
 import { StaticRouter } from "react-router";
-import reportWebVitals from './reportWebVitals';
 const context = {}
 
 ReactDOM.render(
@@ -12,6 +12,5 @@ ReactDOM.render(
   document.getElementById('root')
 );
   
-reportWebVitals();
 
 
