@@ -33,7 +33,7 @@ import {
 } from '@material-ui/core';
 import { useStyles } from './ProfileElements';
 import { AuthService, UserService } from '../../../Services';
-import { Snackbar, Button, Textfield, FButton } from '../../../Components';
+import { Snackbar, Button, Textfield, FButton, UseTerms } from '../../../Components';
 import getCroppedImg from '../../../Components/imageCropper/'
 
 const Profile = () => {
@@ -344,6 +344,7 @@ const Profile = () => {
                     <Tab label="Loja"/>
                     <Tab label="Notificações"/>
                     <Tab label="Segurança"/>
+                    <Tab label="Termos de uso"/>
                 </Tabs>
             </div>
             <Divider/>
@@ -715,6 +716,23 @@ const Profile = () => {
                         </div>
                     )}
                 </div>
+                <div role="tabpanel" hidden={tabValue !== 4} id={`full-width-tabpanel-${4}`}>
+                    {tabValue === 4 && (
+                        <div className={classes.spacing}>
+                            <Paper variant="outlined">
+                                <div className={classes.paperHeader}>
+                                    <Typography variant="h6">
+                                        Termos de uso
+                                    </Typography>
+                                </div>
+                                <Divider/>
+                                <div className={classes.paperContent}>
+                                    {UseTerms()}
+                                </div>
+                            </Paper>
+                        </div>
+                    )}
+                </div> 
             </div>
         </div>
     )

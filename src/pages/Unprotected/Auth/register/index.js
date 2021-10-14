@@ -28,9 +28,9 @@ import {
     DialogContentText
 } from '@material-ui/core';
 import { useStyles } from './RegisterElements';
-
+import { cpf, cnpj } from 'cpf-cnpj-validator'; 
 import { FilesSvg } from '../../../../Assets';
-import { Snackbar, Footer, Header, FButton, MaskedTextField, Textfield } from '../../../../Components';
+import { Snackbar, Footer, Header, FButton, MaskedTextField, Textfield, UseTerms } from '../../../../Components';
 import { AddressService, AuthService, UserService } from '../../../../Services';
 
 const Register = () => {
@@ -96,9 +96,11 @@ const Register = () => {
             }),
             cpf: yup
             .string()
+            .test('cpf', "CPF inválido", val => cpf.isValid(val))
             .required("CPF é obrigatório"),
             cnpj: yup
             .string()
+            .test('cnpj', "CNPJ inválido", val => cnpj.isValid(val))
             .required("CNPJ é obrigatório"),
             companyName: yup
             .string()
@@ -127,13 +129,21 @@ const Register = () => {
             .string()
             .min(8, 'Senha deve ter mais de 8 caracteres')
             .required("Senha é obrigatório"),
-            confirmPassword: yup.string().when("password", {
-                is: val => (val && val.length > 0 ? true : false),
-                then: yup.string().oneOf(
-                [yup.ref("password")],
-                "Senha não confere com a confirmação."
-                )
-            })
+            confirmPassword: yup
+            .string().
+            when('isNew', {
+                is: true,
+                then: yup
+                .string()
+                .when(["password"], {
+                    is: val => (val && val.length > 0 ? true : false),
+                    then: yup
+                    .string()
+                    .oneOf([yup.ref("password")], "Senha não confere com a confirmação.")
+                    .required("Confirmar a senha é obrigatório")
+                }),
+            }),
+            
         }),
         onSubmit: (values, onSubmitProps) => {
             console.log("teste")
@@ -250,7 +260,7 @@ const Register = () => {
         } catch (error) {
             console.log(error);
             setIsLoading(false);
-            setInfoMsg("Ocorreu um erro ao se comunicar com o servidor, tente novamente mais tarde.");
+            setInfoMsg("Não foi possível concluir o cadastro confira seus dados e tente novamente.");
             setToggleFailure(true);
         }
     }
@@ -337,7 +347,7 @@ const Register = () => {
                 return (
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <Typography variant="body1">
+                            <Typography variant="h5">
                                 Digite seu CPF para consulta de cadastro.
                             </Typography> 
                         </Grid>
@@ -367,6 +377,11 @@ const Register = () => {
             case 1:
                 return (
                     <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <Typography variant="h5">
+                                Dados da Empresa
+                            </Typography> 
+                        </Grid>
                         <Grid item xs={6}>
                             <MaskedTextField mask="99.999.999/9999-99" name="cnpj" label="CNPJ" value={formik.values.cnpj} onChange={formik.handleChange}/>                            
                         </Grid>
@@ -427,6 +442,11 @@ const Register = () => {
             case 2:
                 return (
                     <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <Typography variant="h5">
+                               Endereço da Loja
+                            </Typography> 
+                        </Grid>
                         <Grid item xs={6}>
                             <InputMask maskChar="" mask="99999-999" value={formik.values.postalcode} onChange={(e) => searchPostalCode(e)}>
                                 {props => (
@@ -456,13 +476,21 @@ const Register = () => {
                 );
             case 3:
                 return (
+
                     <Grid container spacing={3}  direction="column">
+                        <Grid item xs={12}>
+                            <Typography variant="h5">
+                                {isNew ? "Criar uma Senha" : "Insira sua Senha"}
+                            </Typography> 
+                        </Grid>
                         <Grid item xs={6}>
                             <Textfield name="password" type="password" label="Senha" value={formik.values.password} onChange={formik.handleChange}/>
                         </Grid>
-                        <Grid item xs={6}>
-                            <Textfield name="confirmPassword" type="password" label="Confirmar senha" value={formik.values.confirmPassword} onChange={formik.handleChange}/>
-                        </Grid>
+                        {isNew && (
+                            <Grid item xs={6}>
+                                <Textfield name="confirmPassword" type="password" label="Confirmar senha" value={formik.values.confirmPassword} onChange={formik.handleChange}/>
+                            </Grid>
+                        )}
                         <Grid item xs={12}>
                             <FormControlLabel
                             control={<Checkbox color="secondary" name="saveCard" checked={acceptTerms} value={acceptTerms} onClick={() => setOpenTerms(true)}/>}
@@ -485,19 +513,7 @@ const Register = () => {
                     Termos de uso
                 </DialogTitle>
                 <DialogContent dividers>
-                    <Typography gutterBottom>
-                        Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-                        in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-                    </Typography>
-                    <Typography gutterBottom>
-                        Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis
-                        lacus vel augue laoreet rutrum faucibus dolor auctor.
-                    </Typography>
-                    <Typography gutterBottom>
-                        Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-                        scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-                        auctor fringilla.
-                    </Typography>
+                    {UseTerms()}
                 </DialogContent>
                 <DialogActions>
                     <MuiButton autoFocus onClick={handleAccept} color="primary">
