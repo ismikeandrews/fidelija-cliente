@@ -103,8 +103,8 @@ function History() {
                                     <Table>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell>Produto</TableCell>
                                                 <TableCell>Data</TableCell>
+                                                <TableCell>Produto</TableCell>
                                                 <TableCell>Funcionário</TableCell>
                                                 <TableCell>Cliente</TableCell>
                                                 <TableCell>Valor</TableCell>
@@ -113,8 +113,8 @@ function History() {
                                         <TableBody>
                                             {historyList.map(history => (
                                                 <TableRow key={history.id} hover>
-                                                    <TableCell>{history.product}</TableCell>
                                                     <TableCell>{moment(history.created_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
+                                                    <TableCell>{history.product}</TableCell>
                                                     <TableCell>{history.employee}</TableCell>
                                                     <TableCell>{history.client}</TableCell>
                                                     <TableCell>{history.amount}</TableCell>
