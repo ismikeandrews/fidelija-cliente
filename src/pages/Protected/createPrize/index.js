@@ -73,13 +73,14 @@ const CreatePrize = () => {
     const fetchData = async () => {
         try {
             const categoryRes = await ProductService.getCategories();
+            console.log(categoryRes)
             setCategoryList(categoryRes.data);
             setIsLoading(false)
             setToggleSuccessSnack(false);
         } catch (error) {
             console.log(error);
             setIsLoading(false)
-            toggleFailureSnack(true)
+            setToggleFailureSnack(true)
         }
     };
 

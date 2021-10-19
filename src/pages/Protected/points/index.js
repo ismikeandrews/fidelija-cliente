@@ -65,7 +65,8 @@ const Points = () => {
             await UserService.registerPoints(data)
             setUser(null)
             setAmmount('');
-            setCpf('')
+            setCpf('');
+            setReference('');
             setIsLoading(false);
             setInfoMsg("Usuário pontuado com sucesso.");
             setToggleSuccessSnack(true);

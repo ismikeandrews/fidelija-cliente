@@ -31,7 +31,7 @@ const ProductService = {
     },
 
     async getCategories() {
-        const endPoint = `${url}api/categories`
+        const endPoint = `${url}api/products/categories`
         return axios.get(endPoint, AuthStr);
     },
 

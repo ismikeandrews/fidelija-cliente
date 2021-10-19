@@ -183,7 +183,7 @@ function Payment(){
             console.log(error)
             setIsLoading(false);
             setInfoMsg('Ocorreu um erro');
-            setToggleFailureSnack(false);
+            setToggleFailureSnack(true)
         }
     }
 
