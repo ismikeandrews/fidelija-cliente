@@ -56,6 +56,7 @@ const AuthService = {
         const data = localStorage.getItem("authData");
         if (data) {
             localStorage.removeItem("authData");
+            localStorage.removeItem("userData");
             return true;
         }else{
             return false;
