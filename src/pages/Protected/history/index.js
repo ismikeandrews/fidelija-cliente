@@ -114,7 +114,7 @@ function History() {
                                             {historyList.map(history => (
                                                 <TableRow key={history.id} hover>
                                                     <TableCell>{moment(history.created_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
-                                                    <TableCell>{history.product}</TableCell>
+                                                    <TableCell>{history.product || 'Pontuação'}</TableCell>
                                                     <TableCell>{history.employee}</TableCell>
                                                     <TableCell>{history.client}</TableCell>
                                                     <TableCell>{history.amount}</TableCell>

@@ -29,12 +29,19 @@ import {
     DialogContent,
     Slider,
     DialogActions,
-    DialogTitle
+    DialogTitle,
+    Card,
+    CardContent,
+    CardActionArea,
+    CardActions
 } from '@material-ui/core';
+import GetAppIcon from '@material-ui/icons/GetApp';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { useStyles } from './ProfileElements';
 import { AuthService, UserService } from '../../../Services';
 import { Snackbar, Button, Textfield, FButton, UseTerms } from '../../../Components';
 import getCroppedImg from '../../../Components/imageCropper/'
+import { ProductPlaceholder } from '../../../Assets';
 
 const Profile = () => {
     const [openProfileCropper, setOpenProfileCropper] = useState(false);
@@ -343,6 +350,7 @@ const Profile = () => {
                     <Tab label="Perfil"/>
                     <Tab label="Loja"/>
                     <Tab label="Notificações"/>
+                    <Tab label="Meu QR code"/>
                     <Tab label="Segurança"/>
                     <Tab label="Termos de uso"/>
                 </Tabs>
@@ -685,6 +693,39 @@ const Profile = () => {
                             <Paper variant="outlined">
                                 <div className={classes.paperHeader}>
                                     <Typography variant="h6">
+                                        QR code 
+                                    </Typography>
+                                </div>
+                                <Divider/>
+                                <div className={classes.paperContent}>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={4}>
+                                            <Card variant="outlined">
+                                                <CardActionArea>
+                                                    <img src={ProductPlaceholder} className={classes.qrcode}/>
+                                                </CardActionArea>
+                                                <CardActions>
+                                                    <IconButton>
+                                                        <GetAppIcon/>
+                                                    </IconButton>
+                                                    <IconButton>
+                                                        <FileCopyIcon/>
+                                                    </IconButton>
+                                                </CardActions>
+                                            </Card>
+                                        </Grid>
+                                    </Grid>
+                                </div>
+                            </Paper>
+                        </div>
+                    )}
+                </div>
+                <div role="tabpanel" hidden={tabValue !== 4} id={`full-width-tabpanel-${4}`}>
+                    {tabValue === 4 && (
+                        <div className={classes.spacing}>
+                            <Paper variant="outlined">
+                                <div className={classes.paperHeader}>
+                                    <Typography variant="h6">
                                         Alterar senha
                                     </Typography>
                                 </div>
@@ -716,8 +757,8 @@ const Profile = () => {
                         </div>
                     )}
                 </div>
-                <div role="tabpanel" hidden={tabValue !== 4} id={`full-width-tabpanel-${4}`}>
-                    {tabValue === 4 && (
+                <div role="tabpanel" hidden={tabValue !== 5} id={`full-width-tabpanel-${5}`}>
+                    {tabValue === 5 && (
                         <div className={classes.spacing}>
                             <Paper variant="outlined">
                                 <div className={classes.paperHeader}>

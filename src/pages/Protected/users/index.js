@@ -165,7 +165,6 @@ function Users() {
                         <TableCell align="left">Nome</TableCell>
                         <TableCell align="left">Localização</TableCell>
                         <TableCell align="left">Ultima visita</TableCell>
-                        <TableCell align="left">Valor total</TableCell>
                         <TableCell align="right">Pontos acumulados</TableCell>
                       </TableRow>
                     </TableHead>
@@ -180,8 +179,7 @@ function Users() {
                           </TableCell>
                           <TableCell align="left">{user.city} - {user.state}</TableCell>
                           <TableCell align="left">{moment(user.updated_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
-                          <TableCell align="left">R$ 300,00</TableCell>
-                          <TableCell align="right">{user.pontos} <spam>pts.</spam></TableCell>
+                          <TableCell align="right">{user.points} <spam>pts.</spam></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
