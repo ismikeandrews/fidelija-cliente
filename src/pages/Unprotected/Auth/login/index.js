@@ -87,10 +87,17 @@ export default function Login(props){
             fcm: await getToken()
         }
         try {
-            const res = await AuthService.authenticate(data);
-            await AuthService.setLoggedUser(res.data);
-            setIsLoading(false);
-            window.location.reload()
+            const authRes = await AuthService.authenticate(data);
+            const userRes = await AuthService.getUser(authRes.data);
+            if(userRes.data.stablishment){
+                await AuthService.setLoggedUser(userRes.data, authRes.data);
+                setIsLoading(false);
+                window.location.reload()
+            }else{
+                setIsLoading(false);
+                setInfoMsg('Acesso não autorizado');
+                setToggleFailure(true);
+            }
         } catch (error) {
             if (error.response.status === 403) {
                 setOpen(true);
