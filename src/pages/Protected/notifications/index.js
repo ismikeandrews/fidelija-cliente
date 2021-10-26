@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import LastPageIcon from '@material-ui/icons/LastPage';
+import { KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
 import {
     Typography,
     Breadcrumbs,
@@ -13,30 +16,37 @@ import {
     TableRow,
     Badge,
     Grid,
-    Backdrop,
     CircularProgress,
+    TablePagination,
+    IconButton,
+    useTheme,
     Link as MuiLink
 } from '@material-ui/core';
 import { useStyles } from './NotificationsElements';
 import { UserService } from '../../../Services';
+import { Backdrop, Snackbar } from '../../../Components'
 
 const Notifications = () => {
     const [notificationList, setNotificationList] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [infoMsg, setInfoMsg] = useState('');
+    const [page, setPage] = useState(1);
+    const [item, setItem] = useState(10);
+    const [lastPage, setLastPage] = useState(null);
     const classes = useStyles();
+    const theme = useTheme();
 
     useEffect(() => {
-        fetchData();
+        fetchData(page, item);
     }, []);
 
-    const fetchData = async () => {
+    const fetchData = async (currentPage, rowsPerPage) => {
         try {
-            const res = await UserService.notificationList(1, 20);
-            console.log(res)
-            setNotificationList(res.data.data)
+            const { data } = await UserService.notificationList(currentPage, rowsPerPage);
+            console.log(data)
+            setLastPage(data.last_page)
+            setNotificationList(data.data)
             setIsLoading(false);
         } catch (error) {
             console.log(error)
@@ -48,6 +58,10 @@ const Notifications = () => {
 
     return (
         <div>   
+            <Backdrop open={isLoading}/>
+            <Snackbar toggleSnack={toggleFailureSnack} time={4000} color="warning">
+                {infoMsg}
+            </Snackbar>
             <div className={classes.header}>
                 <Typography variant="h5">Notificações</Typography>
                 <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
@@ -85,6 +99,44 @@ const Notifications = () => {
                             ))}
                         </TableBody>
                     </Table>
+                    <TablePagination
+                    rowsPerPageOptions={[5, 10, 25, 100]}
+                    component="div"
+                    count={notificationList.length - 1}
+                    rowsPerPage={item}
+                    page={page - 1}
+                    onChangePage={() => null}
+                    labelRowsPerPage="Produtos por página:"
+                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count !== 0 ? count : `more than ${to}`}`}
+                    onChangeRowsPerPage={(event) => fetchData(1, event.target.value)}
+                    ActionsComponent={() => (
+                        <div className={classes.paginationIcons}>
+                            <IconButton
+                                onClick={() => fetchData(1, item)}
+                                disabled={page === 1}
+                                aria-label="first page">
+                                {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+                            </IconButton>
+                            <IconButton 
+                                onClick={() => fetchData(page - 1, item)} 
+                                disabled={page === 1} 
+                                aria-label="previous page">
+                                {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
+                            </IconButton>
+                            <IconButton
+                                onClick={() => fetchData(page + 1, item)}
+                                disabled={page === lastPage}
+                                aria-label="next page">
+                                {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
+                            </IconButton>
+                            <IconButton
+                                onClick={() => fetchData(lastPage, item)}
+                                disabled={page === lastPage}
+                                aria-label="last page">
+                                {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+                            </IconButton>
+                        </div>
+                    )}/>
                 </Paper>
             </div>
         </div>

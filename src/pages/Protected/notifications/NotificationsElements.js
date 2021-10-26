@@ -8,4 +8,8 @@ export const useStyles = makeStyles((theme) => ({
         zIndex: theme.zIndex.drawer + 1,
         color: '#fff',
     },
+    paginationIcons: {
+        flexShrink: 0,
+        marginLeft: theme.spacing(2.5),
+    },
 }))

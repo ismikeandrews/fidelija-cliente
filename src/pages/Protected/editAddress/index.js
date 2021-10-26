@@ -95,28 +95,28 @@ const EditAddress = () => {
     const fetchData = async () => {
         setIsLoading(true)
         try {
-            const authRes = await AuthService.getLoggedUser();
+            const { stablishment, address } = await AuthService.getLoggedUser();
             if(id === '0'){
-                if(authRes.address !== null){
-                    formik.setFieldValue('street', authRes.address.street)
-                    formik.setFieldValue('postalcode', authRes.address.zip)
-                    formik.setFieldValue('neighborhood', authRes.address.neighborhood)
-                    formik.setFieldValue('city', authRes.address.city)
-                    formik.setFieldValue('state', authRes.address.state)
-                    formik.setFieldValue('number', authRes.address.number)
-                    formik.setFieldValue('addressLine', authRes.address.complementation)
+                if(address !== null){
+                    formik.setFieldValue('street', address.street)
+                    formik.setFieldValue('postalcode', address.zip)
+                    formik.setFieldValue('neighborhood', address.neighborhood)
+                    formik.setFieldValue('city', address.city)
+                    formik.setFieldValue('state', address.state)
+                    formik.setFieldValue('number', address.number)
+                    formik.setFieldValue('addressLine', address.complementation)
                     setIsLoading(false)
                 }
                 setIsLoading(false)
             }
             if(id === '1'){
-                formik.setFieldValue('street', authRes.stablishment.address.street)
-                formik.setFieldValue('postalcode', authRes.stablishment.address.zip)
-                formik.setFieldValue('neighborhood', authRes.stablishment.address.neighborhood)
-                formik.setFieldValue('city', authRes.stablishment.address.city)
-                formik.setFieldValue('state', authRes.stablishment.address.state)
-                formik.setFieldValue('number', authRes.stablishment.address.number)
-                formik.setFieldValue('addressLine', authRes.stablishment.address.complementation)
+                formik.setFieldValue('street', stablishment.address.street)
+                formik.setFieldValue('postalcode', stablishment.address.zip)
+                formik.setFieldValue('neighborhood', stablishment.address.neighborhood)
+                formik.setFieldValue('city', stablishment.address.city)
+                formik.setFieldValue('state', stablishment.address.state)
+                formik.setFieldValue('number', stablishment.address.number)
+                formik.setFieldValue('addressLine', stablishment.address.complementation)
                 setIsLoading(false)
             }
         } catch (error) {
@@ -142,7 +142,7 @@ const EditAddress = () => {
             try {
                 console.log(data)
                 await AddressService.editUserAddress(data)
-                await AuthService.setLoggedUser(authObj)
+                AuthService.setLoggedUser(authObj)
                 fetchData()
                 setIsLoading(false);
                 setInfoMsg("Endereço atualizado");
@@ -157,7 +157,7 @@ const EditAddress = () => {
         if(id === '1') {
             try {
                 await AddressService.editStablishmentAddress(data);
-                await AuthService.setLoggedUser(authObj)
+                AuthService.setLoggedUser(authObj)
                 fetchData()
                 setIsLoading(false)
                 setInfoMsg("Endereço atualizado");

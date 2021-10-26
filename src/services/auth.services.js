@@ -14,11 +14,23 @@ const AuthService = {
         return await axios.get(endPoint, { headers: { Authorization: `${data.token_type} ${data.access_token}` }})
     },
 
-    async setLoggedUser(userData, token){
+    setLoggedUser(userData, token){
         const stringUserData = JSON.stringify(userData);
         const stringAuthData = JSON.stringify(token);
         localStorage.setItem("userData", stringUserData);
         localStorage.setItem("authData", stringAuthData);
+    },
+
+    updateLoggedUser(userData){
+        const stringUserData = JSON.stringify(userData);
+        localStorage.setItem("userData", stringUserData);
+    },
+
+    async getUserOff(){
+        const { token_type, access_token } = JSON.parse(localStorage.getItem("authData"))
+        const AuthStr = {headers: { Authorization: `${token_type} ${access_token}` }}
+        const endPoint = `${url}api/user`;
+        return await axios.get(endPoint, AuthStr)
     },
 
     getAuthData(){

@@ -23,5 +23,5 @@ export {
     Employee,
     EditStablishment,
     Notifications,
-    Points
+    Points,
 } from './Protected';

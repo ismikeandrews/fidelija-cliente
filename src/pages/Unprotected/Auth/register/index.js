@@ -30,18 +30,17 @@ import {
 import { useStyles } from './RegisterElements';
 import { cpf, cnpj } from 'cpf-cnpj-validator'; 
 import { FilesSvg } from '../../../../Assets';
-import { Snackbar, Footer, Header, FButton, MaskedTextField, Textfield, UseTerms } from '../../../../Components';
+import { Snackbar, Footer, Header, FButton, MaskedTextField, Textfield, UseTerms, ImageCropper } from '../../../../Components';
 import { AddressService, AuthService, UserService } from '../../../../Services';
 
 const Register = () => {
+    const [openCropperDialog, setOpenCropperDialog] = useState(false)
     const [isNew, setIsNew] = useState(true);
     const [currentStep, setCurrentStep] = useState(0);
     const [showInputs, setShowInputs] = useState(false);
     const [infoMsg, setInfoMsg] = useState('');
     const [uploadedFile, setUploadedFile] = useState(null);
     const [imgUrl, setImgUrl] = useState('');
-    const [dimentionError, setDimentionError] = useState(false);
-    const [sizeError, setSizeError] = useState(false);
     const [toggleSuccess, setToggleSuccess] = useState(false);
     const [toggleFailure, setToggleFailure] = useState(false);
     const [acceptTerms, setAcceptTerms] = useState(false);
@@ -196,24 +195,8 @@ const Register = () => {
         }
     }
     const handleNewImage = file => {
-        setUploadedFile(file);
         setImgUrl(URL.createObjectURL(file));
-        setDimentionError(false);
-        setSizeError(false);
-        let reader = new FileReader()
-        reader.onload = e => {
-            let img = new Image;
-            img.onload = () => {
-                if(img.width != img.height){
-                    setDimentionError(true)
-                }
-            }
-            img.src = reader.result;
-        }
-        reader.readAsDataURL(file);
-        if(file.size > 500000){
-            setSizeError(true)
-        }
+        setOpenCropperDialog(true)
     }
     const closeSnack = () => {
         setToggleSuccess(false);
@@ -229,10 +212,6 @@ const Register = () => {
             setToggleFailure(true);
         }
         
-        if(dimentionError || sizeError){
-            setInfoMsg("A imagem não tem o formato correto")
-            setToggleFailure(true);
-        }
         setIsLoading(true);
 
         let data = new FormData()
@@ -286,7 +265,7 @@ const Register = () => {
             }
         }
         if (currentStep === 1) {
-            if (formik.errors.cnpj || formik.errors.companyName || dimentionError || sizeError) {
+            if (formik.errors.cnpj || formik.errors.companyName) {
                 setStep2Error(true)
             }
             else{
@@ -320,7 +299,7 @@ const Register = () => {
             }
         }
         if (currentStep === 1) {
-            if (formik.errors.cnpj || formik.errors.companyName || dimentionError || sizeError) {
+            if (formik.errors.cnpj || formik.errors.companyName) {
                 setStep2Error(true)
             }else{
                 setStep2Error(false)
@@ -409,7 +388,7 @@ const Register = () => {
                             </Paper>
                             <input accept="image/*" hidden id="button-file" type="file" ref={inputFile} onChange={(e) => handleNewImage(e.target.files[0])}/>
                             {uploadedFile !== null && (
-                                <Paper variant="outlined" className={[classes.contentSpacing, classes.paperImg]} style={{border: dimentionError || sizeError ? '1px solid #f44336' : ''}}>
+                                <Paper variant="outlined" className={[classes.contentSpacing, classes.paperImg]}>
                                     <Container>
                                         <div className={classes.previewFormat}>
                                             <div className={classes.previewFormat}>
@@ -417,14 +396,6 @@ const Register = () => {
                                                 <div style={{marginLeft: '20px'}}>
                                                     <Typography variant="subtitle1">{uploadedFile.name}</Typography>
                                                     <Typography variant="subtitle1">{fileSize(uploadedFile.size)}</Typography>
-                                                </div>
-                                                <div style={{marginLeft: '20px'}}>
-                                                    {dimentionError && (
-                                                        <Typography variant="body1" style={{ color: '#f44336'}}>A imagem deve ser quadrada</Typography>
-                                                    )}
-                                                    {sizeError && (
-                                                        <Typography variant="body1" style={{ color: '#f44336'}}>A imagem deve ser menor que 500kB</Typography>
-                                                    )}
                                                 </div>
                                             </div>
                                             <Tooltip title="Remover">
@@ -505,6 +476,7 @@ const Register = () => {
     }
     return (
         <div>
+            <ImageCropper open={openCropperDialog} close={() => setOpenCropperDialog(false)} url={imgUrl} handleChange={setUploadedFile}/>
             <Snackbar toggleSnack={toggleSuccess || toggleFailure} time={toggleFailure ? 4500 : 3500} onClose={closeSnack}  color={toggleSuccess ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>

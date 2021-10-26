@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
+import clsx from 'clsx';
 import fileSize from 'filesize';
 import { FileDrop } from 'react-file-drop'
 import { Link } from 'react-router-dom'
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import ClearIcon from '@material-ui/icons/Clear';
 import {
@@ -25,7 +25,7 @@ import {
     TextField
 } from '@material-ui/core'
 
-import { Snackbar, FButton, Textfield } from '../../../Components'
+import { Snackbar, FButton, Textfield, ImageCropper } from '../../../Components'
 import { ProductService } from '../../../Services';
 import { useStyles } from './CreatePrizeElements';
 import { FilesSvg } from '../../../Assets'
@@ -45,7 +45,7 @@ const FORM_VALIDATION = Yup.object().shape({
 const CreatePrize = () => {
     const classes = useStyles();
     const inputFile = useRef(null);
-
+    const [openDialog, setOpenDialog] = useState(false)
     const [uploadedFile, setUploadedFile] = useState(null);
     const [categoryName, setCategoryName] = useState('');
     const [categoryId, setCategoryId] = useState('');
@@ -57,8 +57,6 @@ const CreatePrize = () => {
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [toggleErrorSnack, setToggleErrorSnack] = useState(false);
     const [errorMsg, setErrorMsg] = useState('Ocorreu um erro');
-    const [dimentionError, setDimentionError] = useState(false);
-    const [sizeError, setSizeError] = useState(false);
 
 
     useEffect(() => {
@@ -73,7 +71,6 @@ const CreatePrize = () => {
     const fetchData = async () => {
         try {
             const categoryRes = await ProductService.getCategories();
-            console.log(categoryRes)
             setCategoryList(categoryRes.data);
             setIsLoading(false)
             setToggleSuccessSnack(false);
@@ -92,22 +89,8 @@ const CreatePrize = () => {
     }
 
     const handleNewImage = (file) => {
-        setUploadedFile(file)
         setImgUrl(URL.createObjectURL(file))
-        let reader = new FileReader()
-        reader.onload = e => {
-            let img = new Image;
-            img.onload = () => {
-                if(img.width != img.height){
-                    setDimentionError(true)
-                }
-            }
-            img.src = reader.result;
-        }
-        reader.readAsDataURL(file);
-        if(file.size > 500000){
-            setSizeError(true)
-        }
+        setOpenDialog(true)
     }
 
     const submitProduct = async (values, onSubmitProps) => {
@@ -115,17 +98,7 @@ const CreatePrize = () => {
             setErrorMsg('Selecione ou cadastre uma categoria para seu produto.')
             setToggleErrorSnack(true)
         }
-
-        if(uploadedFile === null){
-            setErrorMsg('Selecione uma imagem');
-            setToggleErrorSnack(true);
-        }
-
-        if(dimentionError || sizeError){
-            setErrorMsg('A imagem selecionada não é válida')
-            setToggleErrorSnack(true)
-        }
-
+        
         setIsLoading(true)
         let data = new FormData()
         data.append('image', uploadedFile)
@@ -153,6 +126,7 @@ const CreatePrize = () => {
 
     return (
         <div>
+            <ImageCropper open={openDialog} close={() => setOpenDialog(false)} url={imgUrl} handleChange={setUploadedFile}/>
             <Snackbar toggleSnack={toggleSuccessSnack} time={3500} onClose={closeSnack} color="success">
                 Produto cadastrado com sucesso
             </Snackbar>
@@ -216,7 +190,7 @@ const CreatePrize = () => {
                                     </Paper>
                                     <input accept="image/*" hidden id="button-file" type="file" ref={inputFile} onChange={(e) => handleNewImage(e.target.files[0])}/>
                                     {uploadedFile !== null && (
-                                        <Paper variant="outlined" className={[classes.contentSpacing, classes.paperImg]} style={{border: dimentionError || sizeError ? '1px solid #f44336' : ''}}>
+                                        <Paper variant="outlined" className={clsx(classes.contentSpacing, classes.paperImg)}>
                                             <Container>
                                                 <div className={classes.previewFormat}>
                                                     <div className={classes.previewFormat}>
@@ -224,14 +198,6 @@ const CreatePrize = () => {
                                                         <div style={{marginLeft: '20px'}}>
                                                             <Typography variant="subtitle1">{uploadedFile.name}</Typography>
                                                             <Typography variant="subtitle1">{fileSize(uploadedFile.size)}</Typography>
-                                                        </div>
-                                                        <div style={{marginLeft: '20px'}}>
-                                                            {dimentionError && (
-                                                                <Typography variant="body1" style={{ color: '#f44336'}}>A imagem deve ser quadrada</Typography>
-                                                            )}
-                                                            {sizeError && (
-                                                                <Typography variant="body1" style={{ color: '#f44336'}}>A imagem deve ser menor que 500kB</Typography>
-                                                            )}
                                                         </div>
                                                     </div>
                                                     <Tooltip title="Remover">
@@ -264,31 +230,29 @@ const CreatePrize = () => {
                             </Paper>
                         </Grid>
                         <Grid item xs={4}>
-                            <Paper variant="outlined" className={[classes.contentSpacing, classes.submitButton]}>
+                            <Paper variant="outlined" className={clsx(classes.contentSpacing, classes.submitButton)}>
                                 <Container>
                                     <div>
                                         <Typography variant="h6" className={classes.infoTitle}>
                                             Categoria
                                         </Typography>
-                                        <form>
-                                            <FormControl fullWidth className={classes.formControl}>
-                                                <TextField fullWidth variant="outlined" label="Nova Categoria" name="categoryName" value={categoryName} onChange={e => handleNewCategory(e.target.value)}/>
+                                        <FormControl fullWidth className={classes.formControl}>
+                                            <TextField fullWidth variant="outlined" label="Nova Categoria" name="categoryName" value={categoryName} onChange={e => handleNewCategory(e.target.value)}/>
+                                        </FormControl>
+                                        {showCategories && (
+                                            <FormControl fullWidth variant="outlined" className={classes.formControl}>
+                                                <InputLabel id="category">Categorias</InputLabel>
+                                                <Select
+                                                labelId="category"
+                                                value={categoryId}
+                                                onChange={e => setCategoryId(e.target.value)}
+                                                label="Categorias">
+                                                    {categoryList.map(category => (
+                                                        <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>
+                                                    ))}
+                                                </Select>
                                             </FormControl>
-                                            {showCategories && (
-                                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
-                                                    <InputLabel id="category">Categorias</InputLabel>
-                                                    <Select
-                                                    labelId="category"
-                                                    value={categoryId}
-                                                    onChange={e => setCategoryId(e.target.value)}
-                                                    label="Categorias">
-                                                        {categoryList.map(category => (
-                                                            <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>
-                                                        ))}
-                                                    </Select>
-                                                </FormControl>
-                                            )}
-                                        </form>
+                                        )}
                                     </div>
                                 </Container>
                             </Paper>
