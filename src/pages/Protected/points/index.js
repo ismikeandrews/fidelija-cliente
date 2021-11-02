@@ -18,7 +18,7 @@ import {
     Button
 } from '@material-ui/core';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { AccountBox, MonetizationOn} from '@material-ui/icons';
+import { AccountBox, MonetizationOn, Receipt, AccountBalance} from '@material-ui/icons';
 import { styles } from './points.elements';
 import { Snackbar } from '../../../Components'
 import { UserService, AuthService } from '../../../Services';
@@ -39,6 +39,7 @@ const Points = () => {
         const data = {cpf}   
         try {
             const res = await UserService.getUserByCpf(data)
+            console.log(res.data)
             setUser(res.data)
             setIsLoading(false)
             if(!res.data && cpf.length > 0){
@@ -135,6 +136,22 @@ const Points = () => {
                                     </ListItem>
                                     <ListItem>
                                         <ListItemAvatar>
+                                            <Avatar style={{backgroundColor: "#604bd2"}}>
+                                                <Receipt/>
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText>{reference || '- - -'}</ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemAvatar>
+                                            <Avatar style={{backgroundColor: "#604bd2"}}>
+                                                <AccountBalance/>
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText>{user.stablishment_points || "- - -"}</ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemAvatar>
                                             <Avatar style={{backgroundColor: "rgb(38 165 43)"}}>
                                                 <MonetizationOn/>
                                             </Avatar>
@@ -143,7 +160,7 @@ const Points = () => {
                                     </ListItem>
                                 </List>
                                 <div style={{padding: "10px"}}>
-                                    <Button variant="contained" color="secondary" fullWidth disabled={ammount === '' || reference === ''} onClick={submitScore}>
+                                    <Button variant="contained" className={classes.button} fullWidth disabled={ammount === '' || reference === ''} onClick={submitScore}>
                                         Pontuar
                                     </Button>
                                 </div>

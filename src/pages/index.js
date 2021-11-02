@@ -1,11 +1,4 @@
-export {
-    Welcome,
-    Plans,
-    Login,
-    About,
-    NotFound,
-    Register
-} from './Unprotected';
+export { Login, Register } from './Unprotected';
 export { 
     Users, 
     Home, 

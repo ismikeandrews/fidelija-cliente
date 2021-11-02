@@ -35,7 +35,9 @@ import {
     ListItem,
     ListItemText,
     Divider,
-    Link as MuiLink
+    Link as MuiLink,
+    Tab,
+    Tabs
 } from '@material-ui/core';
 import { Snackbar, MaskedTextField, FButton, Textfield } from '../../../Components';
 import { useStyles } from './PaymentElements';
@@ -47,6 +49,7 @@ function Payment(){
     const [isAmex, setIsAmex] = useState(false);
     const [flag, setFlag] = useState(Visa);
     const [cardId, setCardId] = useState('');
+    const [tabValue, setTabValue] = useState(0);
     const [cardName, setCardName] = useState('FULL NAME');
     const [validThru, setValidThru] = useState(moment());
     const [cardNumber, setCardNumber] = useState('#### #### #### ####');
@@ -254,161 +257,184 @@ function Payment(){
                 return (
                     <Box>
                         <div className={classes.contentSpacing}>
-                            <Typography variant="h5" style={{marginBottom: '20px'}}>
-                                Dados do cartão
-                            </Typography>
-                            <Grid container justify="space-between" alignItems="center" spacing={5}>
-                                <Grid item xs={12} md={12} lg={6} xl={8}>
+                            <div style={{marginBottom: "30px"}}>
+                                <Tabs value={tabValue} onChange={(event, newValue) => setTabValue(newValue)}>
+                                    <Tab label="Novo Cartão"/>
+                                    <Tab label="Meus Cartões"/>
+                                </Tabs>
+                                <Divider/>
+                            </div>
+                            <div role="tabpanel" hidden={tabValue !== 0} id={`full-width-tabpanel-${0}`}>
+                                {tabValue === 0 && (
                                     <div>
-                                        <Grid container spacing={3}>
-                                            <Grid item xs={12}>
-                                                <MaskedTextField name="number" label="Número do cartão" margin="normal" mask={isAmex ? "9999 999999 99999" : "9999 9999 9999 9999"} value={formik.values.number} onChange={(e) => getCurrentFlag(e)}/>     
+                                        <Typography variant="h5" style={{marginBottom: '20px'}}>
+                                            Dados do cartão
+                                        </Typography>
+                                        <Grid container justify="space-between" alignItems="center" spacing={5}>
+                                            <Grid item xs={12} md={12} lg={6} xl={8}>
+                                                <div>
+                                                    <Grid container spacing={3}>
+                                                        <Grid item xs={12}>
+                                                            <MaskedTextField name="number" label="Número do cartão" margin="normal" mask={isAmex ? "9999 999999 99999" : "9999 9999 9999 9999"} value={formik.values.number} onChange={(e) => getCurrentFlag(e)}/>     
+                                                        </Grid>
+                                                        <Grid item xs={6}>
+                                                            <Textfield
+                                                            name="description" 
+                                                            label="Apelido" 
+                                                            margin="normal" 
+                                                            helperText="ex. Cartão corporativo"
+                                                            value={formik.values.description} 
+                                                            onChange={formik.handleChange}/>
+                                                        </Grid>
+                                                        <Grid item xs={6}>
+                                                            <Textfield
+                                                            required
+                                                            name="name" 
+                                                            label="Nome"
+                                                            margin="normal"
+                                                            helperText="Nome igual no cartão"
+                                                            value={formik.values.name} 
+                                                            onChange={e => handleNameChange(e)}/>
+                                                        </Grid>
+                                                        <Grid item xs={6}>
+                                                            <MuiPickersUtilsProvider utils={MomentUtils}>
+                                                                <KeyboardDatePicker
+                                                                disableToolbar
+                                                                fullWidth
+                                                                required
+                                                                inputVariant="outlined"
+                                                                variant="dialog"
+                                                                format="MM/YY"
+                                                                margin="normal"
+                                                                label="Validade"
+                                                                views={["year", "month"]}
+                                                                disablePast
+                                                                value={validThru}
+                                                                onChange={date => setValidThru(date)}/>
+                                                            </MuiPickersUtilsProvider>
+                                                        </Grid>
+                                                        <Grid item xs={6}>
+                                                            <MaskedTextField mask={isAmex ? "9999" : "999"} value={formik.values.cvv} onChange={formik.handleChange} onFocus={() => setFlipped(true)} onBlur={() => setFlipped(false)} name="cvv" label="CVV" margin="normal"/>
+                                                        </Grid>
+                                                        <Grid item xs={12}>
+                                                            <FormControlLabel
+                                                            value={mainCard}
+                                                            onChange={() => setMainCard(mainCard === false ? true : false)}
+                                                            checked={mainCard}
+                                                            label="Marcar como cartão pricipal"
+                                                            labelPlacement="end"
+                                                            control={<Checkbox color="primary" />}/>
+                                                        </Grid>
+                                                        <Grid item xs={12}>
+                                                            <FormControlLabel
+                                                            value={remember}
+                                                            onChange={() => setRemember(remember === false ? true : false)}
+                                                            checked={remember}
+                                                            label="Lembrar dados para próxima compra"
+                                                            labelPlacement="end"
+                                                            control={<Checkbox color="primary" />}/>
+                                                        </Grid>
+                                                    </Grid>
+                                                </div>
                                             </Grid>
-                                            <Grid item xs={6}>
-                                                <Textfield
-                                                name="description" 
-                                                label="Apelido" 
-                                                margin="normal" 
-                                                helperText="ex. Cartão corporativo"
-                                                value={formik.values.description} 
-                                                onChange={formik.handleChange}/>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Textfield
-                                                required
-                                                name="name" 
-                                                label="Nome"
-                                                margin="normal"
-                                                helperText="Nome igual no cartão"
-                                                value={formik.values.name} 
-                                                onChange={e => handleNameChange(e)}/>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <MuiPickersUtilsProvider utils={MomentUtils}>
-                                                    <KeyboardDatePicker
-                                                    disableToolbar
-                                                    fullWidth
-                                                    required
-                                                    inputVariant="outlined"
-                                                    variant="dialog"
-                                                    format="MM/YY"
-                                                    margin="normal"
-                                                    label="Validade"
-                                                    views={["year", "month"]}
-                                                    disablePast
-                                                    value={validThru}
-                                                    onChange={date => setValidThru(date)}/>
-                                                </MuiPickersUtilsProvider>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <MaskedTextField mask={isAmex ? "9999" : "999"} value={formik.values.cvv} onChange={formik.handleChange} onFocus={() => setFlipped(true)} onBlur={() => setFlipped(false)} name="cvv" label="CVV" margin="normal"/>
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <FormControlLabel
-                                                value={mainCard}
-                                                onChange={() => setMainCard(mainCard === false ? true : false)}
-                                                checked={mainCard}
-                                                label="Marcar como cartão pricipal"
-                                                labelPlacement="end"
-                                                control={<Checkbox color="primary" />}/>
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <FormControlLabel
-                                                value={remember}
-                                                onChange={() => setRemember(remember === false ? true : false)}
-                                                checked={remember}
-                                                label="Lembrar dados para próxima compra"
-                                                labelPlacement="end"
-                                                control={<Checkbox color="primary" />}/>
+                                            <Grid item xs={12} md={8} lg={6} xl={4} className={classes.gridLimit}>
+                                                <div className={classes.container}>
+                                                    <animated.div style={{ opacity: opacity.to((o) => 1 - o), transform }} className={classes.creditCard}>
+                                                        <div className={classes.ccContainer}>
+                                                            <Grid container spacing={4}>
+                                                                <Grid item xs={6}>
+                                                                    <img src={Chip} width="60px"/>
+                                                                </Grid>
+                                                                <Grid item xs={6} className={classes.ccFlag}>
+                                                                    {flagTransition((style, item) => 
+                                                                        item && (
+                                                                            <animated.div style={style} className="item">
+                                                                                <img src={flag} width={flag === Mastercard ? 80 : 100}/>
+                                                                            </animated.div>
+                                                                        )
+                                                                    )}
+                                                                </Grid>
+                                                                <Grid item xs={12} xl={12}>
+                                                                    {numberTransition((style, item) => 
+                                                                        item && (
+                                                                            <animated.div style={style} className="item">
+                                                                                <Typography variant="body1" className={classes.ccNumber}>
+                                                                                    {cardNumber}
+                                                                                </Typography>
+                                                                            </animated.div>
+                                                                        )
+                                                                    )}
+                                                                </Grid>
+                                                                <Grid item xs={6}>
+                                                                    <Typography variant="overline" className={classes.titles}>Card Holder</Typography>
+                                                                    {nameTransition((style, item) => 
+                                                                        item && (
+                                                                            <animated.div style={style} className="item">
+                                                                                <Typography variant="body1" className={classes.value}>{cardName.toLocaleUpperCase()}</Typography>
+                                                                            </animated.div>
+                                                                        )
+                                                                    )}
+                                                                </Grid>
+                                                                <Grid item xs={6}>
+                                                                    <Typography variant="overline" className={classes.titles}>Valid Thru</Typography>
+                                                                    {validThruTransition((style, item) => 
+                                                                        item && (
+                                                                            <animated.div style={style} className="item">
+                                                                                <Typography variant="body1" className={classes.value}>{moment(validThru).format("MM/YY")}</Typography>
+                                                                            </animated.div>
+                                                                        )
+                                                                    )}
+                                                                </Grid>
+                                                            </Grid>
+                                                        </div>
+                                                    </animated.div>
+                                                    <animated.div style={{opacity, transform, rotateY: "180deg"}} className={classes.creditCard}>
+                                                        <div className={classes.band}></div>
+                                                        <div className={classes.cvv}>
+                                                            <Typography variant="subtitle1" className={classes.cvvTitle}>CVV</Typography>
+                                                            <div className={classes.cvvBand}>
+                                                                <Typography variant="body1">{formik.values.cvv ? formik.values.cvv : isAmex ? "****" : "***"}</Typography>
+                                                            </div>
+                                                            <div className={classes.flagContainer}>
+                                                                <img src={flag} className={classes.flag}/>
+                                                            </div>
+                                                        </div>
+                                                    </animated.div>
+                                                </div>
                                             </Grid>
                                         </Grid>
+                                    </div>       
+                                )}
+                            </div>
+                            <div role="tabpanel" hidden={tabValue !== 1} id={`full-width-tabpanel-${1}`}>
+                                {tabValue === 1 && (
+                                    <div>
+                                        <Container maxWidth="xl">
+                                            <Typography variant="h5" style={{marginBottom: '20px'}}>
+                                                Meus cartões
+                                            </Typography>
+                                            <List>
+                                                {cardList.map((card) => (
+                                                    <Paper variant="outlined" className={classes.cardsPaper} key={card.id}>
+                                                        <Grid container spacing={3}>
+                                                            <Grid item>
+                                                                <Radio
+                                                                checked={cardId === card.id}
+                                                                onChange={() => setCardId(card.id)}
+                                                                value={cardId}/>
+                                                            </Grid>
+                                                            <Grid item>
+                                                                <Typography variant="overline">{card.description}</Typography>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Paper>                                   
+                                                ))}
+                                            </List>
+                                        </Container>
                                     </div>
-                                </Grid>
-                                <Grid item xs={12} md={8} lg={6} xl={4} className={classes.gridLimit}>
-                                    <div className={classes.container}>
-                                        <animated.div style={{ opacity: opacity.to((o) => 1 - o), transform }} className={classes.creditCard}>
-                                            <div className={classes.ccContainer}>
-                                                <Grid container spacing={4}>
-                                                    <Grid item xs={6}>
-                                                        <img src={Chip} width="60px"/>
-                                                    </Grid>
-                                                    <Grid item xs={6} className={classes.ccFlag}>
-                                                        {flagTransition((style, item) => 
-                                                            item && (
-                                                                <animated.div style={style} className="item">
-                                                                    <img src={flag} width={flag === Mastercard ? 80 : 100}/>
-                                                                </animated.div>
-                                                            )
-                                                        )}
-                                                    </Grid>
-                                                    <Grid item xs={12} xl={12}>
-                                                        {numberTransition((style, item) => 
-                                                            item && (
-                                                                <animated.div style={style} className="item">
-                                                                    <Typography variant="body1" className={classes.ccNumber}>
-                                                                        {cardNumber}
-                                                                    </Typography>
-                                                                </animated.div>
-                                                            )
-                                                        )}
-                                                    </Grid>
-                                                    <Grid item xs={6}>
-                                                        <Typography variant="overline" className={classes.titles}>Card Holder</Typography>
-                                                        {nameTransition((style, item) => 
-                                                            item && (
-                                                                <animated.div style={style} className="item">
-                                                                    <Typography variant="body1" className={classes.value}>{cardName.toLocaleUpperCase()}</Typography>
-                                                                </animated.div>
-                                                            )
-                                                        )}
-                                                    </Grid>
-                                                    <Grid item xs={6}>
-                                                        <Typography variant="overline" className={classes.titles}>Valid Thru</Typography>
-                                                        {validThruTransition((style, item) => 
-                                                            item && (
-                                                                <animated.div style={style} className="item">
-                                                                    <Typography variant="body1" className={classes.value}>{moment(validThru).format("MM/YY")}</Typography>
-                                                                </animated.div>
-                                                            )
-                                                        )}
-                                                    </Grid>
-                                                </Grid>
-                                            </div>
-                                        </animated.div>
-                                        <animated.div style={{opacity, transform, rotateY: "180deg"}} className={classes.creditCard}>
-                                            <div className={classes.band}></div>
-                                            <div className={classes.cvv}>
-                                                <Typography variant="subtitle1" className={classes.cvvTitle}>CVV</Typography>
-                                                <div className={classes.cvvBand}>
-                                                    <Typography variant="body1">{formik.values.cvv ? formik.values.cvv : isAmex ? "****" : "***"}</Typography>
-                                                </div>
-                                                <div className={classes.flagContainer}>
-                                                    <img src={flag} className={classes.flag}/>
-                                                </div>
-                                            </div>
-                                        </animated.div>
-                                    </div>
-                                </Grid>
-                            </Grid>
+                                )}
+                            </div>
                         </div>
-                        <Divider/>
-                        <List className={classes.root}>
-                            {cardList.map((card) => (
-                                <>
-                                    <ListItem key={card.id} role={undefined} dense divider>
-                                        <ListItemIcon>
-                                            <Radio
-                                            checked={cardId === card.id}
-                                            onChange={() => setCardId(card.id)}
-                                            value={cardId}/>
-                                        </ListItemIcon>
-                                        <ListItemText>
-                                            {card.description}
-                                        </ListItemText>
-                                    </ListItem>
-                                </>                                    
-                            ))}
-                        </List>
                     </Box>  
                 );
               case 2:

@@ -110,4 +110,7 @@ export const useStyles = makeStyles((theme) => ({
       maxHeight: '100%',
       objectPosition: 'top right'
   },
+  cardsPaper: {
+    padding: "15px"
+  }
 }));

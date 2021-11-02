@@ -1,18 +1,14 @@
 import React from 'react'
-import { Switch, BrowserRouter } from 'react-router-dom';
+import { Switch, BrowserRouter, Route, Redirect } from 'react-router-dom';
 import { Protected } from './protected.routes';
 import { Unprotected } from './unprotected.routes'
 import {
-    Welcome, 
     Login, 
     Home, 
     Users, 
     Prizes, 
     Profile, 
     Services, 
-    Plans, 
-    About, 
-    NotFound, 
     History,  
     Subscription, 
     Payment,
@@ -28,15 +24,16 @@ import {
     Points,
 } from '../Pages';
 
+const Index = () => {
+    return <Redirect to="/"/>
+}
+
 const Routes = () => {
     return (
         <BrowserRouter>
             <Switch>
-                <Unprotected path="/" exact component={Welcome}/>
-                <Unprotected path="/login" component={Login}/>
+                <Unprotected path="/" exact component={Login}/>
                 <Unprotected path="/register" component={Register}/>
-                <Unprotected path="/plans" component={Plans}/>
-                <Unprotected path="/about" component={About}/>
                 <Protected path="/dashboard/users" component={Users}/>
                 <Protected path="/dashboard/notifications" component={Notifications}/>
                 <Protected path="/dashboard/create-cc" component={CreateCreditCard}/>
@@ -54,6 +51,7 @@ const Routes = () => {
                 <Protected path="/dashboard/wallet" component={Wallet}/>
                 <Protected path="/dashboard/employee" component={Employee}/>
                 <Protected path="/dashboard/points" component={Points}/>
+                <Route path="*" component={Index}/>
             </Switch>
         </BrowserRouter>
     )

@@ -12,7 +12,7 @@ export default function Header(){
     return (
         <Navbar>
             <NavbarContainer>
-                <NavLogo to="/"><LogoImg src={Logo}/></NavLogo>
+                <NavLogo href="https://fidelija.com.br"><LogoImg src={Logo}/></NavLogo>
             </NavbarContainer> 
         </Navbar>
     );
