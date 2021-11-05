@@ -52,7 +52,7 @@ const UseTerms = () => {
                 4.5. O usuário poderá acompanhar seus pontos conquistados junto ao Parceiro em tempo real no aplicativo FideliJá, onde será informado a evolução da pontuação em todos os parceiros em que o Usuário esteja pontuando.
             </Typography>
             <Typography variant="body2">    
-                4.6. A pontuação sempre estará de acordo com os percentuais oferecidos pelo parceiro e apresentado de forma clara ao Usuário no aplicativo FideliJá e no Site _________________________________
+                4.6. A pontuação sempre estará de acordo com os percentuais oferecidos pelo parceiro e apresentado de forma clara ao Usuário no aplicativo FideliJá e no Site https://fidelija.com.br
             </Typography>
             <Typography variant="body2">    
                 4.7. A pontuação  pode ser alterada a qualquer momento pelo Parceiro sem que afete a pontuação já conquistada e consolidada pelo Usuário. Todas as compras realizadas nos Parceiros, após a modificação do percentual da pontuação, passam a ser Pontuadas sobre a nova condição estabelecida.
@@ -241,7 +241,7 @@ const UseTerms = () => {
                 14.1 O uso comercial da expressão "FideliJá " como marca nome empresarial ou nome de domínio, bem como os conteúdos das telas relativas aos serviços da Plataforma FideliJá, assim como os programas, bancos de dados, redes, arquivos que permitem que o Usuário acesse e use sua conta são propriedade ________________________________________________ e estão protegidos pelas leis e tratados internacionais de direito autoral, marcas, patentes, modelos e desenhos industriais. O uso indevido e a reprodução total ou parcial dos referidos conteúdos são proibidos, salvo a autorização expressa da FideliJá.
             </Typography>
             <Typography variant="body2">    
-                14.2 O Usuário da plataforma FideliJá e do site ___________________________ não poderão linkar outros sites de parceiros e anunciantes, o que não significa que esses sites sejam de propriedade ou operados pela Plataforma FideliJá, não possuindo controle sobre esses sites. A Plataforma FideliJá não será responsável pelos conteúdos, práticas e serviços ofertados nos mesmos. A presença de links para outros sites não implica relação de sociedade, de supervisão, de cumplicidade ou solidariedade da Plataforma FideliJá para com esses sites e seus conteúdos.
+                14.2 O Usuário da plataforma FideliJá e do site https://fidelija.com.br não poderão linkar outros sites de parceiros e anunciantes, o que não significa que esses sites sejam de propriedade ou operados pela Plataforma FideliJá, não possuindo controle sobre esses sites. A Plataforma FideliJá não será responsável pelos conteúdos, práticas e serviços ofertados nos mesmos. A presença de links para outros sites não implica relação de sociedade, de supervisão, de cumplicidade ou solidariedade da Plataforma FideliJá para com esses sites e seus conteúdos.
             </Typography>
             <Typography variant="subtitle1">
                 15 - INDENIZAÇÃO

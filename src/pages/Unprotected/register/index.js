@@ -497,21 +497,21 @@ const Register = () => {
             <Dialog
             open={openAlert}
             onClose={() => setOpenAlert(false)}>
-            <DialogTitle>Estabelecimento cadastradado</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
-                    Enviamos um link de confirmação no seu email, verifique a caixa de spam e lixo eletrônico.
-                </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-                <MuiButton onClick={resendEmail} color="primary">
-                    Reenviar o link 
-                </MuiButton>
-                <MuiButton onClick={() => setOpenAlert(false)} color="primary">
-                    Continuar
-                </MuiButton>
-            </DialogActions>
-        </Dialog>
+                <DialogTitle>Estabelecimento cadastradado</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Enviamos um link de confirmação no seu email, verifique a caixa de spam e lixo eletrônico.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <MuiButton onClick={resendEmail} color="primary">
+                        Reenviar o link 
+                    </MuiButton>
+                    <MuiButton onClick={() => setOpenAlert(false)} color="primary">
+                        Continuar
+                    </MuiButton>
+                </DialogActions>
+            </Dialog>
 
             <Backdrop className={classes.backdrop} open={isLoading}>
                 <CircularProgress color="inherit" />

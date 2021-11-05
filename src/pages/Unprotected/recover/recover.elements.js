@@ -23,10 +23,4 @@ export const Styles = makeStyles(theme => ({
     submit: {
       margin: theme.spacing(3, 0, 2),
     },
-    links: {
-        color: "#757575",
-        '&:hover': {
-            textDecoration: 'underline'
-        }
-    }
 }))

@@ -8,7 +8,8 @@ import {
     Avatar,
     Typography,
     Grid,
-    Box
+    Box,
+    Link as MuiLink
 } from '@material-ui/core';
 import { Snackbar, Backdrop, Header } from '../../../Components'
 import LockOutlinedIcon from '@material-ui/icons/LockOpenOutlined';
@@ -68,9 +69,9 @@ const Recover = () => {
                         </Button>
                         <Grid container>
                             <Grid item xs>
-                                <Link className={classes.links} to="/" variant="body2">
+                                <MuiLink component={Link} to="/" variant="body2">
                                    Voltar para o login
-                                </Link>
+                                </MuiLink>
                             </Grid>
                         </Grid>
                     </div>
@@ -78,9 +79,9 @@ const Recover = () => {
                 <Box mt={8}>
                     <Typography variant="body2" color="textSecondary" align="center">
                         {'Copyright © '}
-                        <a className={classes.links} color="inherit" href="https://fidelija.com.br/">
+                        <MuiLink color="inherit" href="https://fidelija.com.br/">
                             Fidelijá
-                        </a>{' '}
+                        </MuiLink>{' '}
                         {new Date().getFullYear()}
                         {'.'}
                     </Typography>

@@ -12,7 +12,8 @@ import {
     Grid,
     Box,
     Button,
-    Paper
+    Paper,
+    Link as MuiLink
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { AuthService, UserService } from '../../../Services';
@@ -120,7 +121,7 @@ export default function Login(props){
                 <Paper variant="outlined" className={classes.paper}>
                     <img src={Logo} alt="Fidelijá" className={classes.logo}/>
                     <Typography component="h1" variant="h5">
-                        Login Logista
+                        Login Admin
                     </Typography>
                     <div className={classes.form} >
                         <TextField fullWidth margin="normal" required label="Email" type="text" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)}/>
@@ -130,14 +131,14 @@ export default function Login(props){
                         </Button>
                         <Grid container>
                             <Grid item xs>
-                                <Link className={classes.links} to="/recover" variant="body2">
+                                <MuiLink component={Link} to="/recover" variant="body2">
                                     Esqueceu a senha?
-                                </Link>
+                                </MuiLink>
                             </Grid>
                             <Grid item>
-                                <Link className={classes.links} to="/register" variant="body2">
+                                <MuiLink component={Link} to="/register" variant="body2">
                                     Cadastre-se aqui
-                                </Link>
+                                </MuiLink>
                             </Grid>
                         </Grid>
                     </div>
@@ -145,9 +146,9 @@ export default function Login(props){
                 <Box mt={8}>
                     <Typography variant="body2" color="textSecondary" align="center">
                         {'Copyright © '}
-                        <a className={classes.links} color="inherit" href="https://fidelija.com.br/">
+                        <MuiLink color="inherit" href="https://fidelija.com.br/">
                             Fidelijá
-                        </a>{' '}
+                        </MuiLink>{' '}
                         {new Date().getFullYear()}
                         {'.'}
                     </Typography>
