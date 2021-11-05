@@ -1,4 +1,4 @@
-export { Login, Register } from './Unprotected';
+export { Login, Register, Recover } from './Unprotected';
 export { 
     Users, 
     Home, 

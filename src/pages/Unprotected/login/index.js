@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { 
     TextField, 
     IconButton, 
@@ -7,62 +8,18 @@ import {
     DialogActions, 
     DialogContent, 
     DialogTitle,
-    Backdrop,
-    CircularProgress,
-} from '@material-ui/core';
-
-import { Button as MuiButton } from '@material-ui/core'
-
-import { makeStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
-
-import { AuthService, UserService } from '../../../Services';
-import { 
-    Footer,
+    Container,
+    Grid,
+    Box,
     Button,
-    LButton,
-    Header,
-    Snackbar 
-} from '../../../Components';
-
-import { 
-    Container, 
-    FormContainer, 
-    LoginForm, 
-    Title, 
-    InputField, 
-    LoginRegister, 
-    PanelContainer, 
-    PanelLeft, 
-    SubTitle,
-    ContentLeft,
-    ImageLeft,
-    AccessWrapper,
-} from './LoginElements';
-
-import { LoginSvg } from '../../../Assets';
+    Paper
+} from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import { AuthService, UserService } from '../../../Services';
+import { Header, Snackbar, Backdrop } from '../../../Components';
+import { Logo } from '../../../Assets';
 import { getToken } from '../../../firebase'
-
-const useStyles = makeStyles((theme) => ({
-    appBar: {
-      position: 'relative',
-    },
-    title: {
-      marginLeft: theme.spacing(2),
-      flex: 1,
-    },
-    closeButton: {
-        position: 'absolute',
-        right: theme.spacing(1),
-        top: theme.spacing(1),
-        color: theme.palette.grey[500],
-    },
-    backdrop: {
-        zIndex: theme.zIndex.drawer + 1,
-        color: '#fff',
-    },
-}));
-  
+import { Styles } from './login.elements'
 
 export default function Login(props){
     const [email, setEmail] = useState('');
@@ -73,7 +30,7 @@ export default function Login(props){
     const [toggleSuccess, setToggleSuccess] = useState(false);
     const [toggleFailure, setToggleFailure] = useState(false);
 
-    const classes = useStyles();
+    const classes = Styles();
 
     const submitLogin = async () => {
         setIsLoading(true);
@@ -127,12 +84,10 @@ export default function Login(props){
 
     return (
         <>  
+            <Backdrop open={isLoading}/>
             <Snackbar toggleSnack={toggleSuccess || toggleFailure} time={toggleFailure ? 4500 : 3500} onClose={() => {setToggleFailure(false); setToggleSuccess(false)}}  color={toggleSuccess ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
             <Dialog onClose={() => setOpen(false)} aria-labelledby="customized-dialog-title" open={open}>
                 <DialogTitle disableTypography>
                     <Typography variant="h6">Validação de email</Typography>
@@ -152,53 +107,51 @@ export default function Login(props){
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-                    <MuiButton onClick={() => resendEmail()} color="primary">
+                    <Button onClick={() => resendEmail()} color="primary">
                         Reenviar link
-                    </MuiButton>
-                    <MuiButton onClick={() => setOpen(false)} color="primary">
+                    </Button>
+                    <Button onClick={() => setOpen(false)} color="primary">
                         Continuar
-                    </MuiButton>
+                    </Button>
                 </DialogActions>
             </Dialog>
             <Header/>
-            <Container>
-                <FormContainer>
-                    <LoginRegister>
-                        <LoginForm>
-                            <Title>Login</Title>
-                            <InputField>
-                                <TextField 
-                                    label="Email" 
-                                    type="text"
-                                    variant="outlined"
-                                    value={email} 
-                                    onChange={(e) => setEmail(e.target.value)}/>
-                            </InputField>
-                            <InputField>
-                            <TextField
-                                label="Senha"
-                                type="password"
-                                autoComplete="current-password"
-                                variant="outlined"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}/>
-                            </InputField>
-                            <AccessWrapper>
-                                <Button primary={1} large={0} onClick={() => submitLogin()}>Entrar</Button>
-                                <LButton redirectTo="/" primary={0} large={0}>Esqueceu a Senha?</LButton>
-                            </AccessWrapper>
-                        </LoginForm>
-                    </LoginRegister>
-                </FormContainer>
-                <PanelContainer>
-                    <PanelLeft>
-                        <ContentLeft>
-                            <SubTitle className="subtitle">Comece agora seu plano de fidelidade grátis</SubTitle>
-                            <LButton redirectTo="/register" primary={0} large={0}>Cadastre-se</LButton>
-                        </ContentLeft>
-                        <ImageLeft src={LoginSvg} alt="login icon"/>
-                    </PanelLeft>
-                </PanelContainer>
+            <Container component="main" maxWidth="xs">
+                <Paper variant="outlined" className={classes.paper}>
+                    <img src={Logo} alt="Fidelijá" className={classes.logo}/>
+                    <Typography component="h1" variant="h5">
+                        Login Logista
+                    </Typography>
+                    <div className={classes.form} >
+                        <TextField fullWidth margin="normal" required label="Email" type="text" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)}/>
+                        <TextField fullWidth margin="normal" required label="Senha" type="password" autoComplete="current-password" variant="outlined" value={password} onChange={(e) => setPassword(e.target.value)}/>
+                        <Button fullWidth variant="contained" color="primary" className={classes.submit} onClick={() => submitLogin()}>
+                            Entrar
+                        </Button>
+                        <Grid container>
+                            <Grid item xs>
+                                <Link className={classes.links} to="/recover" variant="body2">
+                                    Esqueceu a senha?
+                                </Link>
+                            </Grid>
+                            <Grid item>
+                                <Link className={classes.links} to="/register" variant="body2">
+                                    Cadastre-se aqui
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </div>
+                </Paper>
+                <Box mt={8}>
+                    <Typography variant="body2" color="textSecondary" align="center">
+                        {'Copyright © '}
+                        <a className={classes.links} color="inherit" href="https://fidelija.com.br/">
+                            Fidelijá
+                        </a>{' '}
+                        {new Date().getFullYear()}
+                        {'.'}
+                    </Typography>
+                </Box>
             </Container>
         </>
     );

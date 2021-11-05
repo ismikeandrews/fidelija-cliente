@@ -82,6 +82,11 @@ const AuthService = {
 
     async cpfVerifier(cpf){
         return axios.get(`${url}api/registered-user/${cpf}`);
+    },
+    
+    async recoverPassword(data){
+        const endpoint = `${url}api/user/recovery`;
+        return axios.post(endpoint, data);
     }
 }
 

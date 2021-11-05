@@ -1,1 +1,0 @@
-{"version":3,"sources":["webpack://src/Styles/index.css"],"names":[],"mappings":"AAAA,EACI,qBAAsB,CACtB,QAAS,CACT,SAAU,CACV,wCACJ","file":"main.54f629f5.chunk.css","sourcesContent":["*{\n    box-sizing: border-box;\n    margin: 0;\n    padding: 0;\n    font-family: 'Source Sans Pro', sans-serif;\n}"]}

@@ -22,6 +22,7 @@ import {
     EditStablishment,
     Notifications,
     Points,
+    Recover
 } from '../Pages';
 
 const Index = () => {
@@ -34,6 +35,7 @@ const Routes = () => {
             <Switch>
                 <Unprotected path="/" exact component={Login}/>
                 <Unprotected path="/register" component={Register}/>
+                <Unprotected path="/recover" component={Recover}/>
                 <Protected path="/dashboard/users" component={Users}/>
                 <Protected path="/dashboard/notifications" component={Notifications}/>
                 <Protected path="/dashboard/create-cc" component={CreateCreditCard}/>
