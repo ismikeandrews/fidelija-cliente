@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams, Redirect } from 'react-router-dom';
 import { useChain, useSpring, useTransition, animated, useSpringRef } from 'react-spring';
 import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
@@ -21,7 +21,6 @@ import {
     Button as MuiButton, 
     Container, 
     Paper,
-    ListItemIcon,
     Radio,
     RadioGroup,
     FormControl,
@@ -72,6 +71,7 @@ function Payment(){
     const numberTransitionRef = useSpringRef();
     const nameTransitionRef = useSpringRef();
     const validThruTransitionRef = useSpringRef();
+    const { productId } = useParams();
     const { transform, opacity } = useSpring({
         opacity: flipped ? 1 : 0,
         transform: `perspective(600px) rotateY(${flipped ? 180 : 0}deg)`,
@@ -151,7 +151,7 @@ function Payment(){
         const data = isPix ? {
            pix: true,
            product: {
-               id: 1
+               id: productId
            }
         } : {
             card: {
@@ -165,7 +165,7 @@ function Payment(){
                 description: values.description,
             },
             product: {
-                id: 1
+                id: productId
             }
         }
         try {
@@ -504,6 +504,10 @@ function Payment(){
                 return 'Unknown stepIndex';
             }
         }
+    }
+
+    if (productId !== '1' && productId !== '2') {
+        return <Redirect to="/dashboard/subscription"/>
     }
 
     return (

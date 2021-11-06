@@ -1,99 +1,76 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Typography, Container, Paper, Button} from '@material-ui/core'
-import { RocketSvg } from '../../../Assets';
+import { Grid, Typography, Container, Card, CardHeader, CardContent, CardActions, Button} from '@material-ui/core';
+import StarIcon from '@material-ui/icons/StarOutline';
+import { Styles } from './subscription.elements';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
+const tiers = [
+
+  {
+    title: 'Anual',
+    price: '500',
+    description: "Cobrando R$500 numa única vez e que pode ser parcelado em até 3x no cartão crédito sem juros.",
+    buttonText: 'Começar agora',
+    buttonVariant: 'contained',
+    link: '/dashboard/payment/1'
   },
-  main: {
-    margin: theme.spacing(2),
+  {
+    title: 'Mensal',
+    price: '50',
+    description: "Cancele a qualquer momento e volte para o plano básico sem perder o plano de fidelidade.",
+    buttonText: 'Começar agora',
+    buttonVariant: 'outlined',
+    link: '/dashboard/payment/2'
   },
-  textContent: {
-    padding: theme.spacing(2),
-    textAlign: 'center',  
-  },
-  elementsContent: {
-    padding: theme.spacing(2),
-  },
-  img: {
-    width: '300px',
-    display: 'block',
-    margin: 'auto',
-  },
-  list: {
-    listStyle: 'none',
-  },
-  paper: {
-    padding: theme.spacing(10),
-  }
-}));
+];
 
 const Subscription = () => {
-    const classes = useStyles();
+    const classes = Styles();
 
     return (
       <div>
-        <Container>
-          <div className={classes.main}>
-            <Paper variant="outlined" className={classes.paper}>
-              <Grid container direction="row" justifyContent="center" alignItems="center" spacing={3}>
-                <Grid item xs={7}>
-                  <Grid className={classes.textContent}>
-                    <Typography variant="h4">
-                      Teste por 3 mêses grátis.
+        <Container maxWidth="sm" component="main" className={classes.heroContent}>
+          <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
+            Planos
+          </Typography>
+          <Typography variant="h5" align="center" color="textSecondary" component="p">
+              Aproveite hoje mesmo, comece no plano básico e terá gratuidade vitalícia. E no plano PRO com desconto de R$100,00 em anuidade.
+          </Typography>
+        </Container>
+        <Container maxWidth="md" component="main">
+          <Grid container spacing={5} alignItems="flex-end">
+            {tiers.map((tier) => (
+              <Grid item key={tier.title} xs={12} md={6}>
+                <Card>
+                  <CardHeader
+                    title={tier.title}
+                    subheader={tier.subheader}
+                    titleTypographyProps={{ align: 'center' }}
+                    subheaderTypographyProps={{ align: 'center' }}
+                    action={tier.title === 'Anual' && <StarIcon />}
+                    className={classes.cardHeader}/>
+                  <CardContent className={classes.cardContent}>
+                    <div className={classes.cardPricing}>
+                      <Typography component="h2" variant="h3" color="textPrimary">
+                        R${tier.price}
+                      </Typography>
+                      <Typography variant="h6" color="textSecondary">
+                        {tier.title === 'Anual' ?  "/anual" : "mensal"}
+                      </Typography>
+                    </div>
+                    <Typography variant="subtitle1" align="center">
+                      {tier.description}
                     </Typography>
-                    <Typography variant="capitation">
-                      Após o periodo de teste valor mensal de R$ 49,90
-                    </Typography>
-                  </Grid>
-                  <Grid container>
-                    <Grid item xs={12}>
-                      <ul className={classes.list}>
-                        <li>
-                          <Typography variant="overline">
-                            Desconto em serviços.
-                          </Typography>
-                        </li>
-                        <li>
-                          <Typography variant="overline">
-                            Envio de emails de marketing.
-                          </Typography>
-                        </li>
-                        <li>
-                          <Typography variant="overline">
-                            Quantidade ilimitada de prêmios.
-                          </Typography>
-                        </li>
-                        <li>
-                          <Typography variant="overline">
-                            Notificação para prospecção de clientes.
-                          </Typography>
-                        </li>
-                        <li>
-                          <Typography variant="overline">
-                            Acesso a todas a funções do painel de controle.
-                          </Typography>
-                        </li>
-                      </ul>
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={5}>
-                  <Grid container direction="column" className={classes.elementsContent}>
-                    <Grid item xs={12} className={classes.elementsContent}>
-                      <img className={classes.img} src={RocketSvg}/>
-                    </Grid>
-                    <Grid item xs={12}> 
-                      <Button fullWidth variant="contained" color='primary' component={Link} to="/dashboard/payment">Comece agora</Button>
-                    </Grid>
-                  </Grid>
-                </Grid>
+                  </CardContent>
+                  <CardActions>
+                    <Button component={Link} to={tier.link} fullWidth variant={tier.buttonVariant} color="primary">
+                      {tier.buttonText}
+                    </Button>
+                  </CardActions>
+                </Card>
               </Grid>
-            </Paper>
-          </div>
+            ))}
+          </Grid>
         </Container>
       </div>
     );

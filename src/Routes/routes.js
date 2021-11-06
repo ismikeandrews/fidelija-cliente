@@ -49,7 +49,7 @@ const Routes = () => {
                 <Protected path="/dashboard/home" component={Home}/>
                 <Protected path="/dashboard/history" component={History}/>
                 <Protected path="/dashboard/subscription" component={Subscription}/>
-                <Protected path="/dashboard/payment" component={Payment}/>
+                <Protected path="/dashboard/payment/:productId" component={Payment}/>
                 <Protected path="/dashboard/wallet" component={Wallet}/>
                 <Protected path="/dashboard/employee" component={Employee}/>
                 <Protected path="/dashboard/points" component={Points}/>

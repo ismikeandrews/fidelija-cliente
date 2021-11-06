@@ -63,9 +63,9 @@ const Recover = () => {
                     </Typography>
                     <div className={classes.form} >
                         <TextField fullWidth margin="normal" required label="Nome" type="text" variant="outlined" value={name} onChange={(e) => setName(e.target.value)}/>
-                        <TextField fullWidth margin="normal" required label="Email" type="text" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)}/>
+                        <TextField fullWidth margin="normal" required label="Email" type="email" variant="outlined" value={email} onChange={(e) => setEmail(e.target.value)}/>
                         <Button fullWidth variant="contained" color="primary" className={classes.submit} onClick={() => sendRecover()}>
-                            Solicitar nova de senha
+                            Solicitar nova senha
                         </Button>
                         <Grid container>
                             <Grid item xs>
