@@ -552,7 +552,7 @@ function Payment(){
                                         <Typography variant="h5" style={{marginBottom: '20px'}}>
                                             Pix
                                         </Typography>
-                                        <Grid container spacing={4}>
+                                        <Grid container spacing={5}>
                                             <Grid item xs={8}>
                                                 <Grid container spacing={3}>
                                                     <Grid item xs={12}>
@@ -590,11 +590,11 @@ function Payment(){
                                                     </Grid>
                                                 </Grid>
                                             </Grid>
-                                            <Grid item xs={4}>
+                                            <Grid item>
                                                 <Typography variant="subtitle1">QR code</Typography>
                                                 <Card>
                                                     <CardContent>
-                                                        {isLoading ? <Skeleton variant="rect" width={260} height={260} /> : <CardMedia style={{height: 260}} image={qrCode}/>}  
+                                                        {isLoading ? <Skeleton variant="rect" width={260} height={260} /> : <CardMedia style={{height: 260, width: 260}} image={qrCode}/>}  
                                                     </CardContent>
                                                 </Card>
                                             </Grid>

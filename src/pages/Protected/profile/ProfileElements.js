@@ -72,8 +72,4 @@ export const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         gap: '20px',
     },
-    qrcode: {
-        maxWidth: "100%",
-        borderBottom: "2px solid #ced0ce"
-    }
 }))

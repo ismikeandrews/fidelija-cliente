@@ -4,10 +4,6 @@ import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import EditIcon from '@material-ui/icons/Edit';
-import CloseIcon from '@material-ui/icons/Close';
-import RotateRightIcon from '@material-ui/icons/RotateRight';
-import RotateLeftIcon from '@material-ui/icons/RotateLeft';
-import Cropper from 'react-easy-crop'
 import { 
     Avatar,
     Typography,
@@ -35,12 +31,12 @@ import {
     CardActionArea,
     CardActions
 } from '@material-ui/core';
+import Skeleton from '@material-ui/lab/Skeleton';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { useStyles } from './ProfileElements';
 import { AuthService, UserService } from '../../../Services';
 import { Snackbar, Button, Textfield, FButton, UseTerms, ImageCropper } from '../../../Components';
-import { ProductPlaceholder } from '../../../Assets';
 
 const Profile = () => {
     const [openProfileCropper, setOpenProfileCropper] = useState(false);
@@ -54,6 +50,7 @@ const Profile = () => {
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [qrcode, setQrcode] = useState('');
     const classes = useStyles();
     const inputFileL = useRef(null);
     const inputFileP = useRef(null);
@@ -89,9 +86,9 @@ const Profile = () => {
         fetchData()
     }, [])
 
-    const fetchData = () => {
+    const fetchData = async () => {
         try {
-            console.log(AuthService.getLoggedUser())
+            setQrcode(process.env.REACT_APP_BASE_URL + `api/stablishments/${AuthService.getLoggedUser().stablishment.id}/qrcode.png`)
             setUserObj(AuthService.getLoggedUser());
             setIsLoading(false);
         } catch (error) {
@@ -548,13 +545,17 @@ const Profile = () => {
                                 <Divider/>
                                 <div className={classes.paperContent}>
                                     <Grid container spacing={3}>
-                                        <Grid item xs={4}>
+                                        <Grid item>
                                             <Card variant="outlined">
                                                 <CardActionArea>
-                                                    <img src={ProductPlaceholder} className={classes.qrcode}/>
+                                                    {qrcode ? (
+                                                        <img src={qrcode} alt="QR code da loja"/>
+                                                        ) : (
+                                                        <Skeleton variant="rect" height={400} width={400}/>
+                                                    )}
                                                 </CardActionArea>
                                                 <CardActions>
-                                                    <IconButton>
+                                                    <IconButton component="a" href={process.env.REACT_APP_BASE_URL + `api/stablishments/${AuthService.getLoggedUser().stablishment.id}/qrcode.png`} download>
                                                         <GetAppIcon/>
                                                     </IconButton>
                                                     <IconButton>
