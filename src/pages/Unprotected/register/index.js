@@ -27,10 +27,10 @@ import {
     CircularProgress,
     DialogContentText
 } from '@material-ui/core';
-import { useStyles } from './RegisterElements';
+import { Styles } from './register.elements';
 import { cpf, cnpj } from 'cpf-cnpj-validator'; 
 import { FilesSvg } from '../../../Assets';
-import { Snackbar, Footer, Header, FButton, MaskedTextField, Textfield, UseTerms, ImageCropper } from '../../../Components';
+import { Snackbar, Header, FButton, MaskedTextField, Textfield, UseTerms, ImageCropper } from '../../../Components';
 import { AddressService, AuthService, UserService } from '../../../Services';
 
 const Register = () => {
@@ -51,7 +51,7 @@ const Register = () => {
     const [step2Error, setStep2Error] = useState(false);
     const [step3Error, setStep3Error] = useState(false);
     const [step4Error, setStep4Error] = useState(false);
-    const classes = useStyles();
+    const classes = Styles();
     const steps = ["Dados Pessoais", "Dados da empresa", "Dados de endereço", "Senha e termos de uso"];
     const inputFile = useRef(null);
     const formik = useFormik({

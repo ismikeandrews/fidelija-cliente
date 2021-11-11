@@ -1,41 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-
-import { KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import LastPageIcon from '@material-ui/icons/LastPage';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-
-import {
-    Link as MuiLink,
-    Breadcrumbs,
-    Backdrop,
-    CircularProgress,
-    Typography,
-    IconButton,
-    useTheme,
-    Paper,
-    Tooltip,
-    Divider,
-    Table,
-    TableHead,
-    TableBody,
-    TableRow,
-    TableCell,
-    TablePagination,
-    Container
-} from '@material-ui/core';
+import { Link as MuiLink, Breadcrumbs, Typography, IconButton, Paper, Tooltip, Divider, Table, TableHead, TableBody, TableRow, TableCell, Container } from '@material-ui/core';
+import { NavigateNext, MoreHoriz } from '@material-ui/icons';
 import { VoidSvg } from '../../../Assets'
-import { Snackbar } from '../../../Components';
+import { Snackbar, Pagination, Backdrop } from '../../../Components';
 import { UserService } from '../../../Services';
-import { useStyles } from './HistoryElements';
+import { Styles } from './history.elements';
 
 function History() {
-    const classes = useStyles();
-    const theme = useTheme();
-  
+    const classes = Styles();
     const [historyList, setHistoryList] = useState([]);
     const [page, setPage] = useState(1);
     const [item, setItem] = useState(10);
@@ -67,14 +41,12 @@ function History() {
             <Snackbar toggleSnack={toggleFailureSnack} time={4000} color="warning">
                 Ocorreu um erro ao carregar os dados, tente novamente mais tarde.
             </Snackbar>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
             <div className={classes.header}>
                 <Typography variant="h5">
                     Meu histórico
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>
@@ -94,7 +66,7 @@ function History() {
                                     </Typography>
                                     <Tooltip title="Mais opções">
                                         <IconButton aria-label="more">
-                                            <MoreHorizIcon fontSize="large" />
+                                            <MoreHoriz fontSize="large" />
                                         </IconButton>
                                     </Tooltip>
                                 </div>
@@ -122,44 +94,7 @@ function History() {
                                             ))}
                                         </TableBody>
                                     </Table>
-                                    <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25, 100]}
-                                    component="div"
-                                    count={historyList.length - 1}
-                                    rowsPerPage={item}
-                                    page={page - 1}
-                                    onChangePage={() => null}
-                                    labelRowsPerPage="Produtos por página:"
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count !== 0 ? count : `more than ${to}`}`}
-                                    onChangeRowsPerPage={(event) => fetchData(1, event.target.value)}
-                                    ActionsComponent={() => (
-                                        <div className={classes.paginationIcons}>
-                                            <IconButton
-                                                onClick={() => fetchData(1, item)}
-                                                disabled={page === 1}
-                                                aria-label="first page">
-                                                {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-                                            </IconButton>
-                                            <IconButton 
-                                                onClick={() => fetchData(page - 1, item)} 
-                                                disabled={page === 1} 
-                                                aria-label="previous page">
-                                                {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                                            </IconButton>
-                                            <IconButton
-                                                onClick={() => fetchData(page + 1, item)}
-                                                disabled={page === lastPage}
-                                                aria-label="next page">
-                                                {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                                            </IconButton>
-                                            <IconButton
-                                                onClick={() => fetchData(lastPage, item)}
-                                                disabled={page === lastPage}
-                                                aria-label="last page">
-                                                {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-                                            </IconButton>
-                                        </div>
-                                    )}/>
+                                    <Pagination rows={item} changeRows={(e) => fetchData(page, e.target.value)} count={lastPage} changePage={(e, page) => fetchData(page, item)}/>
                                 </div>
                             </>
                         ) : (

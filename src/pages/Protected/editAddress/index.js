@@ -2,20 +2,11 @@ import React, { useState, useEffect} from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import {
-    Backdrop,
-    CircularProgress,
-    Typography,
-    Breadcrumbs,
-    Link as MuiLink,
-    Paper,
-    Grid,
-} from '@material-ui/core';
+import NavigateNext from '@material-ui/icons/NavigateNext';
+import { Typography, Breadcrumbs, Link as MuiLink, Paper, Grid } from '@material-ui/core';
 import { AuthService, AddressService } from '../../../Services';
-import { useStyles } from './EditAddressElements';
-import { Snackbar, MaskedTextField, Textfield, FButton } from '../../../Components';
-
+import { Snackbar, MaskedTextField, Textfield, FButton, Backdrop } from '../../../Components';
+import { Styles } from './edit-address.elements';
 
 const EditAddress = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +14,7 @@ const EditAddress = () => {
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [infoMsg, setInfoMsg] = useState('');
     const { id } = useParams();
-    const classes = useStyles();
+    const classes = Styles();
 
     const formik = useFormik({
         initialValues: {
@@ -176,14 +167,12 @@ const EditAddress = () => {
             <Snackbar toggleSnack={toggleSuccessSnack || toggleFailureSnack} time={toggleFailureSnack ? 4500 : 3500} onClose={() => {setToggleFailureSnack(false); setToggleSuccessSnack(false)}}  color={toggleSuccessSnack ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
             <div className={classes.header}>
                 <Typography variant="h5">
                     Editar endereço {id === '0' ? 'pessoal' : id === '1' ? 'da loja' : ''}
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>

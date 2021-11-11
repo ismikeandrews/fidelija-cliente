@@ -1,36 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
 import clsx from 'clsx';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import AddIcon from '@material-ui/icons/Add';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { 
-    Accordion, 
-    AccordionDetails, 
-    AccordionSummary, 
-    AccordionActions,
-    Button,
-    Container,
-    Backdrop,
-    CircularProgress,
-    Dialog,
-    Divider,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Grid,
-    Paper,
-    Snackbar,
-    Typography,
-    Breadcrumbs,
-    Link as MuiLink
-} from '@material-ui/core';
+import { Add, ExpandMore, NavigateNext } from '@material-ui/icons';
+import { Accordion,  AccordionDetails, AccordionSummary, AccordionActions, Button, Container, Dialog, Divider, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Paper, Snackbar, Typography, Breadcrumbs, Link as MuiLink } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
-
 import { UserService } from '../../../Services';
-import { useStyles } from './WalletElements';
+import { Backdrop } from '../../../Components';
+import { Styles } from './wallet.elements';
 import { VisaSvg, MastercardSvg, AmexSvg, DinersclubSvg, NothingSvg } from '../../../Assets';
 
 const SnackType = props => {
@@ -44,7 +20,7 @@ const SnackType = props => {
 }
 
 function Wallet(){
-    const classes = useStyles();
+    const classes = Styles();
     const [openAlert, setOpenAlert] = useState(false)
     const [cardList, setCardList] = useState([]);
     const [expanded, setExpanded] = useState(false);
@@ -61,7 +37,6 @@ function Wallet(){
     const fetchData = async () => {
         try {
             const res = await UserService.getCreditCards();
-            console.log(res.data)
             setCardList(res.data);
             setIsLoading(false)
         } catch (error) {
@@ -128,10 +103,7 @@ function Wallet(){
             <SnackType toggleSnack={toggleSuccessSnack || toggleFailureSnack} time={3500}  color={toggleSuccessSnack ? "success" : "warning"}>
                 {infoMsg}
             </SnackType>
-
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
 
             <Dialog
             open={openAlert}
@@ -157,7 +129,7 @@ function Wallet(){
                     <Typography variant="h5">
                         Meus cartões
                     </Typography>
-                    <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                    <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                         <MuiLink color="inherit" component={Link} to="/">
                             Home
                         </MuiLink>
@@ -168,7 +140,7 @@ function Wallet(){
                 </div>
                 {cardList.length > 0 && (
                     <div>
-                        <Button variant="contained" color="primary" endIcon={<AddIcon/>} component={Link} to="/dashboard/create-cc">
+                        <Button variant="contained" color="primary" endIcon={<Add/>} component={Link} to="/dashboard/create-cc">
                             Novo cartão
                         </Button>
                     </div>
@@ -186,10 +158,10 @@ function Wallet(){
                                 <div>
                                     <Grid container>
                                         {cardList.map((card, index) => (
-                                            <Grid item xs={12}>
-                                                <Accordion key={card.id} className={classes.accordion} expanded={expanded === index} onChange={handleChange(index)} className={classes.arccord}>
+                                            <Grid item xs={12} key={card.id}>
+                                                <Accordion className={classes.accordion} expanded={expanded === index} onChange={handleChange(index)} className={classes.arccord}>
                                                     <AccordionSummary
-                                                    expandIcon={<ExpandMoreIcon />}
+                                                    expandIcon={<ExpandMore/>}
                                                     aria-controls="panel1c-content"
                                                     id="panel1c-header">
                                                     <div className={classes.column}>
@@ -240,7 +212,7 @@ function Wallet(){
                                 <Typography variant="h6" className={classes.infoText}>
                                     Você não tem nem um cartão cadastrado.
                                 </Typography>
-                                <Button  variant="contained" color="primary" endIcon={<AddIcon/>} component={Link} to="/dashboard/create-cc">
+                                <Button  variant="contained" color="primary" endIcon={<Add/>} component={Link} to="/dashboard/create-cc">
                                     Novo cartão
                                 </Button>
                             </div>

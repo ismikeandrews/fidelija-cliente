@@ -13,7 +13,7 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined';
-
+import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber';
 import { 
   CssBaseline, 
   Collapse,
@@ -246,6 +246,12 @@ export default function Dashboard(props) {
             </ListItemIcon>
             <ListItemText primary="Histórico"/>
           </ListItem>
+          <ListItem button component={Link} to="/dashboard/redeem">
+            <ListItemIcon>
+              <ConfirmationNumberIcon />
+            </ListItemIcon>
+            <ListItemText primary="Resgate"/>
+          </ListItem>
 
           <ListItem button onClick={() => {setOpenUserNest(!openUserNest); setOpen(true)}}>
             <ListItemIcon>
@@ -260,7 +266,7 @@ export default function Dashboard(props) {
                 <ListItemText primary="Clientes" />
               </ListItem>
               <ListItem button className={classes.nested} component={Link} to="/dashboard/employee">
-                <ListItemText primary="Funcionarios" />
+                <ListItemText primary="Funcionários" />
               </ListItem>
               <ListItem button className={classes.nested} component={Link} to="/dashboard/points">
                 <ListItemText primary="Pontuar" />

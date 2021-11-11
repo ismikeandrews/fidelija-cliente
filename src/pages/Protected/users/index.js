@@ -1,47 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import LastPageIcon from '@material-ui/icons/LastPage';
-import { KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import SearchIcon from '@material-ui/icons/Search';
-import { 
-  Typography,
-  Link as MuiLink,
-  Breadcrumbs,
-  Backdrop,
-  Container,
-  CircularProgress,
-  Paper,
-  Grid,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  useTheme,
-  IconButton,
-  TablePagination,
-  Divider,
-  Avatar,
-  Tabs,
-  Tab,
-  Select,
-  MenuItem
-} from '@material-ui/core';
+import { NavigateNext, Search } from '@material-ui/icons';
+import { Typography, Link as MuiLink, Breadcrumbs, Container, Paper, Grid, FormControl, InputLabel, OutlinedInput, InputAdornment, Table, TableHead, TableBody, TableRow, TableCell, Divider, Avatar, Tabs, Tab, Select, MenuItem } from '@material-ui/core';
 import { PeopleSvg } from '../../../Assets'
-import { Snackbar } from '../../../Components';
+import { Snackbar, Pagination, Backdrop } from '../../../Components';
 import { UserService } from '../../../Services';
-import { useStyles } from './UsersElements';
+import { Styles } from './users.elements';
 
 function Users() {
-  const classes = useStyles();
-  const theme = useTheme();
+  const classes = Styles();
   const timeoutRef = useRef(null);
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -61,7 +29,6 @@ function Users() {
   const fetchData = async (currentPage, rowsPerPage) => {
     try {
       const clientRes = await UserService.getClientList(currentPage, rowsPerPage);
-      console.log(clientRes.data);
       setPage(clientRes.data.current_page);
       setItem(clientRes.data.per_page);
       setLastPage(clientRes.data.last_page);
@@ -74,6 +41,8 @@ function Users() {
       setToggleFailureSnack(true);
     }
   }
+
+
 
   const handleSearch = (name) => {
     setSearchTerm(name);
@@ -98,15 +67,12 @@ function Users() {
       <Snackbar toggleSnack={toggleFailureSnack} time={4000} color="warning">
         {feedbackAlert}
       </Snackbar>
-      <Backdrop className={classes.backdrop} open={isLoading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-
+      <Backdrop open={isLoading}/>
       <div className={classes.header}>
         <Typography variant="h5">
           Meus usuários
         </Typography>
-        <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+        <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
             <MuiLink color="inherit" component={Link} to="/">
                 Home
             </MuiLink>
@@ -137,7 +103,7 @@ function Users() {
                               label="procurar"
                               value={searchTerm}
                               onChange={e => handleSearch(e.target.value)}
-                              endAdornment={<InputAdornment position="end"><SearchIcon color="primary"/></InputAdornment>}/>
+                              endAdornment={<InputAdornment position="end"><Search color="primary"/></InputAdornment>}/>
                           </FormControl>
                       </Grid>
                       <Grid item xs={3}>
@@ -179,49 +145,16 @@ function Users() {
                           </TableCell>
                           <TableCell align="left">{user.city} - {user.state}</TableCell>
                           <TableCell align="left">{moment(user.updated_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
-                          <TableCell align="right">{user.points} <spam>pts.</spam></TableCell>
+                          <TableCell align="right">{user.points} <span>pts.</span></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
-                  <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, 100]}
-                  component="div"
-                  count={userList.length - 1}
-                  rowsPerPage={item}
-                  page={page - 1}
-                  onChangePage={() => null}
-                  labelRowsPerPage="Produtos por página:"
-                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count !== 0 ? count : `more than ${to}`}`}
-                  onChangeRowsPerPage={(event) => fetchData(1, event.target.value)}
-                  ActionsComponent={() => (
-                      <div className={classes.paginationIcons}>
-                          <IconButton
-                              onClick={() => fetchData(1, item)}
-                              disabled={page === 1}
-                              aria-label="first page">
-                              {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-                          </IconButton>
-                          <IconButton 
-                              onClick={() => fetchData(page - 1, item)} 
-                              disabled={page === 1} 
-                              aria-label="previous page">
-                              {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                          </IconButton>
-                          <IconButton
-                              onClick={() => fetchData(page + 1, item)}
-                              disabled={page === lastPage}
-                              aria-label="next page">
-                              {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                          </IconButton>
-                          <IconButton
-                              onClick={() => fetchData(lastPage, item)}
-                              disabled={page === lastPage}
-                              aria-label="last page">
-                              {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-                          </IconButton>
-                      </div>
-                  )}/>
+                  <Pagination 
+                  rows={item} 
+                  count={lastPage}
+                  changeRows={(e) => fetchData(page, e.target.value)} 
+                  changePage={(e, page) => fetchData(page, item)}/>
                 </div>
               </>
             ) : (

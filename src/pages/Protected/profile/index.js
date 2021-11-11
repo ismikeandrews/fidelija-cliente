@@ -2,41 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import EditIcon from '@material-ui/icons/Edit';
-import { 
-    Avatar,
-    Typography,
-    Breadcrumbs,
-    Link as MuiLink,
-    Tabs,
-    Tab,
-    Divider,
-    Paper,
-    Grid,
-    Button as MuiButton,
-    Checkbox,
-    FormControlLabel,
-    IconButton,
-    Tooltip,
-    Backdrop,
-    CircularProgress,
-    Dialog,
-    DialogContent,
-    Slider,
-    DialogActions,
-    DialogTitle,
-    Card,
-    CardContent,
-    CardActionArea,
-    CardActions
-} from '@material-ui/core';
+import { Edit, NavigateNext, FileCopy, GetApp } from '@material-ui/icons';
+import { Avatar, Typography, Breadcrumbs, Link as MuiLink, Tabs, Tab, Divider, Paper, Grid, Button as MuiButton, Checkbox, FormControlLabel, IconButton, Tooltip, Card, CardActionArea, CardActions } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import { useStyles } from './ProfileElements';
 import { AuthService, UserService } from '../../../Services';
-import { Snackbar, Button, Textfield, FButton, UseTerms, ImageCropper } from '../../../Components';
+import { Snackbar, Textfield, FButton, UseTerms, ImageCropper, Backdrop } from '../../../Components';
+import { Styles } from './profile.elements';
 
 const Profile = () => {
     const [openProfileCropper, setOpenProfileCropper] = useState(false);
@@ -51,9 +22,10 @@ const Profile = () => {
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [qrcode, setQrcode] = useState('');
-    const classes = useStyles();
+    const classes = Styles();
     const inputFileL = useRef(null);
     const inputFileP = useRef(null);
+
     const formik = useFormik({
         initialValues: {
             currentPassword: '',
@@ -172,9 +144,7 @@ const Profile = () => {
         <div>
             <ImageCropper open={openProfileCropper} close={() => setOpenProfileCropper(false)} url={profileUrl} handleChange={submitProfile}/>
             <ImageCropper open={openLogoCropper} close={() => setOpenLogoCropper(false)} url={logoUrl} handleChange={submitLogo}/>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
             <Snackbar toggleSnack={toggleSuccessSnack || toggleFailureSnack} time={toggleFailureSnack ? 4500 : 3500} onClose={() => {setToggleFailureSnack(false); setToggleSuccessSnack(false)}}  color={toggleSuccessSnack ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>
@@ -182,7 +152,7 @@ const Profile = () => {
                 <Typography variant="h5">
                     Minha conta
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>
@@ -271,7 +241,7 @@ const Profile = () => {
                                             </Typography>
                                             <Tooltip title="Editar">
                                                 <IconButton color="primary" component={Link} to={`/dashboard/edit-address/0`}>
-                                                    <EditIcon fontSize="default" />
+                                                    <Edit fontSize="default" />
                                                 </IconButton>
                                             </Tooltip>
                                         </div>
@@ -377,7 +347,7 @@ const Profile = () => {
                                             </Typography>
                                             <Tooltip title="Editar">
                                                 <IconButton color="primary" component={Link} to="/dashboard/edit-stablishment">
-                                                    <EditIcon fontSize="default" />
+                                                    <Edit fontSize="default" />
                                                 </IconButton>
                                             </Tooltip>
                                         </div>
@@ -418,7 +388,7 @@ const Profile = () => {
                                             </Typography>
                                             <Tooltip title="Editar">
                                                 <IconButton color="primary" component={Link} to={`/dashboard/edit-address/1`}>
-                                                    <EditIcon fontSize="default" />
+                                                    <Edit fontSize="default" />
                                                 </IconButton>
                                             </Tooltip>
                                         </div>
@@ -555,11 +525,11 @@ const Profile = () => {
                                                     )}
                                                 </CardActionArea>
                                                 <CardActions>
-                                                    <IconButton component="a" href={process.env.REACT_APP_BASE_URL + `api/stablishments/${AuthService.getLoggedUser().stablishment.id}/qrcode.png`} download>
-                                                        <GetAppIcon/>
+                                                    <IconButton component="a" href={qrcode} download="qrcode-fidelija.png">
+                                                        <GetApp/>
                                                     </IconButton>
-                                                    <IconButton>
-                                                        <FileCopyIcon/>
+                                                    <IconButton onClick={() => {navigator.clipboard.writeText(qrcode)}}>
+                                                        <FileCopy/>
                                                     </IconButton>
                                                 </CardActions>
                                             </Card>

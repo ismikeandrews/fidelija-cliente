@@ -1,11 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Grid, Typography, Container, Card, CardHeader, CardContent, CardActions, Button} from '@material-ui/core';
-import StarIcon from '@material-ui/icons/StarOutline';
+import Star from '@material-ui/icons/StarOutline';
 import { Styles } from './subscription.elements';
 
 const tiers = [
-
   {
     title: 'Anual',
     price: '500',
@@ -47,7 +46,7 @@ const Subscription = () => {
                     subheader={tier.subheader}
                     titleTypographyProps={{ align: 'center' }}
                     subheaderTypographyProps={{ align: 'center' }}
-                    action={tier.title === 'Anual' && <StarIcon />}
+                    action={tier.title === 'Anual' && <Star/>}
                     className={classes.cardHeader}/>
                   <CardContent className={classes.cardContent}>
                     <div className={classes.cardPricing}>

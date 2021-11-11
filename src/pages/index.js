@@ -17,4 +17,5 @@ export {
     EditStablishment,
     Notifications,
     Points,
+    Redeem
 } from './Protected';

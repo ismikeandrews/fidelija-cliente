@@ -1,34 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import fileSize from 'filesize';
 import { FileDrop } from 'react-file-drop'
-import { Link } from 'react-router-dom'
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import ClearIcon from '@material-ui/icons/Clear';
-import {
-    Typography,
-    Link as MuiLink,
-    Grid,
-    Paper,
-    Container,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    IconButton,
-    Tooltip,
-    CircularProgress,
-    Backdrop,
-    Breadcrumbs,
-    TextField
-} from '@material-ui/core'
-
-import { Snackbar, FButton, Textfield, ImageCropper } from '../../../Components'
+import { NavigateNext, Clear } from '@material-ui/icons';
+import { Typography, Link as MuiLink, Grid, Paper, Container, Select, MenuItem, FormControl, InputLabel, IconButton, Tooltip, Breadcrumbs, TextField } from '@material-ui/core'
+import { Snackbar, FButton, Textfield, ImageCropper, Backdrop } from '../../../Components'
 import { ProductService } from '../../../Services';
-import { useStyles } from './CreatePrizeElements';
 import { FilesSvg } from '../../../Assets'
+import { Styles } from './create-prize.elements';
 
 const INITIAL_FORM_STATE = {
     productPrice: '',
@@ -43,7 +25,7 @@ const FORM_VALIDATION = Yup.object().shape({
 })
 
 const CreatePrize = () => {
-    const classes = useStyles();
+    const classes = Styles();
     const inputFile = useRef(null);
     const [openDialog, setOpenDialog] = useState(false)
     const [uploadedFile, setUploadedFile] = useState(null);
@@ -136,15 +118,13 @@ const CreatePrize = () => {
             <Snackbar toggleSnack={toggleErrorSnack} time={4000} color="error">
                 {errorMsg}
             </Snackbar>
-
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            
+            <Backdrop open={isLoading}/>
             <div className={classes.header}>
                 <Typography variant="h5">
                     Criar um novo produto
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>
@@ -202,7 +182,7 @@ const CreatePrize = () => {
                                                     </div>
                                                     <Tooltip title="Remover">
                                                         <IconButton aria-label="delete" className={classes.margin} onClick={() => setUploadedFile(null)}>
-                                                            <ClearIcon fontSize="default"/>
+                                                            <Clear fontSize="default"/>
                                                         </IconButton>
                                                     </Tooltip>
                                                 </div>

@@ -113,7 +113,6 @@ const UseTerms = () => {
                 5. RESGATE DE PONTOS
             </Typography>
             <Typography variant="body2">
-            <Typography variant="body2">    
                 5.1. O Usuário deverá proceder conforme orientações contidas nas Informações do Parceiro na Plataforma FideliJá, observando todos os critérios apresentados a seguir:
             </Typography>
             <Typography variant="body2">    
@@ -133,7 +132,6 @@ const UseTerms = () => {
             </Typography>
             <Typography variant="body2">    
                 5.6. O resgate dos Pontos se dará na sua totalidade, ao ser regatado a pontuação referente ao seu premio, será subtraída. Iniciando-se assim uma nova etapa para pontuação.
-            </Typography>
             </Typography>
             <Typography variant="subtitle1">
                 6. VALIDADE DOS BÔNUS

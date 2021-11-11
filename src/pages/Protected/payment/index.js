@@ -7,41 +7,12 @@ import MomentUtils from '@date-io/moment';
 import moment from 'moment';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import Skeleton from '@material-ui/lab/Skeleton';
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { 
-    Typography,
-    Grid,
-    FormControlLabel,
-    Checkbox,
-    Box, 
-    Breadcrumbs,
-    Backdrop,
-    CircularProgress,
-    Button as MuiButton, 
-    Container, 
-    Paper,
-    Radio,
-    RadioGroup,
-    FormControl,
-    Stepper,
-    Step,
-    StepLabel,
-    Card,
-    CardMedia,
-    CardContent,
-    List,
-    ListItem,
-    ListItemText,
-    Divider,
-    Link as MuiLink,
-    Tab,
-    Tabs
-} from '@material-ui/core';
-import { Snackbar, MaskedTextField, FButton, Textfield } from '../../../Components';
-import { useStyles } from './PaymentElements';
+import { FileCopyOutlined, NavigateNext } from '@material-ui/icons';
+import { Typography, Grid, FormControlLabel, Checkbox, Box, Breadcrumbs, Button as MuiButton, Container, Paper, Radio, RadioGroup, FormControl, Stepper, Step, StepLabel, Card, CardMedia, CardContent, List, ListItem, ListItemText, Divider, Link as MuiLink, Tab, Tabs } from '@material-ui/core';
+import { Snackbar, MaskedTextField, FButton, Textfield, Backdrop } from '../../../Components';
+import { Amex, Chip, Discover, Mastercard, Troy, Visa} from '../../../Assets'
 import { UserService } from '../../../Services';
-import { Amex, Chip, Dinersclub, Discover, Jcb, Mastercard, Troy, Unionpay, Visa} from '../../../Assets'
+import { Styles } from './payment.elements';
 
 function Payment(){
     const [flipped, setFlipped] = useState(false);
@@ -65,7 +36,7 @@ function Payment(){
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [infoMsg, setInfoMsg] = useState('');
-    const classes = useStyles();
+    const classes = Styles();
     const springRef = useSpringRef();
     const flagTransitionRef = useSpringRef();
     const numberTransitionRef = useSpringRef();
@@ -416,7 +387,7 @@ function Payment(){
                                             <List>
                                                 {cardList.map((card) => (
                                                     <Paper variant="outlined" className={classes.cardsPaper} key={card.id}>
-                                                        <Grid container spacing={3}>
+                                                        <Grid container spacing={3} alignItems="center">
                                                             <Grid item>
                                                                 <Radio
                                                                 checked={cardId === card.id}
@@ -516,14 +487,12 @@ function Payment(){
                 {infoMsg}
             </Snackbar>
 
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
             <div style={{marginBottom: '30px'}}>
                 <Typography variant="h5">
                     Pagamento
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>
@@ -537,7 +506,7 @@ function Payment(){
             </div>
             <Paper elevation={3}>
                 <div className={classes.root}>
-                    <Stepper activeStep={activeStep} alternativeLabel>
+                    <Stepper activeStep={activeStep} alternativeLabel style={{marginBottom: "25px"}}>
                         {steps.map((label) => (
                             <Step key={label}>
                                 <StepLabel>{label}</StepLabel>
@@ -548,21 +517,19 @@ function Payment(){
                         {activeStep === steps.length ? (
                             <div className={classes.main}>
                                 {isPix && (
-                                    <Box>
-                                        <Typography variant="h5" style={{marginBottom: '20px'}}>
-                                            Pix
-                                        </Typography>
-                                        <Grid container spacing={5}>
-                                            <Grid item xs={8}>
-                                                <Grid container spacing={3}>
-                                                    <Grid item xs={12}>
+                                    <div>
+
+                                        <Grid container spacing={3} className={classes.pixResume}>
+                                            <Grid item>
+                                                <div>
+                                                    <Typography variant="h5" style={{marginBottom: '20px'}}>
+                                                        Pix
+                                                    </Typography>
+                                                    <div>
                                                         <Typography variant="subtitle1">Pix copia e cola</Typography>
                                                         <Paper variant="outlined" className={classes.paper} onClick={() => {navigator.clipboard.writeText(pixCode)}}>
-                                                            <Grid container spacing={1}>
-                                                                <Grid item xs={1}>
-                                                                    <FileCopyOutlinedIcon color="primary" className={classes.icon}/>
-                                                                </Grid>
-                                                                <Grid item xs={11}>
+                                                            <div className={classes.pixCopy}>
+                                                                <div>
                                                                     {isLoading ? (
                                                                         <Skeleton variant="text"/>
                                                                     ) : (
@@ -570,25 +537,26 @@ function Payment(){
                                                                             {pixCode}
                                                                         </Typography>
                                                                     )}
-                                                                </Grid>
-                                                            </Grid>
+                                                                </div>
+                                                                <div>
+                                                                    <FileCopyOutlined color="primary" className={classes.icon}/>
+                                                                </div>
+                                                            </div>
                                                         </Paper>
-                                                    </Grid>
-                                                    <Grid item xs={12}>
-                                                        <Container>
-                                                            <Typography variant="body2">Entre no aplicativo do seu banco acesse a area pix, escolha entre a opção de ler o código QR ou copiar e colar o código.</Typography>
-                                                            <List className={classes.root} aria-label="mailbox folders">
-                                                                <ListItem light>
-                                                                    <ListItemText primary="Nome" secondary={name}/>
-                                                                </ListItem>
-                                                                <Divider />
-                                                                <ListItem>
-                                                                    <ListItemText primary="Email" secondary={email}/>
-                                                                </ListItem>
-                                                            </List>
-                                                        </Container>
-                                                    </Grid>
-                                                </Grid>
+                                                        <Typography variant="body2">Entre no aplicativo do seu banco acesse a area pix, escolha entre a opção de ler o código QR ou copiar e colar o código.</Typography>
+                                                    </div>
+                                                    <Container>
+                                                        <List className={classes.root} aria-label="mailbox folders">
+                                                            <ListItem light>
+                                                                <ListItemText primary="Nome" secondary={name}/>
+                                                            </ListItem>
+                                                            <Divider />
+                                                            <ListItem>
+                                                                <ListItemText primary="Email" secondary={email}/>
+                                                            </ListItem>
+                                                        </List>
+                                                    </Container>
+                                                </div>
                                             </Grid>
                                             <Grid item>
                                                 <Typography variant="subtitle1">QR code</Typography>
@@ -599,7 +567,10 @@ function Payment(){
                                                 </Card>
                                             </Grid>
                                         </Grid>
-                                    </Box>
+                                        <div className={classes.pixButton}>
+                                            <MuiButton color="primary" variant="contained" onClick={() => console.log("tratamento")}>Concluir</MuiButton>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                             ) : (

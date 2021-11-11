@@ -1,26 +1,11 @@
 import React, { useState } from 'react';
 import InputMask from 'react-input-mask';
 import { Link } from 'react-router-dom';
-import { 
-    Backdrop,
-    CircularProgress,
-    Typography,
-    Breadcrumbs,
-    Link as MuiLink,
-    Grid,
-    Paper,
-    TextField,
-    List,
-    ListItem,
-    ListItemAvatar,
-    Avatar,
-    ListItemText,
-    Button
-} from '@material-ui/core';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { AccountBox, MonetizationOn, Receipt, AccountBalance} from '@material-ui/icons';
-import { styles } from './points.elements';
-import { Snackbar } from '../../../Components'
+import { Typography, Breadcrumbs, Link as MuiLink, Grid, Paper, TextField, List, ListItem, ListItemAvatar, Avatar, ListItemText, Button } from '@material-ui/core';
+import NavigateNext from '@material-ui/icons/NavigateNext';
+import { AccountBox, MonetizationOn, Receipt, AccountBalance } from '@material-ui/icons';
+import { Styles } from './points.elements';
+import { Snackbar, Backdrop } from '../../../Components'
 import { UserService, AuthService } from '../../../Services';
 
 const Points = () => {
@@ -32,7 +17,7 @@ const Points = () => {
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [infoMsg, setInfoMsg] = useState('');
-    const classes = styles();
+    const classes = Styles();
 
     const searchUser = async () => {
         setIsLoading(true)
@@ -84,14 +69,12 @@ const Points = () => {
             <Snackbar toggleSnack={toggleSuccessSnack || toggleFailureSnack} time={toggleFailureSnack ? 4500 : 3500} onClose={() => {setToggleFailureSnack(false); setToggleSuccessSnack(false)}}  color={toggleSuccessSnack ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
            <div className={classes.header}>
                 <Typography variant="h5">
                     Pontuar usuário
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>
