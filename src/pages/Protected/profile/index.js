@@ -166,7 +166,7 @@ const Profile = () => {
                     <Tab label="Perfil"/>
                     <Tab label="Loja"/>
                     <Tab label="Notificações"/>
-                    <Tab label="Meu QR code"/>
+                    <Tab label="Downloads"/>
                     <Tab label="Segurança"/>
                     <Tab label="Termos de uso"/>
                 </Tabs>

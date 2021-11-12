@@ -1,11 +1,42 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import { NavigateNext, Search } from '@material-ui/icons';
-import { Typography, Link as MuiLink, Breadcrumbs, Container, Paper, Grid, FormControl, InputLabel, OutlinedInput, InputAdornment, Table, TableHead, TableBody, TableRow, TableCell, Divider, Avatar, Tabs, Tab, Select, MenuItem } from '@material-ui/core';
+import { NavigateNext, Search, AttachMoney } from '@material-ui/icons';
+import { 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogContentText, 
+  DialogActions, 
+  Typography, 
+  Link as MuiLink, 
+  Breadcrumbs, 
+  Container, 
+  Paper, 
+  Grid, 
+  FormControl, 
+  InputLabel, 
+  OutlinedInput, 
+  InputAdornment, 
+  Table, 
+  TableHead, 
+  TableBody, 
+  TableRow, 
+  TableCell, 
+  Divider, 
+  Avatar, 
+  Tabs, 
+  Tab, 
+  Select, 
+  MenuItem,
+  TextField, 
+  IconButton,
+  Tooltip,
+  Button
+} from '@material-ui/core';
 import { PeopleSvg } from '../../../Assets'
 import { Snackbar, Pagination, Backdrop } from '../../../Components';
-import { UserService } from '../../../Services';
+import { UserService, AuthService } from '../../../Services';
 import { Styles } from './users.elements';
 
 function Users() {
@@ -19,12 +50,18 @@ function Users() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastPage, setLastPage] = useState(null);
   const [feedbackAlert, setFeedbackAlert] = useState('');
+  const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false)
   const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
-  const [tabValue, setTabValue] = useState(0)
+  const [tabValue, setTabValue] = useState(0);
+  const [ammount, setAmmount] = useState('');
+  const [reference, setReference] = useState('');
+  const [name, setName] = useState('');
+  const [userId, setUserId] = useState('');
+  const [toggleDialog, setToggleDialog] = useState(false);
 
   useEffect(() => {
     fetchData(page, item);
-  }, []);
+  }, [page, item]);
 
   const fetchData = async (currentPage, rowsPerPage) => {
     try {
@@ -41,8 +78,6 @@ function Users() {
       setToggleFailureSnack(true);
     }
   }
-
-
 
   const handleSearch = (name) => {
     setSearchTerm(name);
@@ -62,12 +97,59 @@ function Users() {
     }, 500);
   }
 
+  const submitScore = async () => {
+    setIsLoading(true);
+    setToggleDialog(false);
+    const data = {
+        user_id: userId, 
+        ammount: ammount,
+        reference: reference,
+        employeeId: AuthService.getLoggedUser().id
+    }
+    try {
+        await UserService.registerPoints(data);
+        await fetchData(page, item);
+        setAmmount('');
+        setReference('');
+        setIsLoading(false);
+        setFeedbackAlert('Cliente pontuado com sucesso.')
+        setToggleSuccessSnack(true)
+    } catch (error) {
+        console.log(error)
+        setIsLoading(false)
+        setFeedbackAlert('Não foi possivel pontuar no momento.')
+        setToggleFailureSnack(true)
+    }
+}
+
   return (
     <div>
-      <Snackbar toggleSnack={toggleFailureSnack} time={4000} color="warning">
+      <Snackbar toggleSnack={toggleFailureSnack || toggleSuccessSnack} time={toggleFailureSnack ? 4000 : 3500} color={toggleFailureSnack ? "warning" : "success"}>
         {feedbackAlert}
       </Snackbar>
       <Backdrop open={isLoading}/>
+      <Dialog open={toggleDialog} onClose={() => setToggleDialog(false)} maxWidth="md" fullWidth>
+        <DialogTitle>
+          Pontuar cliente
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Cliente: {name}
+          </DialogContentText>
+          <DialogContentText>
+            Valor: {ammount * 5}
+          </DialogContentText>
+          <DialogContentText>
+            Referência: {reference}
+          </DialogContentText>
+          <TextField fullWidth type="number" required variant="outlined" label="Valor" value={ammount} margin="normal" onChange={e => setAmmount(e.target.value)}/>
+          <TextField fullWidth required variant="outlined" label="Referencia" value={reference} margin="normal" onChange={e => setReference(e.target.value)}/>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" color="secondary" onClick={() => setToggleDialog(false)}>Cancelar</Button>
+          <Button variant="contained" color="primary" onClick={() => submitScore()}>Pontuar</Button>
+        </DialogActions>
+      </Dialog>
       <div className={classes.header}>
         <Typography variant="h5">
           Meus usuários
@@ -131,7 +213,8 @@ function Users() {
                         <TableCell align="left">Nome</TableCell>
                         <TableCell align="left">Localização</TableCell>
                         <TableCell align="left">Ultima visita</TableCell>
-                        <TableCell align="right">Pontos acumulados</TableCell>
+                        <TableCell align="center">Pontos acumulados</TableCell>
+                        <TableCell align="right">Ações</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -145,7 +228,14 @@ function Users() {
                           </TableCell>
                           <TableCell align="left">{user.city} - {user.state}</TableCell>
                           <TableCell align="left">{moment(user.updated_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
-                          <TableCell align="right">{user.points} <span>pts.</span></TableCell>
+                          <TableCell align="center">{user.points} <span>pts.</span></TableCell>
+                          <TableCell align="right">
+                            <Tooltip title="Pontuar">
+                              <IconButton onClick={() => {setName(user.client); setUserId(user.id); setToggleDialog(true);}}>
+                                <AttachMoney/>
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
