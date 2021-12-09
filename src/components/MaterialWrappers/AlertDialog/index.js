@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom';
 import { Dialog, DialogActions, DialogTitle, DialogContent, DialogContentText, Button } from '@material-ui/core';
 
 const AlertDialog = (props) => {
@@ -13,9 +14,15 @@ const AlertDialog = (props) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={props.close} color="primary">
-                    Continuar
-                </Button>
+                {props.link !== '' ? (
+                    <Button component={Link} to={props.link} variant="contained" color="primary">
+                        Verificar
+                    </Button>
+                ) : (
+                    <Button onClick={props.close} color="primary">
+                        Continuar
+                    </Button>
+                )}
             </DialogActions>
         </Dialog>
     )

@@ -7,19 +7,17 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { NavigateNext, Clear } from '@material-ui/icons';
 import { Typography, Link as MuiLink, Grid, Paper, Container, Select, MenuItem, FormControl, InputLabel, IconButton, Tooltip, Breadcrumbs, TextField } from '@material-ui/core'
-import { Snackbar, FButton, Textfield, ImageCropper, Backdrop } from '../../../Components'
-import { ProductService } from '../../../Services';
+import { Snackbar, FButton, Textfield, ImageCropper, Backdrop, AlertDialog } from '../../../Components'
+import { ProductService, AuthService } from '../../../Services';
 import { FilesSvg } from '../../../Assets'
 import { Styles } from './create-prize.elements';
 
 const INITIAL_FORM_STATE = {
-    productPrice: '',
     productName: '',
     productStock: '0',
 }
 
 const FORM_VALIDATION = Yup.object().shape({
-    productPrice: Yup.number().integer().typeError('Campo numérico').required('Campo obrigatório'),
     productName: Yup.string().required('Campo obrigatório.'),
     productStock: Yup.number().integer().typeError('Campo numérico').required('Campo obrigatório')
 })
@@ -39,7 +37,14 @@ const CreatePrize = () => {
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [toggleErrorSnack, setToggleErrorSnack] = useState(false);
     const [errorMsg, setErrorMsg] = useState('Ocorreu um erro');
-
+    const [products, setProducts] = useState([]);
+    const [toggleAlert, setToggleAlert] = useState(false);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertText, setAlertText] = useState('');
+    const [link, setLink] = useState('');
+    const [multiplier, setMultiplier] = useState(5);
+    const [points, setPoints] = useState(0);
+    const [ammount, setAmmount] = useState(0)
 
     useEffect(() => {
         fetchData()
@@ -52,7 +57,9 @@ const CreatePrize = () => {
 
     const fetchData = async () => {
         try {
+            const productsRes = await ProductService.getUserProducts(1, 5); 
             const categoryRes = await ProductService.getCategories();
+            setProducts(productsRes.data.data)
             setCategoryList(categoryRes.data);
             setIsLoading(false)
             setToggleSuccessSnack(false);
@@ -76,38 +83,53 @@ const CreatePrize = () => {
     }
 
     const submitProduct = async (values, onSubmitProps) => {
-        if (categoryName === '' && categoryId === '') {
-            setErrorMsg('Selecione ou cadastre uma categoria para seu produto.')
-            setToggleErrorSnack(true)
-        }
-        
-        setIsLoading(true)
-        let data = new FormData()
-        data.append('image', uploadedFile)
-        data.append('name', values.productName)
-        data.append('stock', values.productStock)
-        data.append('cost', values.productPrice)
-        data.append('category_id', categoryId)
-        data.append('category_name', categoryName)
-        
-        try {
-            await ProductService.setProduct(data);
-            await fetchData();
-            setCategoryId('');
-            setCategoryName('');
-            onSubmitProps.resetForm();
-            setUploadedFile(null);
-            setIsLoading(false);
-            setToggleSuccessSnack(true);
-        } catch (error) {
-            console.log(error)
+        if(AuthService.checkMembership() || products.length < 5){
+            if (categoryName === '' && categoryId === '') {
+                setErrorMsg('Selecione ou cadastre uma categoria para seu produto.')
+                setToggleErrorSnack(true)
+            }   
+            setIsLoading(true)
+            let data = new FormData()
+            data.append('image', uploadedFile)
+            data.append('name', values.productName)
+            data.append('stock', values.productStock)
+            data.append('cost', points)
+            data.append('category_id', categoryId)
+            data.append('category_name', categoryName)
+            
+            try {
+                await ProductService.setProduct(data);
+                await fetchData();
+                setCategoryId('');
+                setCategoryName('');
+                onSubmitProps.resetForm();
+                setUploadedFile(null);
+                setIsLoading(false);
+                setToggleSuccessSnack(true);
+            } catch (error) {
+                console.log(error)
+                setIsLoading(false)
+                setToggleFailureSnack(true)
+            }
+        } else {
             setIsLoading(false)
-            toggleFailureSnack(true)
+            setToggleAlert(true);
+            setAlertText('Faça um upgrade de plano e adicione mais produtos');
+            setAlertTitle('Limite de produtos!');
+            setLink("/dashboard/subscription")
         }
+    }
+
+    const calculator = (mult, amm) => {
+        const value = amm * mult * 20
+        setPoints(value)
+        setMultiplier(mult)
+        setAmmount(amm)
     }
 
     return (
         <div>
+            <AlertDialog open={toggleAlert} title={alertTitle} text={alertText} link={link}/>
             <ImageCropper open={openDialog} close={() => setOpenDialog(false)} url={imgUrl} handleChange={setUploadedFile}/>
             <Snackbar toggleSnack={toggleSuccessSnack} time={3500} onClose={closeSnack} color="success">
                 Produto cadastrado com sucesso
@@ -139,9 +161,7 @@ const CreatePrize = () => {
             <Formik
             initialValues={{...INITIAL_FORM_STATE}}
             validationSchema={FORM_VALIDATION}
-            onSubmit={(values, onSubmitProps) => {
-                submitProduct(values, onSubmitProps)
-            }}>
+            onSubmit={(values, onSubmitProps) => {submitProduct(values, onSubmitProps)}}>
                 <Form>
                     <Grid container spacing={4}>
                         <Grid item xs={8}>
@@ -196,14 +216,33 @@ const CreatePrize = () => {
                                         <Grid container spacing={2}>
                                             <Grid item xs={6}>
                                                 <FormControl fullWidth className={classes.formControl}>
-                                                        <Textfield  variant="outlined" label="Preço" name="productPrice" helperText="Valor em pontos"/>
+                                                    <TextField  variant="outlined" label="Preço" value={ammount} onChange={e => calculator(multiplier, e.target.value)} helperText="Valor em Reais"/>
                                                 </FormControl>
                                             </Grid>
-                                            <Grid item xs={6}>
+                                            <Grid item xs={3}>
+                                                <FormControl fullWidth variant="outlined"  className={classes.formControl}>
+                                                    <InputLabel id="multi">Multiplicador</InputLabel>
+                                                    <Select
+                                                    labelId="multi"
+                                                    value={multiplier}
+                                                    onChange={e => calculator(e.target.value, ammount)}
+                                                    label="Multiplier">
+                                                        <MenuItem value={5}>5%</MenuItem>
+                                                        <MenuItem value={10}>10%</MenuItem>
+                                                        <MenuItem value={20}>20%</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item xs={3}>
                                                 <FormControl fullWidth className={classes.formControl}>
-                                                        <Textfield variant="outlined" label="Estoque" name="productStock" type="number"/>
+                                                    <TextField variant="outlined" disabled value={points} type="number" helperText="Pontos"/>
                                                 </FormControl>
                                             </Grid>
+                                        </Grid>
+                                        <Grid item xs={4}>
+                                            <FormControl fullWidth className={classes.formControl}>
+                                                <Textfield variant="outlined" label="Estoque" name="productStock" type="number"/>
+                                            </FormControl>
                                         </Grid>
                                     </div>
                                 </Container>

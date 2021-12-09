@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import moment from 'moment';
 const url = process.env.REACT_APP_BASE_URL;
 
 const AuthService = {
@@ -83,10 +83,22 @@ const AuthService = {
     async cpfVerifier(cpf){
         return axios.get(`${url}api/registered-user/${cpf}`);
     },
-    
     async recoverPassword(data){
         const endpoint = `${url}api/user/recovery`;
         return axios.post(endpoint, data);
+    },
+
+    checkMembership(){
+        const { validity } = JSON.parse(localStorage.getItem('userData'))
+        if(validity === null){
+            return false
+        }
+        if (moment(validity).isBefore(moment())) {
+            return false
+        }
+        if(moment(validity).isAfter(moment())){
+            return true
+        }
     }
 }
 

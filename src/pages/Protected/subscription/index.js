@@ -11,7 +11,7 @@ const tiers = [
     description: "Cobrando R$500 numa única vez e que pode ser parcelado em até 3x no cartão crédito sem juros.",
     buttonText: 'Começar agora',
     buttonVariant: 'contained',
-    link: '/dashboard/payment/1'
+    link: '/dashboard/payment/2'
   },
   {
     title: 'Mensal',
@@ -19,7 +19,7 @@ const tiers = [
     description: "Cancele a qualquer momento e volte para o plano básico sem perder o plano de fidelidade.",
     buttonText: 'Começar agora',
     buttonVariant: 'outlined',
-    link: '/dashboard/payment/2'
+    link: '/dashboard/payment/1'
   },
 ];
 
@@ -54,7 +54,7 @@ const Subscription = () => {
                         R${tier.price}
                       </Typography>
                       <Typography variant="h6" color="textSecondary">
-                        {tier.title === 'Anual' ?  "/anual" : "mensal"}
+                        {tier.title === 'Anual' ?  "/anual" : "/mensal"}
                       </Typography>
                     </div>
                     <Typography variant="subtitle1" align="center">

@@ -80,7 +80,7 @@ function Payment(){
             cvv: '',
             description: '',
         },
-        validationSchema: yup.object(cardId.length === 0 ? {
+        validationSchema: yup.object(cardId.length === 0 && {
             number: yup
             .number()
             .typeError('Campo numérico')
@@ -94,8 +94,6 @@ function Payment(){
             .number()
             .typeError('Campo numérico')
             .required('CVV é obrigatório'),
-        } : {
-
         }),
         onSubmit: (values, onSubmitProps) => {
             handleSubmit(values, onSubmitProps)
@@ -119,29 +117,28 @@ function Payment(){
 
     const handleSubmit = async (values, onSubmitProps) => {
         setIsLoading(true);
-        const data = isPix ? {
-           pix: true,
-           product: {
-               id: productId
-           }
-        } : {
-            card: {
-                id: cardId,
-                number: values.number,
-                name: values.name,
-                validThru: moment(validThru).format('MM/YY'),
-                cvv: values.cvv,
-                remember: remember,
-                main: mainCard,
-                description: values.description,
-            },
-            product: {
-                id: productId
-            }
-        }
         try {
+            const invoiceRes = await UserService.newInvoice({plain: productId});
+            console.log(invoiceRes)
+            const data = isPix ? 
+            { invoice: invoiceRes.data.id, method: 'pix', pix: true } : 
+            {
+                invoice: invoiceRes.data.id,
+                method: 'card',
+                pix: false,
+                card: {
+                    id: cardId,
+                    number: values.number,
+                    name: values.name,
+                    validThru: moment(validThru).format('MM/YY'),
+                    cvv: values.cvv,
+                    remember: remember,
+                    main: mainCard,
+                    description: values.description,
+                },
+            }
             const res = await UserService.checkout(data)
-            console.log(res.data)
+            console.log(res)
             if(isPix){
                 setQrCode(res.data.pix.qrcode)
                 setPixCode(res.data.pix.qrcode_text)
@@ -156,7 +153,7 @@ function Payment(){
         } catch (error) {
             console.log(error)
             setIsLoading(false);
-            setInfoMsg('Ocorreu um erro');
+            setInfoMsg('Pagamento não autorizado');
             setToggleFailureSnack(true)
         }
     }
@@ -421,7 +418,7 @@ function Payment(){
                                 </ListItem>
                                 <Divider />
                                 <ListItem light>
-                                    <ListItemText primary="Valor" secondary="R$ 49,90/mênsal"/>
+                                    <ListItemText primary="Valor" secondary={productId === '1' ? "R$ 49,90/mênsal" : "R$ 500,00/mênsal"}/>
                                 </ListItem>
                             </List>
                         </Box>
@@ -462,7 +459,7 @@ function Payment(){
                                 </ListItem>
                                 <Divider />
                                 <ListItem divider>
-                                    <ListItemText primary="Valor" secondary="R$ 49,90"/>
+                                    <ListItemText primary="Valor" secondary={productId === '1' ? "R$ 49,90/mênsal" : "R$ 500,00/mênsal"}/>
                                 </ListItem>
                                 <ListItem>
                                     <ListItemText primary="Vencimento" secondary={moment().add(5, 'days').format('DD/MM/YYYY')}/>
@@ -504,7 +501,7 @@ function Payment(){
                     </MuiLink>
                 </Breadcrumbs>
             </div>
-            <Paper elevation={3}>
+            <Paper elevation={3} variant="outlined">
                 <div className={classes.root}>
                     <Stepper activeStep={activeStep} alternativeLabel style={{marginBottom: "25px"}}>
                         {steps.map((label) => (
@@ -579,7 +576,7 @@ function Payment(){
                                     <Form>
                                         <div className={classes.main}>
                                             <div>
-                                                    {getStepContent(activeStep)}
+                                                {getStepContent(activeStep)}
                                             </div>
                                         </div>
                                         <div>

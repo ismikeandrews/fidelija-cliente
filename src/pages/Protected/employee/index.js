@@ -31,8 +31,8 @@ import {
     Container
 } from '@material-ui/core';
 import { Styles } from './employee.elements';
-import { UserService } from '../../../Services';
-import { Snackbar, Backdrop } from '../../../Components';
+import { UserService, AuthService } from '../../../Services';
+import { Snackbar, Backdrop, AlertDialog } from '../../../Components';
 import { PeopleSvg } from '../../../Assets';
 
 const Employee = () => {
@@ -46,7 +46,11 @@ const Employee = () => {
     const [infoMsg, setInfoMsg] = useState('');
     const [employeeList, setEmployeeList] = useState([]);
     const [relationId, setRelationId] = useState('');
-    const [alreadyExist, setAlreadyExist] = useState(false)
+    const [alreadyExist, setAlreadyExist] = useState(false);
+    const [toggleAlert, setToggleAlert] = useState(false);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertText, setAlertText] = useState('');
+    const [link, setLink] = useState('');
     const classes = Styles();
 
     useEffect(() => {
@@ -68,29 +72,44 @@ const Employee = () => {
 
     const handleSubmit = async () => {
         setIsLoading(true)
+        setOpenDialog(false)
         const data = {
             cpf: cpf,
             userType: employeeType
         };
-        if(alreadyExist === false && cpf !== ''){
-            try {
-                await UserService.setNewEmployee(data);
-                await fetchData();
+        if (AuthService.checkMembership() || employeeList.length < 1) {
+            if(employeeList.length <= 10){
+                if(alreadyExist === false && cpf !== ''){
+                    try {
+                        await UserService.setNewEmployee(data);
+                        await fetchData();
+                        setIsLoading(false);
+                        setInfoMsg('Funcionário vinculado');
+                        setToggleSuccessSnack(true);
+                    } catch (error) {
+                        console.log(error);
+                        setIsLoading(false);
+                        setInfoMsg('ocorreu um erro ao tentar vincular');
+                        setToggleFailureSnack(true);
+                    }
+                }else {
+                    setIsLoading(false)
+                    setInfoMsg("Insira um cpf válido");
+                    setToggleFailureSnack(true);
+                }
+            } else {
                 setIsLoading(false);
-                setInfoMsg('Funcionário vinculado');
-                setToggleSuccessSnack(true);
-                setOpenDialog(false)
-            } catch (error) {
-                console.log(error);
-                setIsLoading(false);
-                setInfoMsg('ocorreu um erro ao tentar vincular');
-                setToggleFailureSnack(true);
-                setOpenDialog(false)
+                setToggleAlert(true);
+                setAlertText('Seu plano permite 10 usuários como funcionários.');
+                setAlertTitle('Limite de funcionários');
+                setLink('')
             }
-        }else {
+        } else {
             setIsLoading(false)
-            setInfoMsg("Insira um cpf válido");
-            setToggleFailureSnack(true);
+            setToggleAlert(true);
+            setAlertText('Faça um upgrade de plano e adicione mais funcionários');
+            setAlertTitle('Limite de funcionários');
+            setLink("/dashboard/subscription")
         }
     }
 
@@ -132,6 +151,7 @@ const Employee = () => {
 
     return (
         <div>
+            <AlertDialog open={toggleAlert} title={alertTitle} text={alertText} close={() => setToggleAlert(false)} link={link}/>
             <Backdrop open={isLoading}/>
             <Snackbar toggleSnack={toggleSuccessSnack || toggleFailureSnack} time={toggleFailureSnack ? 4500 : 3500} onClose={() => {setToggleFailureSnack(false); setToggleSuccessSnack(false)}}  color={toggleSuccessSnack ? "success" : "warning"}>
                 {infoMsg}
@@ -142,7 +162,7 @@ const Employee = () => {
                     <DialogContentText>
                         Insira o cpf de seu funcionário, para obter as funções de pontuação de sua loja.
                     </DialogContentText>
-                    <InputMask maskChar="" mask="999.999.999-99" value={cpf} onChange={(e) => handleSearch(e.target.value)}>
+                    <InputMask maskChar="" required mask="999.999.999-99" value={cpf} onChange={(e) => handleSearch(e.target.value)}>
                         {props => (
                             <TextField autoFocus label="CPF" type="text" variant="outlined" fullWidth className={classes.input}/>
                         )}

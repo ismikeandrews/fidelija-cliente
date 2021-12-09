@@ -8,4 +8,12 @@ export const Styles = makeStyles((theme) => ({
         flexShrink: 0,
         marginLeft: theme.spacing(2.5),
     },
+    noContent: {
+        textAlign: 'center',
+        margin: '70px'
+    },
+    noContentMsg: {
+        marginTop: '20px',
+        marginBottom: '20px'
+    }
 }))

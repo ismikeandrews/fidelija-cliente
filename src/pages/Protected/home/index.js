@@ -45,84 +45,81 @@ const Home = () => {
 
   return (
       <div>
-          <Grid container spacing={3}>
-          {/* Chart */}
-          <Grid item xs={12} md={8} lg={4}>
-            <Paper className={fixedHeightPaper}>
-              <Card title="Usuarios" content={userInfo.total} text={userInfo.today}/>
-              <Line 
-                  options={
-                    {plugins: {
-                      legend: {
-                        display: false
-                      }
-                  }}}
-                  data={{
-                  labels: labels,
-                  datasets: [
-                    {
-                      data: userInfo.history,
-                      borderColor: colorSchema.lprimary,
-                      fill: true,
-                      backgroundColor: colorSchema.lsecondary,
-                    },
-                  ],
-                }}/>
-            </Paper>
-          </Grid>
-          {/* Recent Card */}
-          <Grid item xs={12} md={4} lg={4}>
-            <Paper className={fixedHeightPaper}>
-              <Card title="Valor arrecadado" content={valuesInfo.total} text={valuesInfo.today}/>
-              <Line 
-                  options={
-                    {plugins: {
-                      legend: {
-                        display: false
-                      }
-                  }}}
-                  data={{
-                  labels: labels,
-                  datasets: [
-                    {
-                      data: valuesInfo.history,
-                      borderColor: colorSchema.lprimary,
-                      fill: true,
-                      backgroundColor: colorSchema.lsecondary,
-                    },
-                  ],
-                }}/>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={4} lg={4}>
-            <Paper className={fixedHeightPaper}>
-              <Card title="Pontos concedidos" content={pointsInfo.total} text={pointsInfo.today}/>
-              <Line 
-                  options={
-                    {plugins: {
-                      legend: {
-                        display: false
-                      }
-                  }}}
-                  data={{
-                  labels: labels,
-                  datasets: [
-                    {
-                      data: pointsInfo.history,
-                      borderColor: colorSchema.lprimary,
-                      fill: true,
-                      backgroundColor: colorSchema.lsecondary,
-                    },
-                  ],
-                }}/>
-            </Paper>
-          </Grid>
-          {/* Recent Orders */}
-          <Grid item xs={12}>
-            <Paper className={classes.paper}>
-              <RTable />
-            </Paper>
-          </Grid>
+        <Grid container spacing={3}>
+            {/* <Grid item xs={12} md={8} lg={4}>
+              <Paper className={fixedHeightPaper}>
+                <Card title="Usuários" content={userInfo.total} text={userInfo.today}/>
+                <Line 
+                    options={
+                      {plugins: {
+                        legend: {
+                          display: false
+                        }
+                    }}}
+                    data={{
+                    labels: labels,
+                    datasets: [
+                      {
+                        data: userInfo.history,
+                        borderColor: colorSchema.lprimary,
+                        fill: true,
+                        backgroundColor: colorSchema.lsecondary,
+                      },
+                    ],
+                  }}/>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4} lg={4}>
+              <Paper className={fixedHeightPaper}>
+                <Card title="Valor arrecadado" content={valuesInfo.total} text={valuesInfo.today}/>
+                <Line 
+                    options={
+                      {plugins: {
+                        legend: {
+                          display: false
+                        }
+                    }}}
+                    data={{
+                    labels: labels,
+                    datasets: [
+                      {
+                        data: valuesInfo.history,
+                        borderColor: colorSchema.lprimary,
+                        fill: true,
+                        backgroundColor: colorSchema.lsecondary,
+                      },
+                    ],
+                  }}/>
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={4} lg={4}>
+              <Paper className={fixedHeightPaper}>
+                <Card title="Pontos concedidos" content={pointsInfo.total} text={pointsInfo.today}/>
+                <Line 
+                    options={
+                      {plugins: {
+                        legend: {
+                          display: false
+                        }
+                    }}}
+                    data={{
+                    labels: labels,
+                    datasets: [
+                      {
+                        data: pointsInfo.history,
+                        borderColor: colorSchema.lprimary,
+                        fill: true,
+                        backgroundColor: colorSchema.lsecondary,
+                      },
+                    ],
+                  }}/>
+              </Paper>
+            </Grid> */}
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <RTable />
+              </Paper>
+            </Grid>
         </Grid>
       </div>
       

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
@@ -327,8 +328,13 @@ const Profile = () => {
                                                     {userObj.stablishment?.name}
                                                 </Typography>
                                                 <Typography variant="overline">
-                                                    Assinatura: Gratuita
+                                                    Assinatura: {userObj.stablishment?.validity === null ? 'Gratuita' : 'Plano Pro'}
                                                 </Typography>
+                                                {userObj.stablishment?.validity !== null && (
+                                                    <Typography variant="body2">
+                                                        Assinatura válida até: {moment(userObj.stablishment?.validity).format('DD/MM/YYYY')}
+                                                    </Typography>
+                                                )}
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <MuiButton color="primary" variant="outlined" onClick={() => inputFileL.current.click()}>

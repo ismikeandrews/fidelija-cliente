@@ -4,7 +4,7 @@ import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
 import NavigateNext from '@material-ui/icons/NavigateNext';
 import { Typography, Breadcrumbs, Link as MuiLink, Paper, Grid } from '@material-ui/core';
-import { AuthService, AddressService } from '../../../Services';
+import { AuthService, AddressService, UserService } from '../../../Services';
 import { Snackbar, MaskedTextField, Textfield, FButton, Backdrop } from '../../../Components';
 import { Styles } from './edit-address.elements';
 
@@ -128,12 +128,11 @@ const EditAddress = () => {
             complementation: values.addressLine,
             number: values.number
         }
-        const authObj = AuthService.getAuthData();
         if (id === '0') {
             try {
                 console.log(data)
                 await AddressService.editUserAddress(data)
-                AuthService.setLoggedUser(authObj)
+                await UserService.refreshUser();
                 fetchData()
                 setIsLoading(false);
                 setInfoMsg("Endereço atualizado");
@@ -148,7 +147,7 @@ const EditAddress = () => {
         if(id === '1') {
             try {
                 await AddressService.editStablishmentAddress(data);
-                AuthService.setLoggedUser(authObj)
+                await UserService.refreshUser();
                 fetchData()
                 setIsLoading(false)
                 setInfoMsg("Endereço atualizado");

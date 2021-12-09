@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import NavigateNext from '@material-ui/icons/NavigateNext';
-import { Typography, Breadcrumbs, Table, TableHead, TableBody, TableCell, Paper, TableRow, Badge, Link as MuiLink } from '@material-ui/core';
+import { Typography, Breadcrumbs, Table, TableHead, TableBody, TableCell, Paper, TableRow, Badge, Link as MuiLink, Container } from '@material-ui/core';
 import { UserService } from '../../../Services';
 import { Backdrop, Snackbar, Pagination } from '../../../Components'
 import { Styles } from './notifications.elements';
+import { EmptySvg } from '../../../Assets';
 
 const Notifications = () => {
     const [notificationList, setNotificationList] = useState([]);
@@ -56,35 +57,50 @@ const Notifications = () => {
                     </MuiLink>
                 </Breadcrumbs>
             </div>
-            <div>
-                <Paper variant="outlined">
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell></TableCell>
-                                <TableCell>Titulo</TableCell>
-                                <TableCell>Mensagem</TableCell>
-                                <TableCell>Data</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {notificationList.map(notification => (
-                                <TableRow key={notification.id}>
-                                    <TableCell>
-                                        {notification.read === 0 && (
-                                            <Badge color="primary" overlap="circle" variant="dot" style={{marginRight: '45px', zIndex: '0'}}></Badge>
-                                        )}
-                                    </TableCell>
-                                    <TableCell>{notification.title}</TableCell>
-                                    <TableCell>{notification.message}</TableCell>
-                                    <TableCell>{moment(notification.created_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                    <Pagination rows={item} changeRows={(e) => fetchData(page, e.target.value)} count={lastPage} changePage={(e, page) => fetchData(page, item)}/>
-                </Paper>
-            </div>
+            {isLoading || (
+                <div>
+                    {notificationList.length > 0 ? (
+                        <div>
+                            <Paper variant="outlined">
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell></TableCell>
+                                            <TableCell>Titulo</TableCell>
+                                            <TableCell>Mensagem</TableCell>
+                                            <TableCell>Data</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {notificationList.map(notification => (
+                                            <TableRow key={notification.id}>
+                                                <TableCell>
+                                                    {notification.read === 0 && (
+                                                        <Badge color="primary" overlap="circle" variant="dot" style={{marginRight: '45px', zIndex: '0'}}></Badge>
+                                                    )}
+                                                </TableCell>
+                                                <TableCell>{notification.title}</TableCell>
+                                                <TableCell>{notification.message}</TableCell>
+                                                <TableCell>{moment(notification.created_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                                <Pagination rows={item} changeRows={(e) => fetchData(page, e.target.value)} count={lastPage} changePage={(e, page) => fetchData(page, item)}/>
+                            </Paper>
+                        </div>
+                    ) : (
+                        <div className={classes.noContent}>
+                        <Container>
+                            <img src={EmptySvg} width="250"/>
+                            <Typography variant="h6" className={classes.noContentMsg}>
+                                Você não possui notificações.
+                            </Typography>
+                        </Container>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     )
 }
