@@ -166,7 +166,7 @@ const EditPrize = () => {
                                                         Selecione a imagem
                                                     </Typography>
                                                     <Typography variant="overline">
-                                                        Arreste o arquivo direto do seu computador
+                                                        Arraste o arquivo direto do seu computador
                                                     </Typography>
                                                 </div>
                                             </div>
