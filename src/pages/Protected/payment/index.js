@@ -418,7 +418,7 @@ function Payment(){
                                 </ListItem>
                                 <Divider />
                                 <ListItem light>
-                                    <ListItemText primary="Valor" secondary={productId === '1' ? "R$ 49,90/mênsal" : "R$ 500,00/mênsal"}/>
+                                    <ListItemText primary="Valor" secondary={productId === '1' ? "R$ 49,90/mênsal" : "R$ 500,00/anual"}/>
                                 </ListItem>
                             </List>
                         </Box>

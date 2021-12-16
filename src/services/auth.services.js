@@ -89,14 +89,15 @@ const AuthService = {
     },
 
     checkMembership(){
-        const { validity } = JSON.parse(localStorage.getItem('userData'))
-        if(validity === null){
+        const user = JSON.parse(localStorage.getItem('userData'))
+        console.log(user.stablishment.validity)
+        if(user.stablishment.validity === null){
             return false
         }
-        if (moment(validity).isBefore(moment())) {
+        if (moment(user.stablishment.validity).isBefore(moment())) {
             return false
         }
-        if(moment(validity).isAfter(moment())){
+        if(moment(user.stablishment.validity).isAfter(moment())){
             return true
         }
     }

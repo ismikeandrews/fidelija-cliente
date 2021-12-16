@@ -113,10 +113,10 @@ const CreatePrize = () => {
             }
         } else {
             setIsLoading(false)
-            setToggleAlert(true);
-            setAlertText('Faça um upgrade de plano e adicione mais produtos');
-            setAlertTitle('Limite de produtos!');
-            setLink("/dashboard/subscription")
+            // setToggleAlert(true);
+            // setAlertText('Faça um upgrade de plano e adicione mais produtos');
+            // setAlertTitle('Limite de produtos!');
+            // setLink("/dashboard/subscription")
         }
     }
 
