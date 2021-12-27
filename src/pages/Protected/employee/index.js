@@ -100,7 +100,7 @@ const Employee = () => {
             } else {
                 setIsLoading(false);
                 setToggleAlert(true);
-                setAlertText('Seu plano permite 10 usuários como funcionários.');
+                setAlertText('Seu plano permite 10 somente funcionários.');
                 setAlertTitle('Limite de funcionários');
                 setLink('')
             }

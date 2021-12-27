@@ -30,8 +30,6 @@ function Payment(){
     const [pixCode, setPixCode] = useState('');
     const [activeStep, setActiveStep] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
-    const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
     const [cardList, setCardList] = useState([]);
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
@@ -120,32 +118,28 @@ function Payment(){
         try {
             const invoiceRes = await UserService.newInvoice({plain: productId});
             console.log(invoiceRes)
-            const data = isPix ? 
-            { invoice: invoiceRes.data.id, method: 'pix', pix: true } : 
-            {
-                invoice: invoiceRes.data.id,
-                method: 'card',
-                pix: false,
-                card: {
-                    id: cardId,
-                    number: values.number,
-                    name: values.name,
-                    validThru: moment(validThru).format('MM/YY'),
-                    cvv: values.cvv,
-                    remember: remember,
-                    main: mainCard,
-                    description: values.description,
-                },
-            }
-            const res = await UserService.checkout(data)
-            console.log(res)
             if(isPix){
-                setQrCode(res.data.pix.qrcode)
-                setPixCode(res.data.pix.qrcode_text)
-                setEmail(res.data.payer_email)
-                setName(res.data.payer_name)
+                setQrCode(invoiceRes.data.pix.qrcode)
+                setPixCode(invoiceRes.data.pix.qrcode_text)
                 setIsLoading(false)
-            }else{
+            } else {
+                const data = {
+                    invoice: invoiceRes.data.id,
+                    method: 'card',
+                    pix: false,
+                    card: {
+                        id: cardId,
+                        number: values.number,
+                        name: values.name,
+                        validThru: moment(validThru).format('MM/YY'),
+                        cvv: values.cvv,
+                        remember: remember,
+                        main: mainCard,
+                        description: values.description,
+                    }
+                }
+                const res = await UserService.checkout(data)
+                console.log(res)
                 setIsLoading(false)
                 setInfoMsg("Pagamento autorizado");
                 setToggleSuccessSnack(true);
@@ -383,7 +377,7 @@ function Payment(){
                                             </Typography>
                                             <List>
                                                 {cardList.map((card) => (
-                                                    <Paper variant="outlined" className={classes.cardsPaper} key={card.id}>
+                                                    <Paper variant="outlined" className={classes.cardsPaper} key={card.id} onClick={() => setCardId(card.id)}>
                                                         <Grid container spacing={3} alignItems="center">
                                                             <Grid item>
                                                                 <Radio
@@ -525,8 +519,11 @@ function Payment(){
                                                     <div>
                                                         <Typography variant="subtitle1">Pix copia e cola</Typography>
                                                         <Paper variant="outlined" className={classes.paper} onClick={() => {navigator.clipboard.writeText(pixCode)}}>
-                                                            <div className={classes.pixCopy}>
-                                                                <div>
+                                                            <Grid container justifyContent="space-around" alignItems="center">
+                                                                <Grid item xs={1}>
+                                                                    <FileCopyOutlined color="primary" className={classes.icon}/>
+                                                                </Grid>
+                                                                <Grid item xs={11}>
                                                                     {isLoading ? (
                                                                         <Skeleton variant="text"/>
                                                                     ) : (
@@ -534,24 +531,13 @@ function Payment(){
                                                                             {pixCode}
                                                                         </Typography>
                                                                     )}
-                                                                </div>
-                                                                <div>
-                                                                    <FileCopyOutlined color="primary" className={classes.icon}/>
-                                                                </div>
-                                                            </div>
+                                                                </Grid>
+                                                            </Grid>
                                                         </Paper>
-                                                        <Typography variant="body2">Entre no aplicativo do seu banco acesse a area pix, escolha entre a opção de ler o código QR ou copiar e colar o código.</Typography>
                                                     </div>
-                                                    <Container>
-                                                        <List className={classes.root} aria-label="mailbox folders">
-                                                            <ListItem light>
-                                                                <ListItemText primary="Nome" secondary={name}/>
-                                                            </ListItem>
-                                                            <Divider />
-                                                            <ListItem>
-                                                                <ListItemText primary="Email" secondary={email}/>
-                                                            </ListItem>
-                                                        </List>
+                                                    <Container className={classes.instructions}>
+                                                        <Typography variant="body1">Entre no aplicativo do seu banco acesse a area pix, escolha entre a opção de ler o código QR ou copiar e colar o código.</Typography>
+                                                        <Typography variant="body2">Pagamentos através do pix pode demorar até 30 minutos para ser verificado.</Typography>
                                                     </Container>
                                                 </div>
                                             </Grid>

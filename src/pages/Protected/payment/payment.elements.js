@@ -16,7 +16,7 @@ export const Styles = makeStyles((theme) => ({
         listStyle: 'none'
     },
     paper: {
-        padding: '5px',
+        padding: '2px',
         cursor: 'pointer',
     },
     contentSpacing: {
@@ -107,12 +107,8 @@ export const Styles = makeStyles((theme) => ({
         objectPosition: 'top right'
     },
     cardsPaper: {
-        padding: "15px"
-    },
-    pixCopy: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between"
+        marginBottom: '15px',
+        cursor: 'pointer'
     },
     pixResume: {
         justifyContent: "space-around",

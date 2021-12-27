@@ -24,8 +24,7 @@ const EditStablishment = () => {
             .string()
             .required("Nome é obrigatório"),
             phone: yup
-            .string()
-            .required("Telefone é obrigatório"),
+            .string(),
         }),
         onSubmit: (values, onSubmitProps) => {
             submit(values, onSubmitProps)

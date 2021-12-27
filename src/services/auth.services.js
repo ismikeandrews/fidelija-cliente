@@ -90,7 +90,6 @@ const AuthService = {
 
     checkMembership(){
         const user = JSON.parse(localStorage.getItem('userData'))
-        console.log(user.stablishment.validity)
         if(user.stablishment.validity === null){
             return false
         }
