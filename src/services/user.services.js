@@ -133,6 +133,10 @@ const UserService = {
         const { data } = await axios.get(endpoint, AuthStr);
         const strUser = JSON.stringify(data);
         localStorage.setItem('userData', strUser)
+    },
+    async deleteHistory(data){
+        const endpoint = `${url}api/history/delete`;
+        return axios.post(endpoint, data, AuthStr);
     }
 };
 

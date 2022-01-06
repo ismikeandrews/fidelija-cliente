@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AuthService } from './';
+import { AuthService } from '.';
 const url = process.env.REACT_APP_BASE_URL;
 const AuthStr = AuthService.getAuthData() && { headers: { Authorization: `${AuthService.getAuthData().token_type} ${AuthService.getAuthData().access_token}` }};
 

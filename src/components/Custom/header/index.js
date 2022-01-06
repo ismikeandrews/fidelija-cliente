@@ -6,7 +6,7 @@ import {
     NavLogo,
     LogoImg
 } from './headerElements';
-import { Logo } from '../../../Assets/';
+import { Logo } from '../../../Assets';
 
 export default function Header(){
     return (
