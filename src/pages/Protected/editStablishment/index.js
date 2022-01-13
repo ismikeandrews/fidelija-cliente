@@ -55,7 +55,7 @@ const EditStablishment = () => {
         const authObj = AuthService.getAuthData();
         try {
             await UserService.updateStablishment(data);
-            await AuthService.setLoggedUser(authObj);
+            await UserService.refreshUser();
             fetchData()
             setIsLoading(false);
             setInfoMsg('Dados atualizados');
