@@ -7,11 +7,11 @@ import MomentUtils from '@date-io/moment';
 import moment from 'moment';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import Skeleton from '@material-ui/lab/Skeleton';
-import { FileCopyOutlined, NavigateNext } from '@material-ui/icons';
-import { Typography, Grid, FormControlLabel, Checkbox, Box, Breadcrumbs, Button as MuiButton, Container, Paper, Radio, RadioGroup, FormControl, Stepper, Step, StepLabel, Card, CardMedia, CardContent, List, ListItem, ListItemText, Divider, Link as MuiLink, Tab, Tabs } from '@material-ui/core';
+import { FileCopyOutlined, NavigateNext, Add } from '@material-ui/icons';
+import { Button, Typography, Grid, FormControlLabel, Checkbox, Box, Breadcrumbs, Button as MuiButton, Container, Paper, Radio, RadioGroup, FormControl, Stepper, Step, StepLabel, Card, CardMedia, CardContent, List, ListItem, ListItemText, Divider, Link as MuiLink, Tab, Tabs } from '@material-ui/core';
 import { Snackbar, MaskedTextField, FButton, Textfield, Backdrop } from '../../../Components';
-import { Amex, Chip, Discover, Mastercard, Troy, Visa} from '../../../Assets'
-import { UserService } from '../../../Services';
+import { Amex, Chip, Discover, FillSvg, Mastercard, Troy, Visa} from '../../../Assets'
+import { UserService, AuthService } from '../../../Services';
 import { Styles } from './payment.elements';
 
 function Payment(){
@@ -34,6 +34,7 @@ function Payment(){
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [infoMsg, setInfoMsg] = useState('');
+    const [haveAddress, setHaveAddress] = useState(false);
     const classes = Styles();
     const springRef = useSpringRef();
     const flagTransitionRef = useSpringRef();
@@ -103,14 +104,19 @@ function Payment(){
     }, [])
 
     const fetchData = async () => {
-        try {
-            const res = await UserService.getCreditCards()
-            setCardList(res.data)
-            setIsLoading(false)
-        } catch (error) {
-            console.error(error);
-            setIsLoading(false)
+        const addressChecked = AuthService.checkUserAddress()
+        setHaveAddress(addressChecked);
+        if (addressChecked) {
+            try {
+                const res = await UserService.getCreditCards()
+                setCardList(res.data)
+                setIsLoading(false)
+            } catch (error) {
+                console.error(error);
+                setIsLoading(false)
+            }
         }
+        setIsLoading(false)
     }
 
     const handleSubmit = async (values, onSubmitProps) => {
@@ -495,106 +501,122 @@ function Payment(){
                     </MuiLink>
                 </Breadcrumbs>
             </div>
-            <Paper elevation={3} variant="outlined">
-                <div className={classes.root}>
-                    <Stepper activeStep={activeStep} alternativeLabel style={{marginBottom: "25px"}}>
-                        {steps.map((label) => (
-                            <Step key={label}>
-                                <StepLabel>{label}</StepLabel>
-                            </Step>
-                        ))}
-                    </Stepper>
-                    <div>
-                        {activeStep === steps.length ? (
-                            <div className={classes.main}>
-                                {isPix && (
-                                    <div>
+            {haveAddress ? (
+                <Paper elevation={3} variant="outlined">
+                    <div className={classes.root}>
+                        <Stepper activeStep={activeStep} alternativeLabel style={{marginBottom: "25px"}}>
+                            {steps.map((label) => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                        <div>
+                            {activeStep === steps.length ? (
+                                <div className={classes.main}>
+                                    {isPix && (
+                                        <div>
 
-                                        <Grid container spacing={3} className={classes.pixResume}>
-                                            <Grid item>
-                                                <div>
-                                                    <Typography variant="h5" style={{marginBottom: '20px'}}>
-                                                        Pix
-                                                    </Typography>
+                                            <Grid container spacing={3} className={classes.pixResume}>
+                                                <Grid item>
                                                     <div>
-                                                        <Typography variant="subtitle1">Pix copia e cola</Typography>
-                                                        <Paper variant="outlined" className={classes.paper} onClick={() => {navigator.clipboard.writeText(pixCode)}}>
-                                                            <Grid container justifyContent="space-around" alignItems="center">
-                                                                <Grid item xs={1}>
-                                                                    <FileCopyOutlined color="primary" className={classes.icon}/>
+                                                        <Typography variant="h5" style={{marginBottom: '20px'}}>
+                                                            Pix
+                                                        </Typography>
+                                                        <div>
+                                                            <Typography variant="subtitle1">Pix copia e cola</Typography>
+                                                            <Paper variant="outlined" className={classes.paper} onClick={() => {navigator.clipboard.writeText(pixCode)}}>
+                                                                <Grid container justifyContent="space-around" alignItems="center">
+                                                                    <Grid item xs={1}>
+                                                                        <FileCopyOutlined color="primary" className={classes.icon}/>
+                                                                    </Grid>
+                                                                    <Grid item xs={11}>
+                                                                        {isLoading ? (
+                                                                            <Skeleton variant="text"/>
+                                                                        ) : (
+                                                                            <Typography variant="overline" style={{fontSize: '11px'}}>
+                                                                                {pixCode}
+                                                                            </Typography>
+                                                                        )}
+                                                                    </Grid>
                                                                 </Grid>
-                                                                <Grid item xs={11}>
-                                                                    {isLoading ? (
-                                                                        <Skeleton variant="text"/>
-                                                                    ) : (
-                                                                        <Typography variant="overline" style={{fontSize: '11px'}}>
-                                                                            {pixCode}
-                                                                        </Typography>
-                                                                    )}
-                                                                </Grid>
-                                                            </Grid>
-                                                        </Paper>
+                                                            </Paper>
+                                                        </div>
+                                                        <Container className={classes.instructions}>
+                                                            <Typography variant="body1">Entre no aplicativo do seu banco acesse a area pix, escolha entre a opção de ler o código QR ou copiar e colar o código.</Typography>
+                                                            <Typography variant="body2">Pagamentos através do pix pode demorar até 30 minutos para ser verificado.</Typography>
+                                                        </Container>
                                                     </div>
-                                                    <Container className={classes.instructions}>
-                                                        <Typography variant="body1">Entre no aplicativo do seu banco acesse a area pix, escolha entre a opção de ler o código QR ou copiar e colar o código.</Typography>
-                                                        <Typography variant="body2">Pagamentos através do pix pode demorar até 30 minutos para ser verificado.</Typography>
-                                                    </Container>
-                                                </div>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Typography variant="subtitle1">QR code</Typography>
+                                                    <Card>
+                                                        <CardContent>
+                                                            {isLoading ? <Skeleton variant="rect" width={260} height={260} /> : <CardMedia style={{height: 260, width: 260}} image={qrCode}/>}  
+                                                        </CardContent>
+                                                    </Card>
+                                                </Grid>
                                             </Grid>
-                                            <Grid item>
-                                                <Typography variant="subtitle1">QR code</Typography>
-                                                <Card>
-                                                    <CardContent>
-                                                        {isLoading ? <Skeleton variant="rect" width={260} height={260} /> : <CardMedia style={{height: 260, width: 260}} image={qrCode}/>}  
-                                                    </CardContent>
-                                                </Card>
-                                            </Grid>
-                                        </Grid>
-                                        <div className={classes.pixButton}>
-                                            <MuiButton color="primary" variant="contained" onClick={() => console.log("tratamento")}>Concluir</MuiButton>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                            ) : (
-                            <div>
-                                <FormikProvider value={formik}>
-                                    <Form>
-                                        <div className={classes.main}>
-                                            <div>
-                                                {getStepContent(activeStep)}
+                                            <div className={classes.pixButton}>
+                                                <MuiButton color="primary" variant="contained" onClick={() => console.log("tratamento")}>Concluir</MuiButton>
                                             </div>
                                         </div>
-                                        <div>
-                                            <MuiButton
-                                                disabled={activeStep === 0}
-                                                onClick={() => setActiveStep((prevActiveStep) => prevActiveStep - 1)}
-                                                className={classes.backButton}>
-                                                Voltar
-                                            </MuiButton>
-                                            {activeStep === steps.length - 1 ? (
-                                                isPix ? (
-                                                    <MuiButton variant="contained" color="primary" onClick={() => {setActiveStep((prevActiveStep) => prevActiveStep + 1); handleSubmit()}}>
-                                                        Finalizar
-                                                    </MuiButton>
-                                                ) : (
-                                                    <FButton variant="containerd" color="primary" type="submit">
-                                                        Finalizar
-                                                    </FButton>
-                                                )
-                                            ) : (
-                                                <MuiButton variant="contained" color="primary" onClick={() => setActiveStep((prevActiveStep) => prevActiveStep + 1)}>
-                                                    Próximo
+                                    )}
+                                </div>
+                                ) : (
+                                <div>
+                                    <FormikProvider value={formik}>
+                                        <Form>
+                                            <div className={classes.main}>
+                                                <div>
+                                                    {getStepContent(activeStep)}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <MuiButton
+                                                    disabled={activeStep === 0}
+                                                    onClick={() => setActiveStep((prevActiveStep) => prevActiveStep - 1)}
+                                                    className={classes.backButton}>
+                                                    Voltar
                                                 </MuiButton>
-                                            )}
-                                        </div>
-                                    </Form>
-                                </FormikProvider>                                        
-                            </div>
-                        )}
+                                                {activeStep === steps.length - 1 ? (
+                                                    isPix ? (
+                                                        <MuiButton variant="contained" color="primary" onClick={() => {setActiveStep((prevActiveStep) => prevActiveStep + 1); handleSubmit()}}>
+                                                            Finalizar
+                                                        </MuiButton>
+                                                    ) : (
+                                                        <FButton variant="containerd" color="primary" type="submit">
+                                                            Finalizar
+                                                        </FButton>
+                                                    )
+                                                ) : (
+                                                    <MuiButton variant="contained" color="primary" onClick={() => setActiveStep((prevActiveStep) => prevActiveStep + 1)}>
+                                                        Próximo
+                                                    </MuiButton>
+                                                )}
+                                            </div>
+                                        </Form>
+                                    </FormikProvider>                                        
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </Paper>
+                </Paper>
+            ) : (
+                <Paper variant="outlined">
+                   <div className={classes.noAddress}>
+                        <Container>
+                            <img src={FillSvg} width="250"/>
+                            <Typography variant="h6" className={classes.noAddressMg}>
+                                Cadastre seu endereço para continuar
+                            </Typography>
+                            <Button variant="contained" color="primary" endIcon={<Add/>} component={Link} to="/dashboard/edit-address/0">
+                                cadastrar
+                            </Button>
+                        </Container>
+                    </div>
+                </Paper>
+            )}
         </div>
     )
 }

@@ -117,5 +117,13 @@ export const Styles = makeStyles((theme) => ({
         display: 'flex', 
         justifyContent: "flex-end", 
         marginTop: "40px"
+    },
+    noAddress:{
+        textAlign: 'center',
+        margin: '70px'
+    },
+    noAddressMg: {
+        marginTop: '20px',
+        marginBottom: '20px'
     }
 }));

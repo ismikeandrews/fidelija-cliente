@@ -99,6 +99,16 @@ const AuthService = {
         if(moment(user.stablishment.validity).isAfter(moment())){
             return true
         }
+    },
+
+    checkUserAddress(){
+        const user = JSON.parse(localStorage.getItem('userData'))
+        if(user.address){
+            return true
+        }
+        if(user.address === null){
+            return false
+        }
     }
 }
 
