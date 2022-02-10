@@ -1,47 +1,46 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import LastPageIcon from '@material-ui/icons/LastPage';
-import { KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import SearchIcon from '@material-ui/icons/Search';
+import { NavigateNext, Search, AttachMoney } from '@material-ui/icons';
 import { 
-  Typography,
-  Link as MuiLink,
-  Breadcrumbs,
-  Backdrop,
-  Container,
-  CircularProgress,
-  Paper,
-  Grid,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  useTheme,
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogContentText, 
+  DialogActions, 
+  Typography, 
+  Link as MuiLink, 
+  Breadcrumbs, 
+  Container, 
+  Paper, 
+  Grid, 
+  FormControl, 
+  InputLabel, 
+  OutlinedInput, 
+  InputAdornment, 
+  Table, 
+  TableHead, 
+  TableBody, 
+  TableRow, 
+  TableCell, 
+  Divider, 
+  Avatar, 
+  Tabs, 
+  Tab, 
+  Select, 
+  MenuItem,
+  TextField, 
   IconButton,
-  TablePagination,
-  Divider,
-  Avatar,
-  Tabs,
-  Tab,
-  Select,
-  MenuItem
+  Tooltip,
+  Button
 } from '@material-ui/core';
 import { PeopleSvg } from '../../../Assets'
-import { Snackbar } from '../../../Components';
-import { UserService } from '../../../Services';
-import { useStyles } from './UsersElements';
+import { Snackbar, Pagination, Backdrop } from '../../../Components';
+import { UserService, AuthService } from '../../../Services';
+import { Styles } from './users.elements';
 
 function Users() {
-  const classes = useStyles();
-  const theme = useTheme();
+  const classes = Styles();
   const timeoutRef = useRef(null);
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -51,17 +50,22 @@ function Users() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastPage, setLastPage] = useState(null);
   const [feedbackAlert, setFeedbackAlert] = useState('');
+  const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false)
   const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
-  const [tabValue, setTabValue] = useState(0)
+  const [tabValue, setTabValue] = useState(0);
+  const [ammount, setAmmount] = useState('');
+  const [reference, setReference] = useState('');
+  const [name, setName] = useState('');
+  const [userId, setUserId] = useState('');
+  const [toggleDialog, setToggleDialog] = useState(false);
 
   useEffect(() => {
     fetchData(page, item);
-  }, []);
+  }, [page, item]);
 
   const fetchData = async (currentPage, rowsPerPage) => {
     try {
       const clientRes = await UserService.getClientList(currentPage, rowsPerPage);
-      console.log(clientRes.data);
       setPage(clientRes.data.current_page);
       setItem(clientRes.data.per_page);
       setLastPage(clientRes.data.last_page);
@@ -93,20 +97,64 @@ function Users() {
     }, 500);
   }
 
+  const submitScore = async () => {
+    setIsLoading(true);
+    setToggleDialog(false);
+    const data = {
+        user_id: userId, 
+        ammount: ammount,
+        reference: reference,
+        employeeId: AuthService.getLoggedUser().id
+    }
+    try {
+        await UserService.registerPoints(data);
+        await fetchData(page, item);
+        setAmmount('');
+        setReference('');
+        setIsLoading(false);
+        setFeedbackAlert('Cliente pontuado com sucesso.')
+        setToggleSuccessSnack(true)
+    } catch (error) {
+        console.log(error)
+        setIsLoading(false)
+        setFeedbackAlert('Não foi possivel pontuar no momento.')
+        setToggleFailureSnack(true)
+    }
+}
+
   return (
     <div>
-      <Snackbar toggleSnack={toggleFailureSnack} time={4000} color="warning">
+      <Snackbar toggleSnack={toggleFailureSnack || toggleSuccessSnack} time={toggleFailureSnack ? 4000 : 3500} color={toggleFailureSnack ? "warning" : "success"}>
         {feedbackAlert}
       </Snackbar>
-      <Backdrop className={classes.backdrop} open={isLoading}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-
+      <Backdrop open={isLoading}/>
+      <Dialog open={toggleDialog} onClose={() => setToggleDialog(false)} maxWidth="md" fullWidth>
+        <DialogTitle>
+          Pontuar cliente
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Cliente: {name}
+          </DialogContentText>
+          <DialogContentText>
+            Valor: {ammount * 5}
+          </DialogContentText>
+          <DialogContentText>
+            Referência: {reference}
+          </DialogContentText>
+          <TextField fullWidth type="number" required variant="outlined" label="Valor" value={ammount} margin="normal" onChange={e => setAmmount(e.target.value)}/>
+          <TextField fullWidth required variant="outlined" label="Referencia" value={reference} margin="normal" onChange={e => setReference(e.target.value)}/>
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" color="secondary" onClick={() => setToggleDialog(false)}>Cancelar</Button>
+          <Button variant="contained" color="primary" onClick={() => submitScore()}>Pontuar</Button>
+        </DialogActions>
+      </Dialog>
       <div className={classes.header}>
         <Typography variant="h5">
           Meus usuários
         </Typography>
-        <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+        <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
             <MuiLink color="inherit" component={Link} to="/">
                 Home
             </MuiLink>
@@ -137,7 +185,7 @@ function Users() {
                               label="procurar"
                               value={searchTerm}
                               onChange={e => handleSearch(e.target.value)}
-                              endAdornment={<InputAdornment position="end"><SearchIcon color="primary"/></InputAdornment>}/>
+                              endAdornment={<InputAdornment position="end"><Search color="primary"/></InputAdornment>}/>
                           </FormControl>
                       </Grid>
                       <Grid item xs={3}>
@@ -165,8 +213,8 @@ function Users() {
                         <TableCell align="left">Nome</TableCell>
                         <TableCell align="left">Localização</TableCell>
                         <TableCell align="left">Ultima visita</TableCell>
-                        <TableCell align="left">Valor total</TableCell>
-                        <TableCell align="right">Pontos acumulados</TableCell>
+                        <TableCell align="center">Pontos acumulados</TableCell>
+                        <TableCell align="right">Ações</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
@@ -180,50 +228,23 @@ function Users() {
                           </TableCell>
                           <TableCell align="left">{user.city} - {user.state}</TableCell>
                           <TableCell align="left">{moment(user.updated_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
-                          <TableCell align="left">R$ 300,00</TableCell>
-                          <TableCell align="right">{user.pontos} <spam>pts.</spam></TableCell>
+                          <TableCell align="center">{user.points} <span>pts.</span></TableCell>
+                          <TableCell align="right">
+                            <Tooltip title="Pontuar">
+                              <IconButton onClick={() => {setName(user.client); setUserId(user.id); setToggleDialog(true);}}>
+                                <AttachMoney/>
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
-                  <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, 100]}
-                  component="div"
-                  count={userList.length - 1}
-                  rowsPerPage={item}
-                  page={page - 1}
-                  onChangePage={() => null}
-                  labelRowsPerPage="Produtos por página:"
-                  labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count !== 0 ? count : `more than ${to}`}`}
-                  onChangeRowsPerPage={(event) => fetchData(1, event.target.value)}
-                  ActionsComponent={() => (
-                      <div className={classes.paginationIcons}>
-                          <IconButton
-                              onClick={() => fetchData(1, item)}
-                              disabled={page === 1}
-                              aria-label="first page">
-                              {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-                          </IconButton>
-                          <IconButton 
-                              onClick={() => fetchData(page - 1, item)} 
-                              disabled={page === 1} 
-                              aria-label="previous page">
-                              {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                          </IconButton>
-                          <IconButton
-                              onClick={() => fetchData(page + 1, item)}
-                              disabled={page === lastPage}
-                              aria-label="next page">
-                              {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                          </IconButton>
-                          <IconButton
-                              onClick={() => fetchData(lastPage, item)}
-                              disabled={page === lastPage}
-                              aria-label="last page">
-                              {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-                          </IconButton>
-                      </div>
-                  )}/>
+                  <Pagination 
+                  rows={item} 
+                  count={lastPage}
+                  changeRows={(e) => fetchData(page, e.target.value)} 
+                  changePage={(e, page) => fetchData(page, item)}/>
                 </div>
               </>
             ) : (

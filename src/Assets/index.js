@@ -34,3 +34,4 @@ export { default as UpgradeSvg } from './Svg/upgrade.svg';
 export { default as VisaSvg } from './Svg/visa.svg';
 export { default as VoidSvg } from './Svg/void.svg';
 export { default as ProfileSvg } from './Svg/profile.svg';
+export { default as FillSvg } from './Svg/fill.svg';

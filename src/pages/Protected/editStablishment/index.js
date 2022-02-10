@@ -1,27 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as yup from 'yup';
-import { useFormik, FormikProvider, Form, setIn } from 'formik'
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import {
-    Typography,
-    Paper,
-    Grid,
-    Breadcrumbs,
-    Backdrop,
-    CircularProgress,
-    Link as MuiLink,
-} from '@material-ui/core';
-import { useStyles } from './EditStablishmentElements';
+import { useFormik, FormikProvider, Form } from 'formik'
+import NavigateNext from '@material-ui/icons/NavigateNext';
+import { Typography, Paper, Grid, Breadcrumbs, Link as MuiLink } from '@material-ui/core';
+import { Styles } from './edit-stablishment.elements';
 import { AuthService, UserService } from '../../../Services';
-import { Snackbar, MaskedTextField, Textfield, FButton } from '../../../Components';
+import { Snackbar, MaskedTextField, Textfield, FButton, Backdrop } from '../../../Components';
 
 const EditStablishment = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [infoMsg, setInfoMsg] = useState('');
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
-    const classes = useStyles();
+    const classes = Styles();
     const formik = useFormik({
         initialValues: {
             name: '',
@@ -32,8 +24,7 @@ const EditStablishment = () => {
             .string()
             .required("Nome é obrigatório"),
             phone: yup
-            .string()
-            .required("Telefone é obrigatório"),
+            .string(),
         }),
         onSubmit: (values, onSubmitProps) => {
             submit(values, onSubmitProps)
@@ -64,7 +55,7 @@ const EditStablishment = () => {
         const authObj = AuthService.getAuthData();
         try {
             await UserService.updateStablishment(data);
-            await AuthService.setLoggedUser(authObj);
+            await UserService.refreshUser();
             fetchData()
             setIsLoading(false);
             setInfoMsg('Dados atualizados');
@@ -82,14 +73,12 @@ const EditStablishment = () => {
             <Snackbar toggleSnack={toggleSuccessSnack || toggleFailureSnack} time={toggleFailureSnack ? 4500 : 3500} onClose={() => {setToggleFailureSnack(false); setToggleSuccessSnack(false)}}  color={toggleSuccessSnack ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
             <div className={classes.header}>
                 <Typography variant="h5">
                     Dados da Loja
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>

@@ -22,7 +22,7 @@ const AddressService = {
     },
     async editUserAddress(data){
         const endpoint = `${url}api/address/user`
-        return axios.put(endpoint, data, AuthStr);
+        return axios.post(endpoint, data, AuthStr);
     }
 
 };

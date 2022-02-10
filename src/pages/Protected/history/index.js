@@ -1,47 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-
-import { KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import LastPageIcon from '@material-ui/icons/LastPage';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
-
-import {
-    Link as MuiLink,
-    Breadcrumbs,
-    Backdrop,
-    CircularProgress,
-    Typography,
-    IconButton,
-    useTheme,
-    Paper,
-    Tooltip,
-    Divider,
-    Table,
-    TableHead,
-    TableBody,
-    TableRow,
-    TableCell,
-    TablePagination,
-    Container
-} from '@material-ui/core';
+import { Link as MuiLink, Breadcrumbs, Typography, IconButton, Paper, Tooltip, Divider, Table, TableHead, TableBody, TableRow, TableCell, Container } from '@material-ui/core';
+import { NavigateNext, MoreHoriz, SettingsBackupRestore } from '@material-ui/icons';
 import { VoidSvg } from '../../../Assets'
-import { Snackbar } from '../../../Components';
+import { Snackbar, Pagination, Backdrop, ActionDialog } from '../../../Components';
 import { UserService } from '../../../Services';
-import { useStyles } from './HistoryElements';
+import { Styles } from './history.elements';
 
 function History() {
-    const classes = useStyles();
-    const theme = useTheme();
-  
+    const classes = Styles();
     const [historyList, setHistoryList] = useState([]);
     const [page, setPage] = useState(1);
     const [item, setItem] = useState(10);
     const [isLoading, setIsLoading] = useState(true);
     const [lastPage, setLastPage] = useState(null);
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
+    const [toggleActionDialog, setToggleActionDialog] = useState(false);
+    const [reference, setReference] = useState('')
 
     useEffect(() => {
         fetchData(page, item);
@@ -50,6 +27,7 @@ function History() {
     const fetchData = async (currentPage, rowsPerPage) => {
         try {
             const historyRes = await UserService.getUserHistory(currentPage, rowsPerPage); 
+            console.log(historyRes.data)
             setPage(historyRes.data.current_page);
             setHistoryList(historyRes.data.data);
             setItem(historyRes.data.per_page);
@@ -62,19 +40,40 @@ function History() {
         }
     };
 
+    const setAndOpen = (id) => {
+        setSelectedId(id);
+        setToggleActionDialog(true)
+    }
+
+    const reverseHistory = async () => {
+        setToggleActionDialog(false)
+        setIsLoading(true)
+        const data = {
+            history_id: selectedId,
+            reference: reference
+        }
+        console.log(data)
+        try {
+            await UserService.deleteHistory(data)
+            await fetchData(page, item)
+        } catch (error) {
+            console.log(error)
+            setIsLoading(false)
+        }
+    }
+
     return (
         <div>
             <Snackbar toggleSnack={toggleFailureSnack} time={4000} color="warning">
                 Ocorreu um erro ao carregar os dados, tente novamente mais tarde.
             </Snackbar>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
+            <ActionDialog inputValue={reference} parentCallback={(reference) => setReference(reference)} inputActive inputLabel="Motivo" title="Reverter Pontuação" text="Ao realizar esta ação ela não poderá ser revertida" open={toggleActionDialog} close={() => setToggleActionDialog(false)} action={reverseHistory}/>
             <div className={classes.header}>
                 <Typography variant="h5">
                     Meu histórico
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>
@@ -94,7 +93,7 @@ function History() {
                                     </Typography>
                                     <Tooltip title="Mais opções">
                                         <IconButton aria-label="more">
-                                            <MoreHorizIcon fontSize="large" />
+                                            <MoreHoriz fontSize="large" />
                                         </IconButton>
                                     </Tooltip>
                                 </div>
@@ -103,63 +102,44 @@ function History() {
                                     <Table>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell>Produto</TableCell>
                                                 <TableCell>Data</TableCell>
+                                                <TableCell>Produto</TableCell>
+                                                <TableCell>Referência</TableCell>
+                                                <TableCell>Transação</TableCell>
                                                 <TableCell>Funcionário</TableCell>
                                                 <TableCell>Cliente</TableCell>
                                                 <TableCell>Valor</TableCell>
+                                                <TableCell align='right'>Ações</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
                                             {historyList.map(history => (
                                                 <TableRow key={history.id} hover>
-                                                    <TableCell>{history.product}</TableCell>
                                                     <TableCell>{moment(history.created_at).format("DD/MM/YYYY - HH:MM")}</TableCell>
+                                                    <TableCell>{history.product || '---'}</TableCell>
+                                                    <TableCell>{history.transaction}</TableCell>
+                                                    <TableCell>{history.reference}</TableCell>
                                                     <TableCell>{history.employee}</TableCell>
                                                     <TableCell>{history.client}</TableCell>
                                                     <TableCell>{history.amount}</TableCell>
+                                                    <TableCell align='right'>
+                                                        {history.reference  === "COMPRA" && (
+                                                            <>
+                                                            {history.reversed === 0 && (
+                                                                    <Tooltip title="Remover" arrow>
+                                                                        <IconButton onClick={() => setAndOpen(history.id)}>
+                                                                            <SettingsBackupRestore color='secondary'/>
+                                                                        </IconButton>
+                                                                    </Tooltip>
+                                                            )}
+                                                            </>
+                                                        )}
+                                                    </TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
                                     </Table>
-                                    <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25, 100]}
-                                    component="div"
-                                    count={historyList.length - 1}
-                                    rowsPerPage={item}
-                                    page={page - 1}
-                                    onChangePage={() => null}
-                                    labelRowsPerPage="Produtos por página:"
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count !== 0 ? count : `more than ${to}`}`}
-                                    onChangeRowsPerPage={(event) => fetchData(1, event.target.value)}
-                                    ActionsComponent={() => (
-                                        <div className={classes.paginationIcons}>
-                                            <IconButton
-                                                onClick={() => fetchData(1, item)}
-                                                disabled={page === 1}
-                                                aria-label="first page">
-                                                {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-                                            </IconButton>
-                                            <IconButton 
-                                                onClick={() => fetchData(page - 1, item)} 
-                                                disabled={page === 1} 
-                                                aria-label="previous page">
-                                                {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                                            </IconButton>
-                                            <IconButton
-                                                onClick={() => fetchData(page + 1, item)}
-                                                disabled={page === lastPage}
-                                                aria-label="next page">
-                                                {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                                            </IconButton>
-                                            <IconButton
-                                                onClick={() => fetchData(lastPage, item)}
-                                                disabled={page === lastPage}
-                                                aria-label="last page">
-                                                {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-                                            </IconButton>
-                                        </div>
-                                    )}/>
+                                    <Pagination rows={item} changeRows={(e) => fetchData(page, e.target.value)} count={lastPage} changePage={(e, page) => fetchData(page, item)}/>
                                 </div>
                             </>
                         ) : (

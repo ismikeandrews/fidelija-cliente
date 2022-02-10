@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import moment from 'moment';
 const url = process.env.REACT_APP_BASE_URL;
 
 const AuthService = {
@@ -9,16 +9,28 @@ const AuthService = {
         return axios.post(endPoint, data);
     },
 
-    async setLoggedUser(data){
+    async getUser(data){
         const endPoint = `${url}api/user`
-        if(data){
-            const res = await axios.get(endPoint, { headers: { Authorization: `${data.token_type} ${data.access_token}` }})
-            const stringAuthData = JSON.stringify(data);
-            const stringUserData = JSON.stringify(res.data);
-            localStorage.setItem("authData", stringAuthData);
-            localStorage.setItem("userData", stringUserData);
-        }
+        return await axios.get(endPoint, { headers: { Authorization: `${data.token_type} ${data.access_token}` }})
+    },
 
+    setLoggedUser(userData, token){
+        const stringUserData = JSON.stringify(userData);
+        const stringAuthData = JSON.stringify(token);
+        localStorage.setItem("userData", stringUserData);
+        localStorage.setItem("authData", stringAuthData);
+    },
+
+    updateLoggedUser(userData){
+        const stringUserData = JSON.stringify(userData);
+        localStorage.setItem("userData", stringUserData);
+    },
+
+    async getUserOff(){
+        const { token_type, access_token } = JSON.parse(localStorage.getItem("authData"))
+        const AuthStr = {headers: { Authorization: `${token_type} ${access_token}` }}
+        const endPoint = `${url}api/user`;
+        return await axios.get(endPoint, AuthStr)
     },
 
     getAuthData(){
@@ -56,6 +68,7 @@ const AuthService = {
         const data = localStorage.getItem("authData");
         if (data) {
             localStorage.removeItem("authData");
+            localStorage.removeItem("userData");
             return true;
         }else{
             return false;
@@ -69,6 +82,33 @@ const AuthService = {
 
     async cpfVerifier(cpf){
         return axios.get(`${url}api/registered-user/${cpf}`);
+    },
+    async recoverPassword(data){
+        const endpoint = `${url}api/user/recovery`;
+        return axios.post(endpoint, data);
+    },
+
+    checkMembership(){
+        const user = JSON.parse(localStorage.getItem('userData'))
+        if(user.stablishment.validity === null){
+            return false
+        }
+        if (moment(user.stablishment.validity).isBefore(moment())) {
+            return false
+        }
+        if(moment(user.stablishment.validity).isAfter(moment())){
+            return true
+        }
+    },
+
+    checkUserAddress(){
+        const user = JSON.parse(localStorage.getItem('userData'))
+        if(user.address){
+            return true
+        }
+        if(user.address === null){
+            return false
+        }
     }
 }
 

@@ -1,26 +1,11 @@
 import React, { useState } from 'react';
 import InputMask from 'react-input-mask';
 import { Link } from 'react-router-dom';
-import { 
-    Backdrop,
-    CircularProgress,
-    Typography,
-    Breadcrumbs,
-    Link as MuiLink,
-    Grid,
-    Paper,
-    TextField,
-    List,
-    ListItem,
-    ListItemAvatar,
-    Avatar,
-    ListItemText,
-    Button
-} from '@material-ui/core';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { AccountBox, MonetizationOn} from '@material-ui/icons';
-import { styles } from './points.elements';
-import { Snackbar } from '../../../Components'
+import { Typography, Breadcrumbs, Link as MuiLink, Grid, Paper, TextField, List, ListItem, ListItemAvatar, Avatar, ListItemText, Button } from '@material-ui/core';
+import NavigateNext from '@material-ui/icons/NavigateNext';
+import { AccountBox, MonetizationOn, Receipt, AccountBalance } from '@material-ui/icons';
+import { Styles } from './points.elements';
+import { Snackbar, Backdrop } from '../../../Components'
 import { UserService, AuthService } from '../../../Services';
 
 const Points = () => {
@@ -32,13 +17,14 @@ const Points = () => {
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [infoMsg, setInfoMsg] = useState('');
-    const classes = styles();
+    const classes = Styles();
 
     const searchUser = async () => {
         setIsLoading(true)
         const data = {cpf}   
         try {
             const res = await UserService.getUserByCpf(data)
+            console.log(res.data)
             setUser(res.data)
             setIsLoading(false)
             if(!res.data && cpf.length > 0){
@@ -65,7 +51,8 @@ const Points = () => {
             await UserService.registerPoints(data)
             setUser(null)
             setAmmount('');
-            setCpf('')
+            setCpf('');
+            setReference('');
             setIsLoading(false);
             setInfoMsg("Usuário pontuado com sucesso.");
             setToggleSuccessSnack(true);
@@ -82,14 +69,12 @@ const Points = () => {
             <Snackbar toggleSnack={toggleSuccessSnack || toggleFailureSnack} time={toggleFailureSnack ? 4500 : 3500} onClose={() => {setToggleFailureSnack(false); setToggleSuccessSnack(false)}}  color={toggleSuccessSnack ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
            <div className={classes.header}>
                 <Typography variant="h5">
                     Pontuar usuário
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>
@@ -134,6 +119,22 @@ const Points = () => {
                                     </ListItem>
                                     <ListItem>
                                         <ListItemAvatar>
+                                            <Avatar style={{backgroundColor: "#604bd2"}}>
+                                                <Receipt/>
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText>{reference || '- - -'}</ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemAvatar>
+                                            <Avatar style={{backgroundColor: "#604bd2"}}>
+                                                <AccountBalance/>
+                                            </Avatar>
+                                        </ListItemAvatar>
+                                        <ListItemText>{user.stablishment_points || "- - -"}</ListItemText>
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListItemAvatar>
                                             <Avatar style={{backgroundColor: "rgb(38 165 43)"}}>
                                                 <MonetizationOn/>
                                             </Avatar>
@@ -142,7 +143,7 @@ const Points = () => {
                                     </ListItem>
                                 </List>
                                 <div style={{padding: "10px"}}>
-                                    <Button variant="contained" color="secondary" fullWidth disabled={ammount === '' || reference === ''} onClick={submitScore}>
+                                    <Button variant="contained" className={classes.button} fullWidth disabled={ammount === '' || reference === ''} onClick={submitScore}>
                                         Pontuar
                                     </Button>
                                 </div>

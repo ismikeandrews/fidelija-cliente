@@ -2,20 +2,11 @@ import React, { useState, useEffect} from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import {
-    Backdrop,
-    CircularProgress,
-    Typography,
-    Breadcrumbs,
-    Link as MuiLink,
-    Paper,
-    Grid,
-} from '@material-ui/core';
-import { AuthService, AddressService } from '../../../Services';
-import { useStyles } from './EditAddressElements';
-import { Snackbar, MaskedTextField, Textfield, FButton } from '../../../Components';
-
+import NavigateNext from '@material-ui/icons/NavigateNext';
+import { Typography, Breadcrumbs, Link as MuiLink, Paper, Grid } from '@material-ui/core';
+import { AuthService, AddressService, UserService } from '../../../Services';
+import { Snackbar, MaskedTextField, Textfield, FButton, Backdrop } from '../../../Components';
+import { Styles } from './edit-address.elements';
 
 const EditAddress = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +14,7 @@ const EditAddress = () => {
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [infoMsg, setInfoMsg] = useState('');
     const { id } = useParams();
-    const classes = useStyles();
+    const classes = Styles();
 
     const formik = useFormik({
         initialValues: {
@@ -95,28 +86,28 @@ const EditAddress = () => {
     const fetchData = async () => {
         setIsLoading(true)
         try {
-            const authRes = await AuthService.getLoggedUser();
+            const { stablishment, address } = await AuthService.getLoggedUser();
             if(id === '0'){
-                if(authRes.address !== null){
-                    formik.setFieldValue('street', authRes.address.street)
-                    formik.setFieldValue('postalcode', authRes.address.zip)
-                    formik.setFieldValue('neighborhood', authRes.address.neighborhood)
-                    formik.setFieldValue('city', authRes.address.city)
-                    formik.setFieldValue('state', authRes.address.state)
-                    formik.setFieldValue('number', authRes.address.number)
-                    formik.setFieldValue('addressLine', authRes.address.complementation)
+                if(address !== null){
+                    formik.setFieldValue('street', address.street)
+                    formik.setFieldValue('postalcode', address.zip)
+                    formik.setFieldValue('neighborhood', address.neighborhood)
+                    formik.setFieldValue('city', address.city)
+                    formik.setFieldValue('state', address.state)
+                    formik.setFieldValue('number', address.number)
+                    formik.setFieldValue('addressLine', address.complementation)
                     setIsLoading(false)
                 }
                 setIsLoading(false)
             }
             if(id === '1'){
-                formik.setFieldValue('street', authRes.stablishment.address.street)
-                formik.setFieldValue('postalcode', authRes.stablishment.address.zip)
-                formik.setFieldValue('neighborhood', authRes.stablishment.address.neighborhood)
-                formik.setFieldValue('city', authRes.stablishment.address.city)
-                formik.setFieldValue('state', authRes.stablishment.address.state)
-                formik.setFieldValue('number', authRes.stablishment.address.number)
-                formik.setFieldValue('addressLine', authRes.stablishment.address.complementation)
+                formik.setFieldValue('street', stablishment.address.street)
+                formik.setFieldValue('postalcode', stablishment.address.zip)
+                formik.setFieldValue('neighborhood', stablishment.address.neighborhood)
+                formik.setFieldValue('city', stablishment.address.city)
+                formik.setFieldValue('state', stablishment.address.state)
+                formik.setFieldValue('number', stablishment.address.number)
+                formik.setFieldValue('addressLine', stablishment.address.complementation)
                 setIsLoading(false)
             }
         } catch (error) {
@@ -137,12 +128,11 @@ const EditAddress = () => {
             complementation: values.addressLine,
             number: values.number
         }
-        const authObj = AuthService.getAuthData();
         if (id === '0') {
             try {
                 console.log(data)
                 await AddressService.editUserAddress(data)
-                await AuthService.setLoggedUser(authObj)
+                await UserService.refreshUser();
                 fetchData()
                 setIsLoading(false);
                 setInfoMsg("Endereço atualizado");
@@ -157,7 +147,7 @@ const EditAddress = () => {
         if(id === '1') {
             try {
                 await AddressService.editStablishmentAddress(data);
-                await AuthService.setLoggedUser(authObj)
+                await UserService.refreshUser();
                 fetchData()
                 setIsLoading(false)
                 setInfoMsg("Endereço atualizado");
@@ -176,14 +166,12 @@ const EditAddress = () => {
             <Snackbar toggleSnack={toggleSuccessSnack || toggleFailureSnack} time={toggleFailureSnack ? 4500 : 3500} onClose={() => {setToggleFailureSnack(false); setToggleSuccessSnack(false)}}  color={toggleSuccessSnack ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
             <div className={classes.header}>
                 <Typography variant="h5">
                     Editar endereço {id === '0' ? 'pessoal' : id === '1' ? 'da loja' : ''}
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>

@@ -1,63 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
+import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import EditIcon from '@material-ui/icons/Edit';
-import CloseIcon from '@material-ui/icons/Close';
-import RotateRightIcon from '@material-ui/icons/RotateRight';
-import RotateLeftIcon from '@material-ui/icons/RotateLeft';
-import Cropper from 'react-easy-crop'
-import { 
-    Avatar,
-    Typography,
-    Breadcrumbs,
-    Link as MuiLink,
-    Tabs,
-    Tab,
-    Divider,
-    Paper,
-    Grid,
-    Button as MuiButton,
-    Checkbox,
-    FormControlLabel,
-    IconButton,
-    Tooltip,
-    Backdrop,
-    CircularProgress,
-    Dialog,
-    DialogContent,
-    Slider,
-    DialogActions,
-    DialogTitle
-} from '@material-ui/core';
-import { useStyles } from './ProfileElements';
+import { Edit, NavigateNext, FileCopy, GetApp } from '@material-ui/icons';
+import { Avatar, Typography, Breadcrumbs, Link as MuiLink, Tabs, Tab, Divider, Paper, Grid, Button as MuiButton, Checkbox, FormControlLabel, IconButton, Tooltip, Card, CardActionArea, CardActions } from '@material-ui/core';
+import Skeleton from '@material-ui/lab/Skeleton';
 import { AuthService, UserService } from '../../../Services';
-import { Snackbar, Button, Textfield, FButton } from '../../../Components';
-import getCroppedImg from '../../../Components/imageCropper/'
+import { Snackbar, Textfield, FButton, UseTerms, ImageCropper, Backdrop } from '../../../Components';
+import { Styles } from './profile.elements';
 
 const Profile = () => {
     const [openProfileCropper, setOpenProfileCropper] = useState(false);
     const [openLogoCropper, setOpenLogoCropper] = useState(false);
-    const [crop, setCrop] = useState({ x: 0, y: 0 })
-    const [zoom, setZoom] = useState(1);
-    const [rotation, setRotation] = useState(0)
-    const [tabValue, setTabValue] = useState(0)
-    const [userObj, setUserObj] = useState({});
-    const [logo, setLogo] = useState(null);
-    const [profile, setProfile] = useState(null);
     const [profileUrl, setProfileUrl] = useState('');
     const [logoUrl, setLogoUrl] = useState('');
+    const [tabValue, setTabValue] = useState(0)
+    const [userObj, setUserObj] = useState({});
     const [alerts, setAlerts] = useState(true);
     const [infoMsg, setInfoMsg] = useState('');
-    const [croppedProfile, setCroppedProfile] = useState(null)
-    const [croppedLogo, setCroppedLogo] = useState(null)
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const classes = useStyles();
+    const [qrcode, setQrcode] = useState('');
+    const classes = Styles();
     const inputFileL = useRef(null);
     const inputFileP = useRef(null);
+
     const formik = useFormik({
         initialValues: {
             currentPassword: '',
@@ -88,10 +57,11 @@ const Profile = () => {
 
     useEffect(() => {
         fetchData()
-      }, [])
+    }, [])
 
     const fetchData = async () => {
         try {
+            setQrcode(process.env.REACT_APP_BASE_URL + `api/stablishments/${AuthService.getLoggedUser().stablishment.id}/qrcode.png`)
             setUserObj(AuthService.getLoggedUser());
             setIsLoading(false);
         } catch (error) {
@@ -121,207 +91,61 @@ const Profile = () => {
         }
     }
 
-    const handleProfileImg = (file) => {
-        setProfile(file)
-        setProfileUrl(URL.createObjectURL(file))
-        setOpenProfileCropper(true)
-    }
-
-    const submitProfileImg = async () => {
-        handleDialogClose()
-        setIsLoading(true);
-        const authObj = AuthService.getAuthData();
-        try {
-            const croppedImage = await getCroppedImg(
-                profileUrl,
-                croppedProfile,
-                rotation
-            )
-            fetch(croppedImage)
-            .then(res => res.blob())
-            .then(async (blob) => {
-                let data = new FormData();
-                data.append('image', blob);
-                try {
-                    await UserService.update(data);
-                    await AuthService.setLoggedUser(authObj)
-                    await fetchData()
-                    setIsLoading(false)
-                    setInfoMsg("Foto de perfil atualizada.")
-                    setToggleSuccessSnack(true);
-                } catch (error) {
-                    console.log(error);
-                    setZoom(1)
-                    setIsLoading(false);
-                    setInfoMsg('Ocorreu um erro ao atuliazar');
-                    setToggleFailureSnack(true);
-                }
-            });
-          } catch (error) {
-            console.log(error)
-            setIsLoading(false);
-            setInfoMsg("Ocorreu um erro ao tentar salvar a imagem.");
-            setToggleFailureSnack(true);
-          }
-    }
-
     const handleLogoImg = (file) => {
-        setLogo(file)
         setLogoUrl(URL.createObjectURL(file))
         setOpenLogoCropper(true)
     }
-
-    const submitLogoImg = async () => {
-        handleDialogClose()
+    
+    const handleProfileImg = (file) => {
+        setProfileUrl(URL.createObjectURL(file))
+        setOpenProfileCropper(true)
+    }
+    
+    const submitProfile = async (file) => {
         setIsLoading(true);
-        const authObj = AuthService.getAuthData();
         try {
-            const croppedImage = await getCroppedImg(
-                logoUrl,
-                croppedLogo,
-                rotation
-            )
-            fetch(croppedImage)
-            .then(res => res.blob())
-            .then(async (blob) => {
-                let data = new FormData();
-                data.append('image', blob);
-                try {
-                    console.log(data)
-                    await UserService.updateStablishment(data);
-                    await AuthService.setLoggedUser(authObj)
-                    await fetchData()
-                    setIsLoading(false)
-                    setInfoMsg("Logo atualizado.")
-                    setToggleSuccessSnack(true);
-                } catch (error) {
-                    console.log(error);
-                    setIsLoading(false);
-                    setInfoMsg('Ocorreu um erro ao atuliazar.');
-                    setToggleFailureSnack(true);
-                }
-            });
-          } catch (error) {
-            console.log(error)
-            setZoom(1)
+            let data = new FormData();
+            data.append('image', file);
+            await UserService.update(data);
+            const user = await AuthService.getUserOff();
+            AuthService.updateLoggedUser(user.data)
+            fetchData()
+            setIsLoading(false)
+            setInfoMsg("Foto de perfil atualizada.")
+            setToggleSuccessSnack(true);
+        } catch (error) {
+            console.log(error);
             setIsLoading(false);
-            setInfoMsg("Ocorreu um erro ao tentar salvar a imagem.");
+            setInfoMsg('Ocorreu um erro ao atuliazar');
             setToggleFailureSnack(true);
-          }
+        }
     }
 
-    const handleDialogClose = () => {
-        setOpenProfileCropper(false); 
-        setOpenLogoCropper(false)
-        setRotation(0); 
-        setZoom(1);
-        setProfile(null)
-        setProfileUrl('')
-        setLogo(null)
-        setLogoUrl('')
+    const submitLogo = async (file) => {
+        setIsLoading(true);
+        try {
+            let data = new FormData();
+            data.append('image', file);
+            await UserService.updateStablishment(data);
+            const user = await AuthService.getUserOff();
+            AuthService.updateLoggedUser(user.data)
+            fetchData()
+            setIsLoading(false)
+            setInfoMsg("Logo atualizado.")
+            setToggleSuccessSnack(true);
+        } catch (error) {
+            console.log(error);
+            setIsLoading(false);
+            setInfoMsg('Ocorreu um erro ao atuliazar.');
+            setToggleFailureSnack(true);
+        }
     }
 
     return (
         <div>
-            <Dialog open={openProfileCropper} onClose={() => handleDialogClose()} maxWidth="lg">
-                <DialogTitle>
-                    <Typography variant="h6">Cortar imagem</Typography>
-                    <IconButton aria-label="close" className={classes.closeButton} onClick={() => handleDialogClose()}>
-                        <CloseIcon />
-                    </IconButton>
-                </DialogTitle>
-               
-                <DialogContent>
-                    <div className={classes.cropArea}>
-                        <Cropper
-                        objectFit="contain"
-                        image={profileUrl}
-                        crop={crop}
-                        zoom={zoom}
-                        rotation={rotation}
-                        aspect={10 / 10}
-                        onCropChange={setCrop}
-                        onCropComplete={(croppedArea, croppedAreaPixels) => setCroppedProfile(croppedAreaPixels)}
-                        onZoomChange={setZoom}/>
-                    </div>
-                </DialogContent>
-                <DialogActions className={classes.slider}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} className={classes.rotationButtons}>
-                            <IconButton color="primary" onClick={() => setRotation(rotation - 90)}>
-                                <RotateLeftIcon/>
-                            </IconButton>
-                            <IconButton color="primary" onClick={() => setRotation(rotation + 90)}>
-                                <RotateRightIcon/>
-                            </IconButton>
-                        </Grid>
-                        <Grid item xs={12}>     
-                            <Slider
-                            value={zoom}
-                            min={1}
-                            max={3}
-                            step={0.1}
-                            aria-labelledby="Zoom"
-                            onChange={(e, zoom) => setZoom(zoom)}
-                            classes={{ root: 'slider' }}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <MuiButton variant="contained" color="primary" fullWidth onClick={submitProfileImg}>Salvar</MuiButton>
-                        </Grid>
-                    </Grid>
-                </DialogActions>
-            </Dialog>
-            <Dialog open={openLogoCropper} onClose={() => handleDialogClose()} maxWidth="lg">
-                <DialogTitle>
-                    <Typography variant="h6">Cortar imagem</Typography>
-                    <IconButton aria-label="close" className={classes.closeButton} onClick={() => handleDialogClose()}>
-                        <CloseIcon />
-                    </IconButton>
-                </DialogTitle>
-               
-                <DialogContent>
-                    <div className={classes.cropArea}>
-                        <Cropper
-                        objectFit="contain"
-                        image={logoUrl}
-                        crop={crop}
-                        zoom={zoom}
-                        rotation={rotation}
-                        aspect={10 / 10}
-                        onCropChange={setCrop}
-                        onCropComplete={(croppedArea, croppedAreaPixels) => setCroppedLogo(croppedAreaPixels)}
-                        onZoomChange={setZoom}/>
-                    </div>
-                </DialogContent>
-                <DialogActions className={classes.slider}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} className={classes.rotationButtons}>
-                            <IconButton color="primary" onClick={() => setRotation(rotation - 90)}>
-                                <RotateLeftIcon/>
-                            </IconButton>
-                            <IconButton color="primary" onClick={() => setRotation(rotation + 90)}>
-                                <RotateRightIcon/>
-                            </IconButton>
-                        </Grid>
-                        <Grid item xs={12}>     
-                            <Slider
-                            value={zoom}
-                            min={1}
-                            max={3}
-                            step={0.1}
-                            aria-labelledby="Zoom"
-                            onChange={(e, zoom) => setZoom(zoom)}
-                            classes={{ root: 'slider' }}/>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <MuiButton variant="contained" color="primary" fullWidth onClick={submitLogoImg}>Salvar</MuiButton>
-                        </Grid>
-                    </Grid>
-                </DialogActions>
-            </Dialog>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <ImageCropper open={openProfileCropper} close={() => setOpenProfileCropper(false)} url={profileUrl} handleChange={submitProfile}/>
+            <ImageCropper open={openLogoCropper} close={() => setOpenLogoCropper(false)} url={logoUrl} handleChange={submitLogo}/>
+            <Backdrop open={isLoading}/>
             <Snackbar toggleSnack={toggleSuccessSnack || toggleFailureSnack} time={toggleFailureSnack ? 4500 : 3500} onClose={() => {setToggleFailureSnack(false); setToggleSuccessSnack(false)}}  color={toggleSuccessSnack ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>
@@ -329,7 +153,7 @@ const Profile = () => {
                 <Typography variant="h5">
                     Minha conta
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Home
                     </MuiLink>
@@ -343,7 +167,9 @@ const Profile = () => {
                     <Tab label="Perfil"/>
                     <Tab label="Loja"/>
                     <Tab label="Notificações"/>
+                    <Tab label="Downloads"/>
                     <Tab label="Segurança"/>
+                    <Tab label="Termos de uso"/>
                 </Tabs>
             </div>
             <Divider/>
@@ -354,7 +180,7 @@ const Profile = () => {
                             <Grid container spacing={3}>
                                 <Grid item xs={3}>
                                     <Paper variant="outlined" className={classes.paperContent}>
-                                        <Grid container spacing={4} direction="column" justifyContent="center" alignItems="center">
+                                        <Grid container spacing={4} direction="column" alignItems="center">
                                             <Grid item xs={12}>
                                                 <Avatar src={process.env.REACT_APP_BASE_URL +  userObj.photo} alt={userObj.name} className={classes.usrProfile}/>
                                             </Grid>
@@ -416,7 +242,7 @@ const Profile = () => {
                                             </Typography>
                                             <Tooltip title="Editar">
                                                 <IconButton color="primary" component={Link} to={`/dashboard/edit-address/0`}>
-                                                    <EditIcon fontSize="default" />
+                                                    <Edit fontSize="default" />
                                                 </IconButton>
                                             </Tooltip>
                                         </div>
@@ -493,7 +319,7 @@ const Profile = () => {
                             <Grid container spacing={3}>
                                 <Grid item xs={3}>
                                     <Paper variant="outlined" className={classes.paperContent}>
-                                        <Grid container spacing={4} direction="column" justifyContent="center" alignItems="center">
+                                        <Grid container spacing={4} direction="column" alignItems="center">
                                             <Grid item xs={12}>
                                                 <Avatar src={process.env.REACT_APP_BASE_URL + 'imgs/' + userObj.stablishment?.photo} alt={userObj.stablishment?.name} className={classes.usrProfile}/>
                                             </Grid>
@@ -502,8 +328,13 @@ const Profile = () => {
                                                     {userObj.stablishment?.name}
                                                 </Typography>
                                                 <Typography variant="overline">
-                                                    Assinatura: Gratuita
+                                                    Assinatura: {userObj.stablishment?.validity === null ? 'Gratuita' : 'Plano Pro'}
                                                 </Typography>
+                                                {userObj.stablishment?.validity !== null && (
+                                                    <Typography variant="body2">
+                                                        Assinatura válida até: {moment(userObj.stablishment?.validity).format('DD/MM/YYYY')}
+                                                    </Typography>
+                                                )}
                                             </Grid>
                                             <Grid item xs={12}>
                                                 <MuiButton color="primary" variant="outlined" onClick={() => inputFileL.current.click()}>
@@ -522,7 +353,7 @@ const Profile = () => {
                                             </Typography>
                                             <Tooltip title="Editar">
                                                 <IconButton color="primary" component={Link} to="/dashboard/edit-stablishment">
-                                                    <EditIcon fontSize="default" />
+                                                    <Edit fontSize="default" />
                                                 </IconButton>
                                             </Tooltip>
                                         </div>
@@ -563,7 +394,7 @@ const Profile = () => {
                                             </Typography>
                                             <Tooltip title="Editar">
                                                 <IconButton color="primary" component={Link} to={`/dashboard/edit-address/1`}>
-                                                    <EditIcon fontSize="default" />
+                                                    <Edit fontSize="default" />
                                                 </IconButton>
                                             </Tooltip>
                                         </div>
@@ -684,6 +515,43 @@ const Profile = () => {
                             <Paper variant="outlined">
                                 <div className={classes.paperHeader}>
                                     <Typography variant="h6">
+                                        QR code 
+                                    </Typography>
+                                </div>
+                                <Divider/>
+                                <div className={classes.paperContent}>
+                                    <Grid container spacing={3}>
+                                        <Grid item>
+                                            <Card variant="outlined">
+                                                <CardActionArea>
+                                                    {qrcode ? (
+                                                        <img src={qrcode} alt="QR code da loja"/>
+                                                        ) : (
+                                                        <Skeleton variant="rect" height={400} width={400}/>
+                                                    )}
+                                                </CardActionArea>
+                                                <CardActions>
+                                                    <IconButton component="a" href={qrcode} download="qrcode-fidelija.png">
+                                                        <GetApp/>
+                                                    </IconButton>
+                                                    <IconButton onClick={() => {navigator.clipboard.writeText(qrcode)}}>
+                                                        <FileCopy/>
+                                                    </IconButton>
+                                                </CardActions>
+                                            </Card>
+                                        </Grid>
+                                    </Grid>
+                                </div>
+                            </Paper>
+                        </div>
+                    )}
+                </div>
+                <div role="tabpanel" hidden={tabValue !== 4} id={`full-width-tabpanel-${4}`}>
+                    {tabValue === 4 && (
+                        <div className={classes.spacing}>
+                            <Paper variant="outlined">
+                                <div className={classes.paperHeader}>
+                                    <Typography variant="h6">
                                         Alterar senha
                                     </Typography>
                                 </div>
@@ -715,6 +583,23 @@ const Profile = () => {
                         </div>
                     )}
                 </div>
+                <div role="tabpanel" hidden={tabValue !== 5} id={`full-width-tabpanel-${5}`}>
+                    {tabValue === 5 && (
+                        <div className={classes.spacing}>
+                            <Paper variant="outlined">
+                                <div className={classes.paperHeader}>
+                                    <Typography variant="h6">
+                                        Termos de uso
+                                    </Typography>
+                                </div>
+                                <Divider/>
+                                <div className={classes.paperContent}>
+                                    {UseTerms()}
+                                </div>
+                            </Paper>
+                        </div>
+                    )}
+                </div> 
             </div>
         </div>
     )

@@ -1,5 +1,3 @@
-export { default as Welcome } from './Welcome';
-export { default as Plans } from './Plans';
-export { Login, Register } from './Auth';
-export { default as About } from './About';
-export { default as NotFound } from './NotFound';
+export { default as Register } from './register';
+export { default as Login } from './login';
+export { default as Recover } from './recover';

@@ -10,7 +10,7 @@ const AuthData = AuthService.getAuthData();
 let AuthStr = {} 
 
 if(AuthData){
-     AuthStr = { headers: { Authorization: `${AuthData.token_type} ${AuthData.access_token}` }}
+     AuthStr = { headers: { Authorization: `${AuthData.token_type} ${AuthData.access_token}`, Accept: 'application/json' }}
 }
 
 
@@ -124,6 +124,20 @@ const UserService = {
         const enpoint = `${url}api/points/stablishment`
         return axios.post(enpoint, data, AuthStr);
     },
+    async newInvoice(data){
+        const endpoint = `${url}api/payments/invoice/create`
+        return axios.post(endpoint, data, AuthStr)
+    },
+    async refreshUser(){
+        const endpoint = `${url}api/user`
+        const { data } = await axios.get(endpoint, AuthStr);
+        const strUser = JSON.stringify(data);
+        localStorage.setItem('userData', strUser)
+    },
+    async deleteHistory(data){
+        const endpoint = `${url}api/history/delete`;
+        return axios.post(endpoint, data, AuthStr);
+    }
 };
 
 export default UserService;

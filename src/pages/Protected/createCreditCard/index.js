@@ -1,29 +1,17 @@
-import React, { useState, useRef } from 'react';
-import { useChain, useSpring, useTransition, animated, useSpringRef } from 'react-spring';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import moment from 'moment';
 import MomentUtils from '@date-io/moment';
-import { Link } from 'react-router-dom';
-import { useFormik, FormikProvider, Form } from 'formik';
 import * as yup from 'yup';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import { 
-    Breadcrumbs, 
-    Link as MuiLink,
-    Typography,
-    Paper,
-    Checkbox,
-    FormControlLabel,
-    Grid,
-    Backdrop,
-    CircularProgress
-} from '@material-ui/core';
+import { useFormik, FormikProvider, Form } from 'formik';
+import { useChain, useSpring, useTransition, animated, useSpringRef } from 'react-spring';
+import { Breadcrumbs, Link as MuiLink, Typography, Paper, Checkbox, FormControlLabel, Grid } from '@material-ui/core';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-import { Snackbar, MaskedTextField, Textfield, FButton } from '../../../Components';
-import { useStyles } from './CreditCardElements';
-
-
+import NavigateNext from '@material-ui/icons/NavigateNext';
+import { Snackbar, MaskedTextField, Textfield, FButton, Backdrop } from '../../../Components';
 import { UserService } from '../../../Services';
-import { Amex, Chip, Dinersclub, Discover, Jcb, Mastercard, Troy, Unionpay, Visa } from '../../../Assets'
+import { Amex, Chip, Discover, Mastercard, Troy, Visa } from '../../../Assets'
+import { Styles } from './credit-card.elements';
 
 const CreateCreditCard = () => {
     const [flipped, setFlipped] = useState(false);
@@ -37,7 +25,7 @@ const CreateCreditCard = () => {
     const [toggleFailure, setToggleFailure] = useState(false);
     const [number, setNumber] = useState('#### #### #### ####');
     const [name, setName] = useState('FULL NAME')
-    const classes = useStyles();
+    const classes = Styles();
     const springRef = useSpringRef();
     const flagTransitionRef = useSpringRef();
     const numberTransitionRef = useSpringRef();
@@ -178,13 +166,11 @@ const CreateCreditCard = () => {
             <Snackbar toggleSnack={toggleSuccess || toggleFailure} time={toggleFailure ? 4500 : 3500}  color={toggleSuccess ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
             <div className={classes.header}>
                 <div>
                     <Typography variant="h5">Novo cartão de crédito</Typography>
-                    <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                    <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                         <MuiLink color="inherit" component={Link} to="/">
                             Home
                         </MuiLink>

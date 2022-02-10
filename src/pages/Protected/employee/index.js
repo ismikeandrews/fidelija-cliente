@@ -1,15 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import InputMask from 'react-input-mask';
 import { Link } from 'react-router-dom';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import AddIcon from '@material-ui/icons/Add';
+import { NavigateNext, DeleteOutline, Add } from '@material-ui/icons';
 import {
     Link as MuiLink,
     Breadcrumbs,
     Button as MuiButton,
-    Backdrop,
-    CircularProgress,
     Typography,
     Paper,
     Table,
@@ -31,11 +27,13 @@ import {
     Chip,
     Tooltip,
     IconButton,
-    Avatar
+    Avatar,
+    Container
 } from '@material-ui/core';
-import { useStyles } from './EmployeeElements';
-import { UserService } from '../../../Services';
-import { Snackbar } from '../../../Components';
+import { Styles } from './employee.elements';
+import { UserService, AuthService } from '../../../Services';
+import { Snackbar, Backdrop, AlertDialog } from '../../../Components';
+import { PeopleSvg } from '../../../Assets';
 
 const Employee = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -48,9 +46,13 @@ const Employee = () => {
     const [infoMsg, setInfoMsg] = useState('');
     const [employeeList, setEmployeeList] = useState([]);
     const [relationId, setRelationId] = useState('');
-    const [alreadyExist, setAlreadyExist] = useState(false)
+    const [alreadyExist, setAlreadyExist] = useState(false);
+    const [toggleAlert, setToggleAlert] = useState(false);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertText, setAlertText] = useState('');
+    const [link, setLink] = useState('');
+    const classes = Styles();
 
-    const classes = useStyles();
     useEffect(() => {
         fetchData()
     }, []);
@@ -58,7 +60,6 @@ const Employee = () => {
     const fetchData = async () => {
         try {
             const {data} = await UserService.getEmployees();
-            console.log(data)
             setEmployeeList(data);
             setIsLoading(false);
         } catch (error) {
@@ -71,29 +72,44 @@ const Employee = () => {
 
     const handleSubmit = async () => {
         setIsLoading(true)
+        setOpenDialog(false)
         const data = {
             cpf: cpf,
             userType: employeeType
         };
-        if(alreadyExist === false && cpf !== ''){
-            try {
-                await UserService.setNewEmployee(data);
-                await fetchData();
+        if (AuthService.checkMembership() || employeeList.length < 1) {
+            if(employeeList.length <= 10){
+                if(alreadyExist === false && cpf !== ''){
+                    try {
+                        await UserService.setNewEmployee(data);
+                        await fetchData();
+                        setIsLoading(false);
+                        setInfoMsg('Funcionário vinculado');
+                        setToggleSuccessSnack(true);
+                    } catch (error) {
+                        console.log(error);
+                        setIsLoading(false);
+                        setInfoMsg('ocorreu um erro ao tentar vincular');
+                        setToggleFailureSnack(true);
+                    }
+                }else {
+                    setIsLoading(false)
+                    setInfoMsg("Insira um cpf válido");
+                    setToggleFailureSnack(true);
+                }
+            } else {
                 setIsLoading(false);
-                setInfoMsg('Funcionário vinculado');
-                setToggleSuccessSnack(true);
-                setOpenDialog(false)
-            } catch (error) {
-                console.log(error);
-                setIsLoading(false);
-                setInfoMsg('ocorreu um erro ao tentar vincular');
-                setToggleFailureSnack(true);
-                setOpenDialog(false)
+                setToggleAlert(true);
+                setAlertText('Seu plano permite 10 somente funcionários.');
+                setAlertTitle('Limite de funcionários');
+                setLink('')
             }
-        }else {
+        } else {
             setIsLoading(false)
-            setInfoMsg("Insira um cpf válido");
-            setToggleFailureSnack(true);
+            setToggleAlert(true);
+            setAlertText('Faça um upgrade de plano e adicione mais funcionários');
+            setAlertTitle('Limite de funcionários');
+            setLink("/dashboard/subscription")
         }
     }
 
@@ -135,9 +151,8 @@ const Employee = () => {
 
     return (
         <div>
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <AlertDialog open={toggleAlert} title={alertTitle} text={alertText} close={() => setToggleAlert(false)} link={link}/>
+            <Backdrop open={isLoading}/>
             <Snackbar toggleSnack={toggleSuccessSnack || toggleFailureSnack} time={toggleFailureSnack ? 4500 : 3500} onClose={() => {setToggleFailureSnack(false); setToggleSuccessSnack(false)}}  color={toggleSuccessSnack ? "success" : "warning"}>
                 {infoMsg}
             </Snackbar>
@@ -147,7 +162,7 @@ const Employee = () => {
                     <DialogContentText>
                         Insira o cpf de seu funcionário, para obter as funções de pontuação de sua loja.
                     </DialogContentText>
-                    <InputMask maskChar="" mask="999.999.999-99" value={cpf} onChange={(e) => handleSearch(e.target.value)}>
+                    <InputMask maskChar="" required mask="999.999.999-99" value={cpf} onChange={(e) => handleSearch(e.target.value)}>
                         {props => (
                             <TextField autoFocus label="CPF" type="text" variant="outlined" fullWidth className={classes.input}/>
                         )}
@@ -191,7 +206,7 @@ const Employee = () => {
             <div className={classes.header}>
                 <div>
                     <Typography variant="h6">Funcionarios</Typography>
-                    <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                    <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                         <MuiLink color="inherit" component={Link} to="/">
                             Home
                         </MuiLink>
@@ -200,53 +215,71 @@ const Employee = () => {
                         </MuiLink>
                     </Breadcrumbs>
                 </div>
+                {employeeList.length > 0 && (
+                    <div>
+                        <MuiButton variant="contained" endIcon={<Add/>} color="primary" onClick={() => setOpenDialog(true)}>
+                            Novo Funcionário
+                        </MuiButton>
+                    </div>
+                )}
+            </div>
+            {isLoading || (
                 <div>
-                    <MuiButton variant="contained" endIcon={<AddIcon/>} color="primary" onClick={() => setOpenDialog(true)}>
-                        Novo Funcionário
-                    </MuiButton>
+                    {employeeList.length > 0 ? (
+                        <Paper variant="outlined">
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>Nome</TableCell>
+                                        <TableCell>CPF</TableCell>
+                                        <TableCell align="center">Tipo de funcionário</TableCell>
+                                        <TableCell align="right">Ações</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {employeeList.map(employee => (
+                                        <TableRow key={employee.id}>
+                                            <TableCell>
+                                                <div className={classes.imgText}>
+                                                    <Avatar alt={employee.name} src={process.env.REACT_APP_BASE_URL + employee.photo} style={{marginRight: "10px"}}/>
+                                                    {employee.name}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>{employee.cpf}</TableCell>
+                                            <TableCell align="center">
+                                                {employee.type === 3 ? (
+                                                    <Chip style={{backgroundColor: '#36f4d8' , color: 'black'}} size="small" label="Funcionário"/>
+                                                ) : employee.type === 2 && (
+                                                    <Chip style={{backgroundColor: '#c536f4' , color: 'white'}} size="small" label="Admin"/>
+                                                )}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                <Tooltip title="Desvincular">
+                                                    <IconButton onClick={() => {setRelationId(employee.relation_id); setOpenQuestionDialog(true);}}>
+                                                        <DeleteOutline/>
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Paper>
+                    ) : (
+                        <div className={classes.noEmployee}>
+                            <Container>
+                                <img src={PeopleSvg} width="250"/>
+                                <Typography variant="h6" className={classes.noEmployeeMsg}>
+                                    Você ainda não possui um funcionário
+                                </Typography>
+                                <MuiButton variant="contained" endIcon={<Add/>} color="primary" onClick={() => setOpenDialog(true)}>
+                                    Novo Funcionário
+                                </MuiButton>
+                            </Container>
+                        </div>
+                    )}
                 </div>
-            </div>
-            <div>
-                <Paper variant="outlined">
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Nome</TableCell>
-                                <TableCell>CPF</TableCell>
-                                <TableCell align="center">Tipo de funcionário</TableCell>
-                                <TableCell align="right">Ações</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {employeeList.map(employee => (
-                                <TableRow key={employee.id}>
-                                    <TableCell>
-                                        <div className={classes.imgText}>
-                                            <Avatar alt={employee.name} src={process.env.REACT_APP_BASE_URL + employee.photo} style={{marginRight: "10px"}}/>
-                                            {employee.name}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>{employee.cpf}</TableCell>
-                                    <TableCell align="center">
-                                        {employee.type === 3 ? (
-                                            <Chip style={{backgroundColor: '#36f4d8' , color: 'black'}} size="small" label="Funcionário"/>
-                                        ) : employee.type === 2 && (
-                                            <Chip style={{backgroundColor: '#c536f4' , color: 'white'}} size="small" label="Admin"/>
-                                        )}
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        <Tooltip title="Desvincular">
-                                            <IconButton>
-                                                <DeleteOutlineIcon onClick={() => {setRelationId(employee.relation_id); setOpenQuestionDialog(true);}}/>
-                                            </IconButton>
-                                        </Tooltip>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </Paper>
-            </div>
+            )}
         </div>
     )
 }

@@ -4,31 +4,12 @@ import { FileDrop } from 'react-file-drop'
 import { Link, useParams } from 'react-router-dom'
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import ClearIcon from '@material-ui/icons/Clear';
-import {
-    Typography,
-    Link as MuiLink,
-    Grid,
-    Paper,
-    Container,
-    Select,
-    MenuItem,
-    FormControl,
-    InputLabel,
-    IconButton,
-    Tooltip,
-    CircularProgress,
-    Backdrop,
-    Breadcrumbs,
-    TextField
-} from '@material-ui/core'
-
-import { Snackbar, Textfield, FButton } from '../../../Components'
+import { NavigateNext, Clear } from '@material-ui/icons';
+import { Typography, Link as MuiLink, Grid, Paper, Container, Select, MenuItem, FormControl, InputLabel, IconButton, Tooltip, Breadcrumbs, TextField } from '@material-ui/core'
+import { Snackbar, Textfield, FButton, ImageCropper, Backdrop } from '../../../Components'
 import { ProductService } from '../../../Services';
-import { useStyles } from './EditPrizeElements';
 import { FilesSvg } from '../../../Assets'
+import { Styles } from './edit-prize.elements';
 
 const FORM_VALIDATION = Yup.object().shape({
     productPrice: Yup.number().integer().typeError('Campo numérico').required('Campo obrigatório'),
@@ -38,9 +19,9 @@ const FORM_VALIDATION = Yup.object().shape({
 
 const EditPrize = () => {
     const { id } = useParams();
-    const classes = useStyles();
+    const classes = Styles();
     const inputFile = useRef(null);
-
+    const [openDialog, setOpenDialog] = useState(false)
     const [uploadedFile, setUploadedFile] = useState(null);
     const [categoryName, setCategoryName] = useState('');
     const [categoryId, setCategoryId] = useState('');
@@ -53,8 +34,6 @@ const EditPrize = () => {
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [toggleErrorSnack, setToggleErrorSnack] = useState(false);
     const [errorMsg, setErrorMsg] = useState('Ocorreu um erro');
-    const [dimentionError, setDimentionError] = useState(false)
-    const [sizeError, setSizeError] = useState(false)
     const [formValues, setFormValues] = useState({productPrice: '', productName: '', productStock: ''});
 
     useEffect(() => {
@@ -98,24 +77,8 @@ const EditPrize = () => {
     }
 
     const handleNewImage = (file) => {
-        setUploadedFile(file)
         setImgUrl(URL.createObjectURL(file))
-        setDimentionError(false)
-        setSizeError(false)
-        let reader = new FileReader()
-        reader.onload = e => {
-            let img = new Image;
-            img.onload = () => {
-                if(img.width != img.height){
-                    setDimentionError(true)
-                }
-            }
-            img.src = reader.result;
-        }
-        reader.readAsDataURL(file);
-        if(file.size > 500000){
-            setSizeError(true)
-        }
+        setOpenDialog(true)
     }
 
     const editProduct = async (values) => {
@@ -123,12 +86,6 @@ const EditPrize = () => {
             setErrorMsg('Selecione ou cadastre uma categoria para seu produto.')
             setToggleErrorSnack(true)
         }
-
-        if(dimentionError || sizeError){
-            setErrorMsg('A imagem selecionada não é válida')
-            setToggleErrorSnack(true)
-        }
-        console.log(values)
         setIsLoading(true)
         let data = new FormData()
         data.append('image', uploadedFile)
@@ -154,6 +111,7 @@ const EditPrize = () => {
 
     return (
         <div>
+            <ImageCropper open={openDialog} close={() => setOpenDialog(false)} url={imgUrl} handleChange={setUploadedFile}/>
             <Snackbar toggleSnack={toggleSuccessSnack} time={3500} onClose={closeSnack} color="success">
                 Produto editado.
             </Snackbar>
@@ -164,14 +122,12 @@ const EditPrize = () => {
                 {errorMsg}
             </Snackbar>
 
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
             <div className={classes.header}>
                 <Typography variant="h5">
                     Editar produto
                 </Typography>
-                <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                     <MuiLink color="inherit" component={Link} to="/">
                         Dashboard
                     </MuiLink>
@@ -210,7 +166,7 @@ const EditPrize = () => {
                                                         Selecione a imagem
                                                     </Typography>
                                                     <Typography variant="overline">
-                                                        Arreste o arquivo direto do seu computador
+                                                        Arraste o arquivo direto do seu computador
                                                     </Typography>
                                                 </div>
                                             </div>
@@ -230,7 +186,7 @@ const EditPrize = () => {
                                             </Container>
                                         </Paper>
                                     {uploadedFile !== null && (
-                                        <Paper variant="outlined" className={[classes.contentSpacing, classes.paperImg]} style={{border: dimentionError || sizeError ? '1px solid #f44336' : ''}}>
+                                        <Paper variant="outlined" className={[classes.contentSpacing, classes.paperImg]}>
                                             <Container>
                                                 <div className={classes.previewFormat}>
                                                     <div className={classes.previewFormat}>
@@ -239,18 +195,10 @@ const EditPrize = () => {
                                                             <Typography variant="subtitle1">{uploadedFile.name}</Typography>
                                                             <Typography variant="subtitle1">{fileSize(uploadedFile.size)}</Typography>
                                                         </div>
-                                                        <div style={{marginLeft: '20px'}}>
-                                                            {dimentionError && (
-                                                                <Typography variant="body1" style={{ color: '#f44336'}}>A imagem deve ser quadrada</Typography>
-                                                            )}
-                                                            {sizeError && (
-                                                                <Typography variant="body1" style={{ color: '#f44336'}}>A imagem deve ser menor que 500kB</Typography>
-                                                            )}
-                                                        </div>
                                                     </div>
                                                     <Tooltip title="Remover">
                                                         <IconButton aria-label="delete" className={classes.margin} onClick={() => setUploadedFile(null)}>
-                                                            <ClearIcon fontSize="default"/>
+                                                            <Clear fontSize="default"/>
                                                         </IconButton>
                                                     </Tooltip>
                                                 </div>
@@ -284,25 +232,23 @@ const EditPrize = () => {
                                         <Typography variant="h6" className={classes.infoTitle}>
                                             Categoria
                                         </Typography>
-                                        <form>
-                                            <FormControl fullWidth className={classes.formControl}>
-                                                <TextField fullWidth variant="outlined" label="Nova Categoria" name="categoryName" value={categoryName} onChange={e => handleNewCategory(e.target.value)}/>
+                                        <FormControl fullWidth className={classes.formControl}>
+                                            <TextField fullWidth variant="outlined" label="Nova Categoria" name="categoryName" value={categoryName} onChange={e => handleNewCategory(e.target.value)}/>
+                                        </FormControl>
+                                        {showCategories && (
+                                            <FormControl fullWidth variant="outlined" className={classes.formControl}>
+                                                <InputLabel id="category">Categorias</InputLabel>
+                                                <Select
+                                                labelId="category"
+                                                value={categoryId}
+                                                onChange={e => setCategoryId(e.target.value)}
+                                                label="Categorias">
+                                                    {categoryList.map(category => (
+                                                        <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>
+                                                    ))}
+                                                </Select>
                                             </FormControl>
-                                            {showCategories && (
-                                                <FormControl fullWidth variant="outlined" className={classes.formControl}>
-                                                    <InputLabel id="category">Categorias</InputLabel>
-                                                    <Select
-                                                    labelId="category"
-                                                    value={categoryId}
-                                                    onChange={e => setCategoryId(e.target.value)}
-                                                    label="Categorias">
-                                                        {categoryList.map(category => (
-                                                            <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>
-                                                        ))}
-                                                    </Select>
-                                                </FormControl>
-                                            )}
-                                        </form>
+                                        )}
                                     </div>
                                 </Container>
                             </Paper>

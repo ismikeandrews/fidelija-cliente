@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Link as LinkR } from 'react-router-dom';
 
 import { colorSchema } from '../../../Styles/colorSchema';
 
@@ -29,7 +28,7 @@ export const NavbarContainer = styled.div`
     max-width: 1100px;
 `;
 
-export const NavLogo = styled(LinkR)`
+export const NavLogo = styled.a`
     color: ${colorSchema.white};
     justify-self: flex-start;
     cursor: pointer;

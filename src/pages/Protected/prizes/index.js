@@ -1,52 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom'
-
-import AddIcon from '@material-ui/icons/Add';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import SearchIcon from '@material-ui/icons/Search';
-import SettingsRoundedIcon from '@material-ui/icons/SettingsRounded';
-import CreateRoundedIcon from '@material-ui/icons/CreateRounded';
-import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import LastPageIcon from '@material-ui/icons/LastPage';
-import { KeyboardArrowRight, KeyboardArrowLeft } from '@material-ui/icons';
-
-import { 
-    Button, 
-    Breadcrumbs,
-    Link as MuiLink,
-    OutlinedInput,
-    Chip,
-    Container,
-    Backdrop,
-    Dialog, 
-    DialogActions, 
-    DialogContent, 
-    DialogTitle, 
-    DialogContentText,
-    Slide,
-    CircularProgress,
-    Grid,
-    Typography, 
-    Paper,
-    InputAdornment,
-    FormControl,
-    InputLabel,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-    IconButton,
-    Tooltip,
-    TablePagination,
-    Divider,
-    useTheme
-} from '@material-ui/core';
-
-import { Snackbar } from '../../../Components'
+import { Add, NavigateNext, Search, SettingsRounded, CreateRounded, PlayArrowRounded } from '@material-ui/icons';
+import { Button, Breadcrumbs, Link as MuiLink, OutlinedInput, Chip, Container, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Slide, Grid, Typography, Paper, InputAdornment, FormControl, InputLabel, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Tooltip, Divider } from '@material-ui/core';
+import { Snackbar, Pagination, Backdrop } from '../../../Components'
 import { ProductService } from '../../../Services';
-import { useStyles } from './prizesElements';
+import { Styles } from './prizes.elements';
 import { EmptySvg } from '../../../Assets'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -55,10 +13,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 
 const Prizes = () => {
-    const classes = useStyles();
-    const theme = useTheme();
+    const classes = Styles();
     const timeoutRef = useRef(null);
-
     const [toggleSuccessSnack, setToggleSuccessSnack] = useState(false);
     const [toggleFailureSnack, setToggleFailureSnack] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -79,7 +35,6 @@ const Prizes = () => {
     const fetchData = async (currentPage, rowsPerPage) => {
         try {
             const productsRes = await ProductService.getUserProducts(currentPage, rowsPerPage);
-            console.log(productsRes);
             setProducts(productsRes.data.data);
             setPage(productsRes.data.current_page);
             setItem(productsRes.data.per_page);
@@ -171,9 +126,7 @@ const Prizes = () => {
                 {feedbackAlert}
             </Snackbar>
 
-            <Backdrop className={classes.backdrop} open={isLoading}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
+            <Backdrop open={isLoading}/>
 
             <Dialog
             open={openQuestionDialog}
@@ -219,7 +172,7 @@ const Prizes = () => {
                     <Typography variant="h5">
                         Meus produtos
                     </Typography>
-                    <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />}>
+                    <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
                         <MuiLink color="inherit" component={Link} to="/">
                             Home
                         </MuiLink>
@@ -230,7 +183,7 @@ const Prizes = () => {
                 </div>
                 {products.length > 0 && (
                     <div>
-                        <Button variant="contained" color="primary" endIcon={<AddIcon/>} component={Link} to="/dashboard/create-prize">
+                        <Button variant="contained" color="primary" endIcon={<Add/>} component={Link} to="/dashboard/create-prize">
                             Novo produto
                         </Button>
                     </div>
@@ -252,7 +205,7 @@ const Prizes = () => {
                                                 label="procurar"
                                                 value={searchTerm}
                                                 onChange={e => handleSearch(e.target.value)}
-                                                endAdornment={<InputAdornment position="end"><SearchIcon color="primary"/></InputAdornment>}/>
+                                                endAdornment={<InputAdornment position="end"><Search color="primary"/></InputAdornment>}/>
                                             </FormControl>
                                         </Grid>
                                     </Grid>
@@ -291,19 +244,19 @@ const Prizes = () => {
                                                     <TableCell align="right">
                                                         <Tooltip title="Editar">
                                                             <IconButton aria-label="delete" component={Link} to={`/dashboard/edit-prize/${product.id}`}>
-                                                                <CreateRoundedIcon/>
+                                                                <CreateRounded/>
                                                             </IconButton>
                                                         </Tooltip>
                                                         {product.active === 1 ? (
                                                                 <Tooltip title="Excluir/Pausar">
-                                                                    <IconButton aria-label="Configurações">
-                                                                        <SettingsRoundedIcon onClick={() => handleOpenQuestionDialog(product.id)}/>
+                                                                    <IconButton aria-label="Configurações" onClick={() => handleOpenQuestionDialog(product.id)}>
+                                                                        <SettingsRounded/>
                                                                     </IconButton>
                                                                 </Tooltip>
                                                             ) :
                                                             <Tooltip title="Ativar">
-                                                                <IconButton aria-label="resume">
-                                                                    <PlayArrowRoundedIcon onClick={() => togglePauseMode(product.id)}/>
+                                                                <IconButton aria-label="resume" onClick={() => togglePauseMode(product.id)}>
+                                                                    <PlayArrowRounded/>
                                                                 </IconButton>
                                                             </Tooltip>
                                                         }
@@ -312,44 +265,7 @@ const Prizes = () => {
                                             ))}
                                         </TableBody>
                                     </Table>
-                                    <TablePagination
-                                    rowsPerPageOptions={[5, 10, 25, 100]}
-                                    component="div"
-                                    count={products.length - 1}
-                                    rowsPerPage={item}
-                                    page={page - 1}
-                                    onChangePage={() => null}
-                                    labelRowsPerPage="Produtos por página:"
-                                    labelDisplayedRows={({ from, to, count }) => `${from}-${to} de ${count !== 0 ? count : `more than ${to}`}`}
-                                    onChangeRowsPerPage={(event) => fetchData(1, event.target.value)}
-                                    ActionsComponent={() => (
-                                        <div className={classes.paginationIcons}>
-                                            <IconButton
-                                                onClick={() => fetchData(1, item)}
-                                                disabled={page === 1}
-                                                aria-label="first page">
-                                                {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-                                            </IconButton>
-                                            <IconButton 
-                                                onClick={() => fetchData(page - 1, item)} 
-                                                disabled={page === 1} 
-                                                aria-label="previous page">
-                                                {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-                                            </IconButton>
-                                            <IconButton
-                                                onClick={() => fetchData(page + 1, item, searchTerm)}
-                                                disabled={page === lastPage}
-                                                aria-label="next page">
-                                                {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-                                            </IconButton>
-                                            <IconButton
-                                                onClick={() => fetchData(lastPage, item)}
-                                                disabled={page === lastPage}
-                                                aria-label="last page">
-                                                {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-                                            </IconButton>
-                                        </div>
-                                    )}/>
+                                    <Pagination rows={item} changeRows={(e) => fetchData(page, e.target.value)} count={lastPage} changePage={(e, page) => fetchData(page, item)}/>
                                 </div>
                             </>
                         ) : (
@@ -359,7 +275,7 @@ const Prizes = () => {
                                     <Typography variant="h6" className={classes.noProductsMg}>
                                         Você ainda não possui um produto
                                     </Typography>
-                                    <Button variant="contained" color="primary" endIcon={<AddIcon/>} component={Link} to="/dashboard/create-prize">
+                                    <Button variant="contained" color="primary" endIcon={<Add/>} component={Link} to="/dashboard/create-prize">
                                         Novo produto
                                     </Button>
                                 </Container>

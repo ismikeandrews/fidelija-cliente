@@ -1,13 +1,8 @@
 import axios from 'axios';
 import { AuthService } from '.';
-
 const url = process.env.REACT_APP_BASE_URL;
-
 const AuthData = AuthService.getAuthData();
-
-
 let AuthStr = {} 
-
 if(AuthData){
      AuthStr = { headers: { Authorization: `${AuthData.token_type} ${AuthData.access_token}` }}
 }
@@ -31,7 +26,7 @@ const ProductService = {
     },
 
     async getCategories() {
-        const endPoint = `${url}api/categories`
+        const endPoint = `${url}api/products/categories`
         return axios.get(endPoint, AuthStr);
     },
 
