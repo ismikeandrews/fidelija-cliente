@@ -13,6 +13,7 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined';
+import LoyaltyIcon from '@material-ui/icons/Loyalty';
 
 import { 
   CssBaseline, 
@@ -51,6 +52,7 @@ export default function Dashboard(props) {
   const [open, setOpen] = useState(true);
   const [openNest, setOpenNest] = useState(false);
   const [openUserNest, setOpenUserNest] = useState(false);
+  const [openSaleNest, setOpenSaleNest] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userObj, setUserObj] = useState({});
   const [notMenu, setNotMenu] = useState(null)
@@ -107,6 +109,7 @@ export default function Dashboard(props) {
     setOpen(false);
     setOpenNest(false)
     setOpenUserNest(false)
+    setOpenSaleNest(false)
   };
 
   const handleLogout = () => {
@@ -283,6 +286,24 @@ export default function Dashboard(props) {
             {openNest ? <ExpandLess /> : <ExpandMore />}
           </ListItem>
           <Collapse in={openNest} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/prizes">
+                <ListItemText primary="Lista de Produtos" />
+              </ListItem>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/create-prize">
+                <ListItemText primary="Novo Produto" />
+              </ListItem>
+            </List>
+          </Collapse>
+
+          <ListItem button onClick={() => {setOpenSaleNest(!openSaleNest); setOpen(true);}}>
+            <ListItemIcon>
+              <LoyaltyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Promoções" />
+            {openSaleNest ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={openSaleNest} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItem button className={classes.nested} component={Link} to="/dashboard/prizes">
                 <ListItemText primary="Lista" />

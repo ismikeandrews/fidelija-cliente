@@ -23,5 +23,9 @@ export {
     Employee,
     EditStablishment,
     Notifications,
-    Points
+    Points,
+    Sales,
+    CreateSale,
+    SendSale,
+    EditSale
 } from './Protected';

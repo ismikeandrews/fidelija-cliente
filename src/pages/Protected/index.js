@@ -15,3 +15,7 @@ export { default as Employee } from "./employee";
 export { default as EditStablishment } from "./editStablishment";
 export { default as Notifications } from "./notifications";
 export { default as Points } from "./points";
+export { default as Sales } from "./sales";
+export { default as SendSale } from "./sendSale";
+export { default as CreateSale } from "./createSale";
+export { default as EditSale } from "./editSale";
