@@ -125,11 +125,11 @@ const CreatePrize = () => {
         if(mult === 5){
             const value = amm  * 100
             setPoints(value)
-        }else if(mult === 10){
-            const value = amm  * 50
-            setPoints(value)
         }else if(mult === 20){
             const value = amm  * 25
+            setPoints(value)
+        }else if(mult === 10){
+            const value = amm  * 50
             setPoints(value)
         }
         setMultiplier(mult)
