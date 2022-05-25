@@ -17,5 +17,9 @@ export {
     EditStablishment,
     Notifications,
     Points,
+    Sales,
+    CreateSale,
+    SendSale,
+    EditSale,
     Redeem
 } from './Protected';

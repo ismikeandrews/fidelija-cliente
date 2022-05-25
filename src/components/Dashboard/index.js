@@ -13,6 +13,7 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined';
+import LoyaltyIcon from '@material-ui/icons/Loyalty';
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber';
 import { 
   CssBaseline, 
@@ -35,7 +36,6 @@ import {
   ListSubheader,
   Grid,
   ListItemIcon,
-  withStyles
 } from '@material-ui/core'
 
 import { useSnackbar } from 'notistack';
@@ -51,6 +51,7 @@ export default function Dashboard(props) {
   const [open, setOpen] = useState(true);
   const [openNest, setOpenNest] = useState(false);
   const [openUserNest, setOpenUserNest] = useState(false);
+  const [openSaleNest, setOpenSaleNest] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userObj, setUserObj] = useState({});
   const [notMenu, setNotMenu] = useState(null)
@@ -107,6 +108,7 @@ export default function Dashboard(props) {
     setOpen(false);
     setOpenNest(false)
     setOpenUserNest(false)
+    setOpenSaleNest(false)
   };
 
   const handleLogout = () => {
@@ -246,12 +248,6 @@ export default function Dashboard(props) {
             </ListItemIcon>
             <ListItemText primary="Histórico"/>
           </ListItem>
-          <ListItem button component={Link} to="/dashboard/redeem">
-            <ListItemIcon>
-              <ConfirmationNumberIcon />
-            </ListItemIcon>
-            <ListItemText primary="Resgate"/>
-          </ListItem>
 
           <ListItem button onClick={() => {setOpenUserNest(!openUserNest); setOpen(true)}}>
             <ListItemIcon>
@@ -291,10 +287,34 @@ export default function Dashboard(props) {
           <Collapse in={openNest} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItem button className={classes.nested} component={Link} to="/dashboard/prizes">
-                <ListItemText primary="Lista" />
+                <ListItemText primary="Lista de Produtos" />
               </ListItem>
               <ListItem button className={classes.nested} component={Link} to="/dashboard/create-prize">
                 <ListItemText primary="Novo Produto" />
+              </ListItem>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/redeem">
+                <ListItemText primary="Resgatar Produto" />
+              </ListItem>
+            </List>
+          </Collapse>
+
+          <ListItem button onClick={() => {setOpenSaleNest(!openSaleNest); setOpen(true);}}>
+            <ListItemIcon>
+              <LoyaltyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Promoções" />
+            {openSaleNest ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={openSaleNest} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/sales">
+                <ListItemText primary="Lista de Promoções" />
+              </ListItem>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/sale/new">
+                <ListItemText primary="Nova Promoção" />
+              </ListItem>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/send/sale">
+                <ListItemText primary="Enviar Promoção" />
               </ListItem>
             </List>
           </Collapse>
