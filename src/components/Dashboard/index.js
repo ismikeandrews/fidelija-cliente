@@ -13,12 +13,8 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ShoppingCartOutlinedIcon from '@material-ui/icons/ShoppingCartOutlined';
-<<<<<<< HEAD
 import LoyaltyIcon from '@material-ui/icons/Loyalty';
-
-=======
 import ConfirmationNumberIcon from '@material-ui/icons/ConfirmationNumber';
->>>>>>> 38f90048ed3676129c15ec2337114c7f71088e4c
 import { 
   CssBaseline, 
   Collapse,
@@ -40,7 +36,6 @@ import {
   ListSubheader,
   Grid,
   ListItemIcon,
-  withStyles
 } from '@material-ui/core'
 
 import { useSnackbar } from 'notistack';
@@ -253,12 +248,6 @@ export default function Dashboard(props) {
             </ListItemIcon>
             <ListItemText primary="Histórico"/>
           </ListItem>
-          <ListItem button component={Link} to="/dashboard/redeem">
-            <ListItemIcon>
-              <ConfirmationNumberIcon />
-            </ListItemIcon>
-            <ListItemText primary="Resgate"/>
-          </ListItem>
 
           <ListItem button onClick={() => {setOpenUserNest(!openUserNest); setOpen(true)}}>
             <ListItemIcon>
@@ -303,6 +292,9 @@ export default function Dashboard(props) {
               <ListItem button className={classes.nested} component={Link} to="/dashboard/create-prize">
                 <ListItemText primary="Novo Produto" />
               </ListItem>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/redeem">
+                <ListItemText primary="Resgatar Produto" />
+              </ListItem>
             </List>
           </Collapse>
 
@@ -315,11 +307,14 @@ export default function Dashboard(props) {
           </ListItem>
           <Collapse in={openSaleNest} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              <ListItem button className={classes.nested} component={Link} to="/dashboard/prizes">
-                <ListItemText primary="Lista" />
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/sales">
+                <ListItemText primary="Lista de Promoções" />
               </ListItem>
-              <ListItem button className={classes.nested} component={Link} to="/dashboard/create-prize">
-                <ListItemText primary="Novo Produto" />
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/sale/new">
+                <ListItemText primary="Nova Promoção" />
+              </ListItem>
+              <ListItem button className={classes.nested} component={Link} to="/dashboard/send/sale">
+                <ListItemText primary="Enviar Promoção" />
               </ListItem>
             </List>
           </Collapse>

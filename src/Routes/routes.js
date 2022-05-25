@@ -22,15 +22,12 @@ import {
     EditStablishment,
     Notifications,
     Points,
-<<<<<<< HEAD
     Sales,
     CreateSale,
     EditSale,
-    SendSale
-=======
+    SendSale,
     Recover,
     Redeem
->>>>>>> 38f90048ed3676129c15ec2337114c7f71088e4c
 } from '../Pages';
 
 const Index = () => {
@@ -61,15 +58,12 @@ const Routes = () => {
                 <Protected path="/dashboard/wallet" component={Wallet}/>
                 <Protected path="/dashboard/employee" component={Employee}/>
                 <Protected path="/dashboard/points" component={Points}/>
-<<<<<<< HEAD
                 <Protected path="/dashboard/sales" component={Sales}/>
                 <Protected path="/dashboard/sale/new" component={CreateSale}/>
                 <Protected path="/dashboard/sale/edit/:id" component={EditSale}/>
                 <Protected path="/dashboard/send/sale" component={SendSale}/>
-=======
                 <Protected path="/dashboard/redeem" component={Redeem}/>
                 <Route path="*" component={Index}/>
->>>>>>> 38f90048ed3676129c15ec2337114c7f71088e4c
             </Switch>
         </BrowserRouter>
     )

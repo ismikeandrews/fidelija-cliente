@@ -17,12 +17,9 @@ export {
     EditStablishment,
     Notifications,
     Points,
-<<<<<<< HEAD
     Sales,
     CreateSale,
     SendSale,
-    EditSale
-=======
+    EditSale,
     Redeem
->>>>>>> 38f90048ed3676129c15ec2337114c7f71088e4c
 } from './Protected';

@@ -121,8 +121,17 @@ const CreatePrize = () => {
     }
 
     const calculator = (mult, amm) => {
-        const value = amm * mult * 20
-        setPoints(value)
+        console.log(mult)
+        if(mult === 5){
+            const value = amm  * 100
+            setPoints(value)
+        }else if(mult === 10){
+            const value = amm  * 50
+            setPoints(value)
+        }else if(mult === 20){
+            const value = amm  * 25
+            setPoints(value)
+        }
         setMultiplier(mult)
         setAmmount(amm)
     }
@@ -227,9 +236,9 @@ const CreatePrize = () => {
                                                     value={multiplier}
                                                     onChange={e => calculator(e.target.value, ammount)}
                                                     label="Multiplier">
-                                                        <MenuItem value={5}>5%</MenuItem>
-                                                        <MenuItem value={10}>10%</MenuItem>
                                                         <MenuItem value={20}>20%</MenuItem>
+                                                        <MenuItem value={10}>10%</MenuItem>
+                                                        <MenuItem value={5}>5%</MenuItem>
                                                     </Select>
                                                 </FormControl>
                                             </Grid>
